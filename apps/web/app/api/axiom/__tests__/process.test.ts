@@ -1,3 +1,10 @@
+jest.mock('@/lib/supabase/client', () => ({
+  getServiceSupabase: jest.fn(() => null),
+  saveFacts: jest.fn(async () => ({ ok: true, skipped: true })),
+  saveReasoning: jest.fn(async () => ({ ok: true, skipped: true })),
+  saveDocuments: jest.fn(async () => ({ ok: true, skipped: true })),
+}));
+
 import { POST as postProcess } from '@/app/api/axiom/process/route';
 
 async function readAllSseEvents(res: Response): Promise<unknown[]> {

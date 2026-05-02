@@ -1,10 +1,15 @@
+# Continuous integration — same checks as PR Validation, on every push to mainline branches.
+# Phase 0 gate: must stay green with Deploy IterLaw + Deploy Azure Functions.
 name: CI
 
 on:
+  push:
+    branches:
+      - master
+      - main
   workflow_dispatch:
 
 jobs:
-  disabled:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "CI temporarily disabled during Azure deployment setup"
+  validate:
+    uses: ./.github/workflows/ci-reusable.yml
+    secrets: inherit

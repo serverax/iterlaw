@@ -14,6 +14,7 @@ const customJestConfig = {
     '<rootDir>/node_modules/',
     '<rootDir>/apps/web/.next/',
   ],
+  modulePathIgnorePatterns: ['<rootDir>/apps/web/.next/standalone/'],
   collectCoverageFrom: [
     'apps/web/lib/gov-apis/**/*.{ts,tsx}',
     '!apps/web/lib/gov-apis/**/*.test.ts',

@@ -2,6 +2,8 @@
 
 **Accuracy baseline (five doc corrections, commit history):** [`docs/CRUSER_DEVOPS_ACCURACY_BASELINE.md`](../docs/CRUSER_DEVOPS_ACCURACY_BASELINE.md)
 
+**Phase 0 merge gate (IterLaw):** [`docs/PHASE0_GATE.md`](../docs/PHASE0_GATE.md) — definition of done, required secrets, and permanent CI/CD design notes (not “fix later”).
+
 This repo uses **one reusable CI definition** (lint → typecheck → tests with coverage → build) so you do not pay **3×** GitHub Actions minutes for the same `npm ci` on every push. The guide’s separate `test.yml` / `build.yml` ideas are represented as:
 
 | Guide name | In this repo |

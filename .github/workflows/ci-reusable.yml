@@ -13,13 +13,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -36,8 +37,15 @@ jobs:
           CI: true
           NODE_ENV: test
 
+      # Match Deploy IterLaw "Verify Static Web App build" — materialize workspace package
+      # so Next build matches deploy and avoids symlink-only layouts on the runner.
       - name: Production build
-        run: npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web
+        run: |
+          set -e
+          mkdir -p apps/web/node_modules/@rightsnow
+          rm -rf apps/web/node_modules/@rightsnow/shared
+          cp -a packages/shared apps/web/node_modules/@rightsnow/shared
+          npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4

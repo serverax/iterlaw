@@ -1,3 +1,10 @@
+jest.mock('@/lib/supabase/client', () => ({
+  getServiceSupabase: jest.fn(() => null),
+  saveFacts: jest.fn(async () => ({ ok: true, skipped: true })),
+  saveReasoning: jest.fn(async () => ({ ok: true, skipped: true })),
+  saveDocuments: jest.fn(async () => ({ ok: true, skipped: true })),
+}));
+
 import { POST as postExtract } from '@/app/api/axiom/extract/route';
 import { POST as postReason } from '@/app/api/axiom/reason/route';
 

@@ -16,14 +16,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     if: github.event.inputs.confirmation == 'YES' && vars.VERCEL_PROD_DEPLOY_ENABLED == 'true'
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://example.supabase.co' }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDc5NzI4MDAsImV4cCI6MTk2MzU0ODgwMH0.E316OMskv_dswTnvNDcDsFkXORI_MTO1SmIzsTbfvsQ' }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - run: npm ci
 

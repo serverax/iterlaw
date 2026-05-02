@@ -11,7 +11,7 @@ export type PayRelatedIssue =
   | 'zero_hours'
   | 'working_time';
 
-const TRIGGER_ISSUES: ReadonlySet<PayRelatedIssue> = new Set([
+const TRIGGER_ISSUES: ReadonlySet<PayRelatedIssue> = new Set<PayRelatedIssue>([
   'pay',
   'holiday_pay',
   'ssp',

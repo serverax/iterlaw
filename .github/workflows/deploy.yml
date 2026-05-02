@@ -4,6 +4,7 @@
 #   AZURE_CREDENTIALS — JSON from: az ad sp create-for-rbac --name "github-iterlaw-deploy" --role "Website Contributor" \
 #     --scopes /subscriptions/<SUB_ID>/resourceGroups/<RG>/providers/Microsoft.Web/sites/iterlaw-api-001 --json-auth
 #   AZURE_STATIC_WEB_APPS_API_TOKEN — SWA → Manage deployment token
+#   NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY — required for `next build` (prerender); add as repo Actions secrets
 #
 # OIDC alternative (no client secret in GitHub): grant the identity Website Contributor on iterlaw-api-001, add a
 # federated credential for this repo, then replace the Azure Login step with client-id / tenant-id / subscription-id
@@ -23,6 +24,9 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,6 +40,17 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Check Next.js public Supabase env (build + SWA Oryx)
+        run: |
+          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]; then
+            echo '::error::Set repository secrets NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY (required for next build prerender; same values as local .env)'
+            exit 1
+          fi
+
+      # Same command as SWA Oryx (app_build_command); fails here before Azure deploy if the web app cannot build.
+      - name: Verify Static Web App build (Oryx parity)
+        run: npm run build -w @rightsnow/shared && npm run build
 
       - name: Build Azure Functions app (@rightsnow/api)
         run: npm run build -w @rightsnow/shared && npm run build -w @rightsnow/legal-core && npm run build -w @rightsnow/api
@@ -106,6 +121,9 @@ jobs:
 
       - name: Deploy Static Web App
         uses: Azure/static-web-apps-deploy@v1
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}

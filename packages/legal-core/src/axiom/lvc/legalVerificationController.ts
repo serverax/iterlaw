@@ -106,9 +106,11 @@ function reasoningAssumesFactsNotInExtracted(
   const marker = /\[REQUIRES_FACT:\s*([^\]]+)\]/gi;
   let m: RegExpExecArray | null;
   while ((m = marker.exec(reasoningText)) !== null) {
-    const key = m[1].trim().toLowerCase();
+    const captured = m[1];
+    if (!captured) continue;
+    const key = captured.trim().toLowerCase();
     if (key && !factKeys.has(key)) {
-      missing.push(`Fact "${m[1].trim()}" referenced in reasoning but not present in extracted_facts`);
+      missing.push(`Fact "${captured.trim()}" referenced in reasoning but not present in extracted_facts`);
     }
   }
 
@@ -156,6 +158,7 @@ export function verifyLegalOutput(input: VerifyLegalInput): VerifyLegalOutput {
   } else {
     for (let i = 0; i < input.legal_conclusions.length; i++) {
       const c = input.legal_conclusions[i];
+      if (c === undefined) continue;
       const st = normalizeSourceType(c.source_type);
       const ref = c.reference;
       if (!isValidSourceType(st)) {

@@ -1,7 +1,7 @@
 # Cruser: DevOps — final accurate handoff
 
 **Branch:** `phase0/step7-qa-pool`  
-**Cite for PRs / audits:** doc tip **`59a9609`** (or omit SHA and link the three paths below).  
+**Cite for PRs / audits:** doc tip **`0dc0f52`** (includes **`6083eaf`** commit-table alignment; or omit SHA and link the three paths below).  
 **Accuracy baseline:** [`CRUSER_DEVOPS_ACCURACY_BASELINE.md`](./CRUSER_DEVOPS_ACCURACY_BASELINE.md)  
 
 **Status:** Ready to push and merge; GitHub variables / secrets / branch protection are operator follow-ups  
@@ -9,11 +9,15 @@
 
 ## Three linked docs
 
+Corrections and rationale: [`CRUSER_DEVOPS_ACCURACY_BASELINE.md`](./CRUSER_DEVOPS_ACCURACY_BASELINE.md).
+
 Doc-only commits (newest first):
 
 | Commit | What changed |
 |--------|----------------|
-| **`59a9609`** | Baseline + handoff: cite bundle, `test.yml` / `build.yml` **not** per-event, heading fixes. |
+| **`0dc0f52`** | PR cite synced to git tip; “corrections and rationale” link under **Three linked docs**; baseline **`6083eaf`** changelog section. |
+| **`6083eaf`** | Commit table here (correct **baseline file → `7f6a926`**, not `84b29e4`); baseline header + `59a9609` changelog section. |
+| **`59a9609`** | Baseline + handoff: cite `7f6a926` bundle, `test.yml` / `build.yml` **not** per-push/PR, “three linked docs” heading. |
 | **`7f6a926`** | Added **`CRUSER_DEVOPS_ACCURACY_BASELINE.md`**; cross-links from this handoff + `.github/DEVOPS.md`. |
 | **`84b29e4`** | Rewrote this handoff (8 workflows, double CI, backup path, `test:ci` vs `npm run ci`); DEVOPS two-run note. |
 

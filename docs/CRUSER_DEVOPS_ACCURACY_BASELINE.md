@@ -1,10 +1,12 @@
 # Cruser: DevOps handoff — accuracy baseline
 
 **Branch:** `phase0/step7-qa-pool`  
-**Doc bundle tip:** **`59a9609`** — citation alignment + `test.yml` / `build.yml` trigger note + handoff header fixes  
+**Doc bundle tip:** **`0dc0f52`** — PR cite + corrections link; includes **`6083eaf`** table + **`59a9609`** tightening  
+**Prior:** **`6083eaf`** — commit table + attribution fix; baseline **`59a9609`** changelog  
+**Earlier:** **`59a9609`** — citation + `test.yml` / `build.yml` not per-push/PR  
 **Baseline file landed:** **`7f6a926`** — created this doc + cross-links from handoff and `.github/DEVOPS.md`  
 **Handoff rewrite:** **`84b29e4`** — eight-workflow table, double-CI note, backup/S3 path, `test:ci` vs `npm run ci`  
-**Status:** Matches repository behaviour through **`59a9609`** (bump SHAs after future doc-only commits)  
+**Status:** Matches repository behaviour through **`0dc0f52`** (bump SHAs after future doc-only commits)  
 
 **Primary handoff (operators):** [`CRUSER_DEVOPS_CICD_HANDOFF.md`](./CRUSER_DEVOPS_CICD_HANDOFF.md)  
 **Contributor setup:** [`.github/DEVOPS.md`](../.github/DEVOPS.md)
@@ -96,6 +98,20 @@ If names do not match, failed workflows may not block merge.
 
 - **`docs/CRUSER_DEVOPS_ACCURACY_BASELINE.md`** — Header now distinguishes `84b29e4` / `7f6a926` / `59a9609`; note that `test.yml` and `build.yml` are **not** per-push/per-PR.  
 - **`docs/CRUSER_DEVOPS_CICD_HANDOFF.md`** — “Three linked docs” heading; baseline line clarified (bundle vs rewrites).
+
+---
+
+## What changed in commit `6083eaf`
+
+- **`docs/CRUSER_DEVOPS_CICD_HANDOFF.md`** — Commit history table (newest first); **baseline file** correctly attributed to **`7f6a926`** (not `84b29e4`).  
+- **`docs/CRUSER_DEVOPS_ACCURACY_BASELINE.md`** — Header roles for `59a9609` / `7f6a926` / `84b29e4`; **`59a9609`** changelog subsection added.
+
+---
+
+## What changed in commit `0dc0f52`
+
+- **`docs/CRUSER_DEVOPS_CICD_HANDOFF.md`** — PR cite uses current git tip; one-line link to baseline under **Three linked docs**.  
+- **`docs/CRUSER_DEVOPS_ACCURACY_BASELINE.md`** — Doc tip / status bumped; this subsection added.
 
 ---
 

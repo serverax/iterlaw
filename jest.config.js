@@ -10,6 +10,9 @@ const customJestConfig = {
     'lib/gov-apis/**/*.{ts,tsx}',
     '!lib/gov-apis/**/*.test.ts',
     '!lib/gov-apis/types.ts',
+    'lib/validation/**/*.{ts,tsx}',
+    '!lib/validation/**/*.test.ts',
+    '!lib/validation/index.ts',
   ],
 };
 

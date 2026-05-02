@@ -5,6 +5,10 @@ const createJestConfig = nextJest({ dir: './' });
 /** @type {import('jest').Config} */
 const customJestConfig = {
   testEnvironment: 'node',
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/$1',
+  },
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
   collectCoverageFrom: [
     'lib/gov-apis/**/*.{ts,tsx}',
@@ -16,6 +20,17 @@ const customJestConfig = {
     'lib/ai/**/*.ts',
     '!lib/ai/**/*.test.ts',
     '!lib/ai/index.ts',
+    'types/**/*.ts',
+    'lib/agents/**/*.ts',
+    '!lib/agents/**/*.test.ts',
+    'lib/workflow/**/*.ts',
+    '!lib/workflow/**/*.test.ts',
+    'lib/supabase/client.ts',
+    '!lib/supabase/**/*.test.ts',
+    'lib/prompts/**/*.ts',
+    'components/dashboard/**/*.{tsx,ts}',
+    '!components/dashboard/**/*.test.tsx',
+    'app/api/axiom/**/*.ts',
   ],
 };
 

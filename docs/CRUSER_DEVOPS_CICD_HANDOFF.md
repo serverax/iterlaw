@@ -20,6 +20,8 @@ Doc-only commits (newest first):
 | **`7f6a926`** | Added **`CRUSER_DEVOPS_ACCURACY_BASELINE.md`**; cross-links from this handoff + `.github/DEVOPS.md`. |
 | **`84b29e4`** | Rewrote this handoff (8 workflows, double CI, backup path, `test:ci` vs `npm run ci`); DEVOPS two-run note. |
 
+*The table is **historical reference** only. For the current tree, use the three paths above or **`git rev-parse HEAD`** on **`phase0/step7-qa-pool`** — do not rely on a pinned SHA in prose.*
+
 | File | Audience |
 |------|----------|
 | **This file** (`docs/CRUSER_DEVOPS_CICD_HANDOFF.md`) | Operators — what actually runs |

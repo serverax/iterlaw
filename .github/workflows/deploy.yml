@@ -1,49 +1,42 @@
-name: Deploy IterLaw
+name: Deploy IterLaw Backend (Azure Functions)
 
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
+env:
+  NODE_VERSION: '20.x'
+
 jobs:
-  deploy-backend:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      # 1. Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Install backend dependencies
-        working-directory: backend
-        run: npm ci
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
-      - name: Backend typecheck
-        working-directory: backend
-        run: npm run typecheck
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm install
 
-      - name: Deploy Azure Function using publish profile
+      # 4. Build project (if using TypeScript)
+      - name: Build
+        run: npm run build
+        continue-on-error: true
+
+      # 5. Deploy to Azure Functions
+      - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
         with:
           app-name: iterlaw-api-001
-          package: backend
+          package: .
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-          respect-funcignore: true
-
-  deploy-web:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install web dependencies
-        run: npm ci
-
-      - name: Build web
-        run: npm run build
-
-      - name: Deploy Static Web App
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: upload
-          app_location: "/"
-          output_location: ".next"

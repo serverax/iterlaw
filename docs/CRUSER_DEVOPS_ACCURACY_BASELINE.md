@@ -1,8 +1,9 @@
 # Cruser: DevOps handoff — accuracy baseline
 
 **Branch:** `phase0/step7-qa-pool`  
-**Commit:** `84b29e4` (baseline for this document; update the SHA if the tip moves)  
-**Status:** Matches repository behaviour as of that commit  
+**Doc bundle tip:** `7f6a926` — this file added + cross-links from handoff and `.github/DEVOPS.md`  
+**Prior handoff rewrite:** `84b29e4` — eight-workflow table, double-CI note, backup path, `test:ci` vs `npm run ci`  
+**Status:** Matches repository behaviour through **`7f6a926`** (update SHAs after future doc-only commits)  
 
 **Primary handoff (operators):** [`CRUSER_DEVOPS_CICD_HANDOFF.md`](./CRUSER_DEVOPS_CICD_HANDOFF.md)  
 **Contributor setup:** [`.github/DEVOPS.md`](../.github/DEVOPS.md)
@@ -25,6 +26,8 @@ This file records **five** corrections that had appeared in earlier drafts so no
 6. `deploy-staging.yml`  
 7. `deploy-production.yml`  
 8. `backup.yml`  
+
+`test.yml` is **weekly + manual** (`workflow_dispatch`); `build.yml` is **manual only**. They are not part of every push/PR event — unlike `ci.yml` and `pull-request.yml`.
 
 Documentation is not executable CI.
 
@@ -77,6 +80,14 @@ If names do not match, failed workflows may not block merge.
 
 - **`docs/CRUSER_DEVOPS_CICD_HANDOFF.md`** — Rewritten with the eight workflows, double-CI honesty, backup/S3 details, `test:ci` vs `npm run ci`, suggested PR blurb.  
 - **`.github/DEVOPS.md`** — Note on two CI runs + troubleshooting row.
+
+---
+
+## What changed in commit `7f6a926`
+
+- **`docs/CRUSER_DEVOPS_ACCURACY_BASELINE.md`** — Created (this file): the five corrections in one place.  
+- **`docs/CRUSER_DEVOPS_CICD_HANDOFF.md`** — Links here; audience table lists three linked docs.  
+- **`.github/DEVOPS.md`** — Link under the title to this baseline.
 
 ---
 

@@ -1,11 +1,11 @@
 # Cruser: DevOps — final accurate handoff
 
 **Branch:** `phase0/step7-qa-pool`  
-**Accuracy baseline:** [`CRUSER_DEVOPS_ACCURACY_BASELINE.md`](./CRUSER_DEVOPS_ACCURACY_BASELINE.md) (commit **`84b29e4`** and later; update SHA if the tip moves)  
+**Accuracy baseline:** [`CRUSER_DEVOPS_ACCURACY_BASELINE.md`](./CRUSER_DEVOPS_ACCURACY_BASELINE.md) — cite doc bundle tip **`7f6a926`** (includes cross-links; **`84b29e4`** is the prior handoff rewrite)  
 **Status:** Ready to push and merge; GitHub variables / secrets / branch protection are operator follow-ups  
 **Date:** May 28, 2026  
 
-**Two docs, two audiences**
+**Three linked docs**
 
 | File | Audience |
 |------|----------|

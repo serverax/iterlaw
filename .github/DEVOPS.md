@@ -103,6 +103,8 @@ npm run ci
 1. Push any branch → **Actions** → workflow **“CI”** should succeed.
 2. Open a PR into `master` → **“PR Validation”** should succeed.
 
+Pushing to a branch that already has an open PR to `master` usually runs **both** workflows (push + `pull_request` sync), so you may see **two** full CI runs — same reusable job definition, separate runners.
+
 ---
 
 ## Step 8 — Optional production smoke
@@ -119,6 +121,7 @@ There is no `/api/health` route in this app yet. Production workflow uses option
 | Staging never runs | `VERCEL_DEPLOY_ENABLED` must be `true`; secrets must be present. |
 | Slack never fires | `SLACK_NOTIFY_ENABLED=true` **and** `SLACK_WEBHOOK` secret. |
 | Codecov optional | Upload step is `continue-on-error`; add `CODECOV_TOKEN` for private repos if needed. |
+| Two CI runs on one PR push | Expected: **CI** (push) + **PR Validation** (pull_request); each runs `npm ci` once. |
 
 ---
 

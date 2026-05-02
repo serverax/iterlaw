@@ -1,17 +1,27 @@
 # Cruser: DevOps — final accurate handoff
 
 **Branch:** `phase0/step7-qa-pool`  
-**Accuracy baseline:** [`CRUSER_DEVOPS_ACCURACY_BASELINE.md`](./CRUSER_DEVOPS_ACCURACY_BASELINE.md) — cite doc bundle tip **`7f6a926`** (includes cross-links; **`84b29e4`** is the prior handoff rewrite)  
+**Cite for PRs / audits:** doc tip **`59a9609`** (or omit SHA and link the three paths below).  
+**Accuracy baseline:** [`CRUSER_DEVOPS_ACCURACY_BASELINE.md`](./CRUSER_DEVOPS_ACCURACY_BASELINE.md)  
+
 **Status:** Ready to push and merge; GitHub variables / secrets / branch protection are operator follow-ups  
 **Date:** May 28, 2026  
 
-**Three linked docs**
+## Three linked docs
+
+Doc-only commits (newest first):
+
+| Commit | What changed |
+|--------|----------------|
+| **`59a9609`** | Baseline + handoff: cite bundle, `test.yml` / `build.yml` **not** per-event, heading fixes. |
+| **`7f6a926`** | Added **`CRUSER_DEVOPS_ACCURACY_BASELINE.md`**; cross-links from this handoff + `.github/DEVOPS.md`. |
+| **`84b29e4`** | Rewrote this handoff (8 workflows, double CI, backup path, `test:ci` vs `npm run ci`); DEVOPS two-run note. |
 
 | File | Audience |
 |------|----------|
-| **This file** (`docs/CRUSER_DEVOPS_CICD_HANDOFF.md`) | Operators — trust this for “what actually runs” |
-| **`CRUSER_DEVOPS_ACCURACY_BASELINE.md`** | Changelog of past doc mistakes + why the handoff says what it says |
-| **`.github/DEVOPS.md`** | Contributors — quick variables/secrets and setup |
+| **This file** (`docs/CRUSER_DEVOPS_CICD_HANDOFF.md`) | Operators — what actually runs |
+| **`CRUSER_DEVOPS_ACCURACY_BASELINE.md`** | Five corrections + commit changelog |
+| **`.github/DEVOPS.md`** | Contributors — variables, secrets, quick setup |
 
 ---
 

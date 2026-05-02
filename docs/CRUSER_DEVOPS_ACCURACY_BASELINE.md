@@ -1,9 +1,10 @@
 # Cruser: DevOps handoff — accuracy baseline
 
 **Branch:** `phase0/step7-qa-pool`  
-**Doc bundle tip:** `7f6a926` — this file added + cross-links from handoff and `.github/DEVOPS.md`  
-**Prior handoff rewrite:** `84b29e4` — eight-workflow table, double-CI note, backup path, `test:ci` vs `npm run ci`  
-**Status:** Matches repository behaviour through **`7f6a926`** (update SHAs after future doc-only commits)  
+**Doc bundle tip:** **`59a9609`** — citation alignment + `test.yml` / `build.yml` trigger note + handoff header fixes  
+**Baseline file landed:** **`7f6a926`** — created this doc + cross-links from handoff and `.github/DEVOPS.md`  
+**Handoff rewrite:** **`84b29e4`** — eight-workflow table, double-CI note, backup/S3 path, `test:ci` vs `npm run ci`  
+**Status:** Matches repository behaviour through **`59a9609`** (bump SHAs after future doc-only commits)  
 
 **Primary handoff (operators):** [`CRUSER_DEVOPS_CICD_HANDOFF.md`](./CRUSER_DEVOPS_CICD_HANDOFF.md)  
 **Contributor setup:** [`.github/DEVOPS.md`](../.github/DEVOPS.md)
@@ -88,6 +89,13 @@ If names do not match, failed workflows may not block merge.
 - **`docs/CRUSER_DEVOPS_ACCURACY_BASELINE.md`** — Created (this file): the five corrections in one place.  
 - **`docs/CRUSER_DEVOPS_CICD_HANDOFF.md`** — Links here; audience table lists three linked docs.  
 - **`.github/DEVOPS.md`** — Link under the title to this baseline.
+
+---
+
+## What changed in commit `59a9609`
+
+- **`docs/CRUSER_DEVOPS_ACCURACY_BASELINE.md`** — Header now distinguishes `84b29e4` / `7f6a926` / `59a9609`; note that `test.yml` and `build.yml` are **not** per-push/per-PR.  
+- **`docs/CRUSER_DEVOPS_CICD_HANDOFF.md`** — “Three linked docs” heading; baseline line clarified (bundle vs rewrites).
 
 ---
 

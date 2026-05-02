@@ -1,6 +1,7 @@
 # Cruser: Phase 0 Step 8b — Handoff (shipped)
 
 **Commit:** `e494fa3` (`feat(axiom): SSE /api/axiom/process + useAxiomEngine`)  
+**Handoff doc:** `8cd38cb` adds this file (after `e494fa3`).  
 **Branch (current):** `phase0/step7-qa-pool` — rename to `phase0/step8b-streaming` if your process requires it.  
 
 ---
@@ -29,11 +30,13 @@
 
 ## Contracts (do not copy older drafts)
 
-- **Extract:** same as `extractRequestSchema` — `caseId`, `documentText` (min **20** chars), `currentState?` (not UUID-only `caseId`).  
-- **Reason:** same as `reasonRequestSchema` — `caseId`, `jurisdiction?`, **`facts[]`**, `currentState?`.  
+- **Schemas live in:** `@/lib/agents/extraction-schema` and `@/lib/agents/reasoning-schema` — **not** `lib/axiom/schemas`.  
+- **Extract:** `extractRequestSchema` — `caseId`, `documentText` (min **20** chars), `currentState?` — **no `jurisdiction` on extract** (jurisdiction is only on the **reason** request).  
+- **Reason:** `reasonRequestSchema` — `caseId`, `jurisdiction?`, **`facts[]`**, `currentState?`.  
 - **Mode:** non-empty **`facts`** → reason path; else **`documentText`** → extract path.  
-- **Merit field:** **`meritScore`** (camelCase) on `AxiomTrace` — not `merit_score`.  
-- **Complete event:** `type: 'complete'`, `phase`, `result`, **`durationMs`**.
+- **Merit field:** **`meritScore`** on `AxiomTrace` (camelCase end-to-end) — not `merit_score`.  
+- **Complete event:** `type: 'complete'`, **`phase`**, **`result`** (shape matches phase result, not arbitrary `nextStep` strings), **`durationMs`**.  
+- **`encodeSseData`:** returns **`Uint8Array`**, not `string`; TypeScript payloads omit `timestamp` — it is injected at encode time.  
 
 ---
 

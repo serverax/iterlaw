@@ -13,6 +13,9 @@ const customJestConfig = {
     'lib/validation/**/*.{ts,tsx}',
     '!lib/validation/**/*.test.ts',
     '!lib/validation/index.ts',
+    'lib/ai/**/*.ts',
+    '!lib/ai/**/*.test.ts',
+    '!lib/ai/index.ts',
   ],
 };
 

@@ -1,6 +1,13 @@
+/* eslint-disable no-console -- server-side API trace logs */
+import { callAIFallback } from '@/lib/ai/orchestrate';
 import { queryAllGovAPIs } from '@/lib/gov-apis/orchestrate';
-import { toUserAnswer, validateAndFormatAnswer } from '@/lib/validation';
-import type { UserContext } from '@/lib/validation/types';
+import {
+  toUserAnswer,
+  validateAndFormatAnswer,
+  validateAnswer,
+  ValidationRules,
+} from '@/lib/validation';
+import type { FormattedAnswer, UserContext } from '@/lib/validation/types';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -11,6 +18,23 @@ const bodySchema = z.object({
   situation_type: z.string().min(2).max(80).optional(),
   employment_dates: z.string().min(2).max(120).optional(),
 });
+
+function buildUserContext(
+  jurisdiction: string,
+  situation_type?: string,
+  employment_dates?: string
+): UserContext {
+  return { jurisdiction, situation_type, employment_dates };
+}
+
+function isGovShippable(confidence: number, passed: boolean, formatted?: FormattedAnswer, escalate?: boolean) {
+  return (
+    passed &&
+    !!formatted &&
+    !escalate &&
+    confidence >= ValidationRules.CONFIDENCE_THRESHOLD_ESCALATE
+  );
+}
 
 export async function POST(req: Request) {
   let json: unknown;
@@ -29,56 +53,85 @@ export async function POST(req: Request) {
   }
 
   const { question, jurisdiction, companyName, situation_type, employment_dates } = parsed.data;
-
-  const userContext: UserContext | undefined =
-    situation_type || employment_dates
-      ? {
-          jurisdiction,
-          situation_type,
-          employment_dates,
-        }
-      : { jurisdiction };
+  const userContext = buildUserContext(jurisdiction, situation_type, employment_dates);
 
   try {
     const { results, metadata } = await queryAllGovAPIs(question, jurisdiction, companyName);
-    const validation = await validateAndFormatAnswer(question, results, userContext);
+    const govValidation = await validateAndFormatAnswer(question, results, userContext);
 
-    if (!validation.passed) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Unable to answer question reliably. Escalating to solicitor.',
-          errors: validation.errors,
-          metadata,
-        },
-        { status: 422 }
+    if (
+      isGovShippable(
+        govValidation.confidence,
+        govValidation.passed,
+        govValidation.formatted,
+        govValidation.escalate
+      ) &&
+      govValidation.formatted
+    ) {
+      const answer = toUserAnswer(
+        govValidation.formatted,
+        govValidation.confidence,
+        govValidation.disclaimer
       );
+      return NextResponse.json({ success: true, answer, metadata, source: 'gov' });
     }
 
-    if (validation.escalate) {
+    console.log('[api/answer] Gov path not shippable; attempting AI fallback...');
+    const aiResponse = await callAIFallback(question, {
+      jurisdiction,
+      situation_type,
+      employment_dates,
+    });
+
+    if (!aiResponse) {
       return NextResponse.json(
         {
           success: false,
           escalate: true,
-          reason: 'Confidence too low. Solicitor escalation recommended.',
-          confidence: validation.confidence,
+          reason: 'Question is outside employment law scope, requires a solicitor, or AI is unavailable.',
           metadata,
         },
         { status: 200 }
       );
     }
 
-    if (!validation.formatted) {
-      return NextResponse.json({ success: false, error: 'Unexpected validation state' }, { status: 500 });
+    const aiFormatted: FormattedAnswer = {
+      law_section: aiResponse.law_section,
+      meaning: aiResponse.meaning,
+      action: aiResponse.action,
+      source_citation: aiResponse.source_citation,
+      source_url: undefined,
+      source_type: 'AI',
+      confidence_score: aiResponse.confidence_score,
+    };
+
+    const aiValidation = validateAnswer(aiFormatted);
+
+    if (
+      !aiValidation.passed ||
+      aiValidation.escalate ||
+      aiValidation.confidence < ValidationRules.CONFIDENCE_THRESHOLD_ESCALATE ||
+      !aiValidation.formatted
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          escalate: true,
+          reason: `AI confidence too low (${aiValidation.confidence.toFixed(2)}) or validation failed.`,
+          errors: aiValidation.errors,
+          metadata,
+        },
+        { status: 422 }
+      );
     }
 
-    const answer = toUserAnswer(validation.formatted, validation.confidence, validation.disclaimer);
+    const answer = toUserAnswer(
+      aiValidation.formatted,
+      aiValidation.confidence,
+      aiValidation.disclaimer
+    );
 
-    return NextResponse.json({
-      success: true,
-      answer,
-      metadata,
-    });
+    return NextResponse.json({ success: true, answer, metadata, source: 'ai' });
   } catch (e) {
     const message = e instanceof Error ? e.message : 'Internal error';
     console.error('[api/answer]', message);

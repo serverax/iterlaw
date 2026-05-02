@@ -1,7 +1,7 @@
 # Cruser: DevOps — final accurate handoff
 
 **Branch:** `phase0/step7-qa-pool`  
-**Baseline doc commit:** `0fa7ff3` (update this line after merge if the tip moves)  
+**Accuracy baseline:** [`CRUSER_DEVOPS_ACCURACY_BASELINE.md`](./CRUSER_DEVOPS_ACCURACY_BASELINE.md) (commit **`84b29e4`** and later; update SHA if the tip moves)  
 **Status:** Ready to push and merge; GitHub variables / secrets / branch protection are operator follow-ups  
 **Date:** May 28, 2026  
 
@@ -10,6 +10,7 @@
 | File | Audience |
 |------|----------|
 | **This file** (`docs/CRUSER_DEVOPS_CICD_HANDOFF.md`) | Operators — trust this for “what actually runs” |
+| **`CRUSER_DEVOPS_ACCURACY_BASELINE.md`** | Changelog of past doc mistakes + why the handoff says what it says |
 | **`.github/DEVOPS.md`** | Contributors — quick variables/secrets and setup |
 
 ---

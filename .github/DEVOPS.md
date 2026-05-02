@@ -1,5 +1,7 @@
 # CI/CD — 30-minute setup (RightsNow)
 
+**Accuracy baseline (five doc corrections, commit history):** [`docs/CRUSER_DEVOPS_ACCURACY_BASELINE.md`](../docs/CRUSER_DEVOPS_ACCURACY_BASELINE.md)
+
 This repo uses **one reusable CI definition** (lint → typecheck → tests with coverage → build) so you do not pay **3×** GitHub Actions minutes for the same `npm ci` on every push. The guide’s separate `test.yml` / `build.yml` ideas are represented as:
 
 | Guide name | In this repo |

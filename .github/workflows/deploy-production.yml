@@ -1,0 +1,48 @@
+# Production deploy — manual only. Requires typed confirmation.
+# Set VERCEL_DEPLOY_ENABLED and production Vercel secrets before use.
+name: Deploy production
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Type YES to confirm production deployment'
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    name: Vercel (production)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event.inputs.confirmation == 'YES' && vars.VERCEL_PROD_DEPLOY_ENABLED == 'true'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: CI gate
+        run: npm run ci
+
+      - name: Deploy to Vercel (production)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_PRODUCTION }}
+          scope: ${{ secrets.VERCEL_SCOPE }}
+          working-directory: ./
+          vercel-args: '--prod'
+
+      # Optional: replace with a real health endpoint when available.
+      - name: Smoke check (optional URL)
+        if: vars.PRODUCTION_URL != ''
+        continue-on-error: true
+        run: |
+          curl -fsS "${{ vars.PRODUCTION_URL }}/" -o /dev/null || true

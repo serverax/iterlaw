@@ -1,0 +1,44 @@
+# Auto-deploy to Vercel staging when pushing to master.
+# Enable by setting repository variable VERCEL_DEPLOY_ENABLED=true (Settings → Secrets and variables → Actions → Variables)
+# and configuring Vercel secrets below.
+name: Deploy staging
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    name: Vercel (staging)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    if: vars.VERCEL_DEPLOY_ENABLED == 'true'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to Vercel (preview / staging target)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_STAGING }}
+          scope: ${{ secrets.VERCEL_SCOPE }}
+          working-directory: ./
+          vercel-args: '--prod=false'
+
+      # Add Playwright or API smoke tests here when E2E_BASE_URL and tests exist.
+      # - name: E2E smoke
+      #   run: npm run test:e2e
+      #   env:
+      #     E2E_BASE_URL: ${{ vars.STAGING_URL }}

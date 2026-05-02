@@ -112,4 +112,16 @@ describe('escapeHtml + toUserAnswer', () => {
     expect(ua.confidence).toBe(0.92);
     expect(ua.disclaimer).toContain('Disclaimer');
   });
+
+  it('marks cached answers when requested', () => {
+    const formatted = formatAnswer({
+      content: 'ERA 1996. Notice.',
+      url: 'https://www.gov.uk/',
+      source: 'GOV_API',
+      citeAs: 'ERA 1996',
+      relevanceScore: 0.9,
+    });
+    const ua = toUserAnswer(formatted, 0.9, undefined, { cached: true });
+    expect(ua.cached).toBe(true);
+  });
 });

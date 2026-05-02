@@ -31,6 +31,14 @@ const customJestConfig = {
     'components/dashboard/**/*.{tsx,ts}',
     '!components/dashboard/**/*.test.tsx',
     'app/api/axiom/**/*.ts',
+    'lib/qa-pool/**/*.ts',
+    '!lib/qa-pool/**/*.test.ts',
+    'lib/answer/**/*.ts',
+    '!lib/answer/**/*.test.ts',
+    'lib/documents/**/*.ts',
+    '!lib/documents/**/*.test.ts',
+    'app/api/answer/**/*.ts',
+    '!app/api/answer/**/*.test.ts',
   ],
 };
 

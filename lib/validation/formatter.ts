@@ -101,7 +101,8 @@ export function escapeHtml(input: string): string {
 export function toUserAnswer(
   formatted: FormattedAnswer,
   confidence: number,
-  disclaimer?: string
+  disclaimer?: string,
+  options?: { cached?: boolean }
 ): import('./types').UserAnswer {
   return {
     law: escapeHtml(formatted.law_section),
@@ -114,6 +115,6 @@ export function toUserAnswer(
     },
     confidence,
     disclaimer: disclaimer ? escapeHtml(disclaimer) : undefined,
-    cached: false,
+    cached: options?.cached ?? false,
   };
 }

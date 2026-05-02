@@ -145,6 +145,9 @@ jobs:
             exit 1
           fi
 
+      # Pre-built Next standalone (see apps/web next.config + post-next-standalone.cjs). With skip_app_build,
+      # app_location is the deployable output folder per Azure SWA build docs — avoids Oryx re-running npm
+      # install in an isolated tree where file:../../packages/shared symlinks break hybrid api packaging.
       - name: Deploy Static Web App
         uses: Azure/static-web-apps-deploy@v1
         env:
@@ -154,12 +157,8 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          # Next lives under apps/web; hybrid SWA needs this so Oryx can find artifacts
-          # (app_location / + output '' => "unable to determine the location of the app artifacts").
-          app_location: apps/web
+          app_location: apps/web/.next/standalone/apps/web
           api_location: ''
           output_location: ''
+          skip_app_build: true
           is_static_export: false
-          # Install/build from monorepo root; vendor shared into apps/web so Oryx hybrid api zip has no broken symlinks.
-          app_build_command: 'cd ../.. && npm ci && mkdir -p apps/web/node_modules/@rightsnow && rm -rf apps/web/node_modules/@rightsnow/shared && cp -a packages/shared apps/web/node_modules/@rightsnow/shared && npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web'
-          skip_app_build: false

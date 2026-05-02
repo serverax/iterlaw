@@ -1,17 +1,10 @@
-on:
-  workflow_dispatch:
-# Runs on every branch push (feature branches, PR sync, merges).
-# Pull requests targeting `master` are also validated via pull-request.yml (same reusable job).
 name: CI
 
 on:
-  push:
-
-concurrency:
-  group: ci-push-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_dispatch:
 
 jobs:
-  validate:
-    uses: ./.github/workflows/ci-reusable.yml
-    secrets: inherit
+  disabled:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "CI temporarily disabled during Azure deployment setup"

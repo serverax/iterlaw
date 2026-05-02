@@ -1,0 +1,15 @@
+-- Optional dev seed for Phase 1 POST /ask (run after 012 migration).
+-- INSERT INTO public.qa_pool (question, answer, source, approved) VALUES
+-- (
+--   'What is the national minimum wage for workers aged 21 and over in April 2026?',
+--   'Placeholder: replace with solicitor-approved text from GOV.UK rates page.',
+--   'gov.uk',
+--   true
+-- );
+-- INSERT INTO public.trusted_content (title, content, source, tags) VALUES
+-- (
+--   'ACAS — holiday pay basics',
+--   'Placeholder: verbatim extract only, no paraphrase.',
+--   'acas',
+--   ARRAY['holiday', 'pay']
+-- );

@@ -1,12 +1,12 @@
 # Cruser: DevOps handoff — accuracy baseline
 
 **Branch:** `phase0/step7-qa-pool`  
-**Doc bundle tip:** **`0dc0f52`** — PR cite + corrections link; includes **`6083eaf`** table + **`59a9609`** tightening  
-**Prior:** **`6083eaf`** — commit table + attribution fix; baseline **`59a9609`** changelog  
+**Pinning a SHA:** use **`git rev-parse HEAD`** after pull (doc-only commits change the tip often).  
+**Recent doc commits:** **`6083eaf`** — handoff commit table (baseline file = **`7f6a926`**) + baseline **`59a9609`** changelog; later tip commits add PR cite wording + “corrections” link under **Three linked docs** in the handoff.  
 **Earlier:** **`59a9609`** — citation + `test.yml` / `build.yml` not per-push/PR  
 **Baseline file landed:** **`7f6a926`** — created this doc + cross-links from handoff and `.github/DEVOPS.md`  
 **Handoff rewrite:** **`84b29e4`** — eight-workflow table, double-CI note, backup/S3 path, `test:ci` vs `npm run ci`  
-**Status:** Matches repository behaviour through **`0dc0f52`** (bump SHAs after future doc-only commits)  
+**Status:** Matches repository behaviour at branch tip (verify with **`git rev-parse HEAD`**)  
 
 **Primary handoff (operators):** [`CRUSER_DEVOPS_CICD_HANDOFF.md`](./CRUSER_DEVOPS_CICD_HANDOFF.md)  
 **Contributor setup:** [`.github/DEVOPS.md`](../.github/DEVOPS.md)
@@ -105,13 +105,6 @@ If names do not match, failed workflows may not block merge.
 
 - **`docs/CRUSER_DEVOPS_CICD_HANDOFF.md`** — Commit history table (newest first); **baseline file** correctly attributed to **`7f6a926`** (not `84b29e4`).  
 - **`docs/CRUSER_DEVOPS_ACCURACY_BASELINE.md`** — Header roles for `59a9609` / `7f6a926` / `84b29e4`; **`59a9609`** changelog subsection added.
-
----
-
-## What changed in commit `0dc0f52`
-
-- **`docs/CRUSER_DEVOPS_CICD_HANDOFF.md`** — PR cite uses current git tip; one-line link to baseline under **Three linked docs**.  
-- **`docs/CRUSER_DEVOPS_ACCURACY_BASELINE.md`** — Doc tip / status bumped; this subsection added.
 
 ---
 

@@ -1,7 +1,7 @@
 # Cruser: DevOps — final accurate handoff
 
 **Branch:** `phase0/step7-qa-pool`  
-**Cite for PRs / audits:** doc tip **`0dc0f52`** (includes **`6083eaf`** commit-table alignment; or omit SHA and link the three paths below).  
+**Cite for PRs / audits:** pin **`git rev-parse HEAD`** on **`phase0/step7-qa-pool`** after pull, **or** link only the three paths below (no SHA drift).  
 **Accuracy baseline:** [`CRUSER_DEVOPS_ACCURACY_BASELINE.md`](./CRUSER_DEVOPS_ACCURACY_BASELINE.md)  
 
 **Status:** Ready to push and merge; GitHub variables / secrets / branch protection are operator follow-ups  
@@ -15,7 +15,6 @@ Doc-only commits (newest first):
 
 | Commit | What changed |
 |--------|----------------|
-| **`0dc0f52`** | PR cite synced to git tip; “corrections and rationale” link under **Three linked docs**; baseline **`6083eaf`** changelog section. |
 | **`6083eaf`** | Commit table here (correct **baseline file → `7f6a926`**, not `84b29e4`); baseline header + `59a9609` changelog section. |
 | **`59a9609`** | Baseline + handoff: cite `7f6a926` bundle, `test.yml` / `build.yml` **not** per-push/PR, “three linked docs” heading. |
 | **`7f6a926`** | Added **`CRUSER_DEVOPS_ACCURACY_BASELINE.md`**; cross-links from this handoff + `.github/DEVOPS.md`. |

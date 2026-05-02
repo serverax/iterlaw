@@ -25,7 +25,7 @@ jobs:
       - run: npm ci
 
       - name: Build
-        run: npm run build
+        run: npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web
 
       - name: Deploy to Vercel (preview / staging target)
         uses: amondnet/vercel-action@v25

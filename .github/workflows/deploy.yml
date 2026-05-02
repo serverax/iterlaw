@@ -50,7 +50,7 @@ jobs:
 
       # Same command as SWA Oryx (app_build_command); fails here before Azure deploy if the web app cannot build.
       - name: Verify Static Web App build (Oryx parity)
-        run: npm run build -w @rightsnow/shared && npm run build
+        run: npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web
 
       - name: Build Azure Functions app (@rightsnow/api)
         run: npm run build -w @rightsnow/shared && npm run build -w @rightsnow/legal-core && npm run build -w @rightsnow/api
@@ -148,7 +148,7 @@ jobs:
           action: upload
           app_location: /
           api_location: ''
-          output_location: ''
-          # Root Next app (no apps/web workspace on this branch); @rightsnow/shared is a workspace package.
-          app_build_command: 'npm run build -w @rightsnow/shared && npm run build'
+          # Next.js app lives in apps/web (@rightsnow/web); build from monorepo root so workspaces resolve.
+          output_location: apps/web/.next
+          app_build_command: 'npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web'
           skip_app_build: false

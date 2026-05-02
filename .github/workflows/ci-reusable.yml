@@ -34,7 +34,7 @@ jobs:
           NODE_ENV: test
 
       - name: Production build
-        run: npm run build
+        run: npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4

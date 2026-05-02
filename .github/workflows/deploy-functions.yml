@@ -3,6 +3,11 @@
 #
 # Secret: AZURE_CREDENTIALS (JSON from az ad sp create-for-rbac ... --json-auth, role Website Contributor on iterlaw-api-001).
 # Do NOT set AZURE_FUNCTIONAPP_PUBLISH_PROFILE — Kudu basic auth is disabled / returns 401.
+#
+# Deployment strategy (pre-built api/, no remote Oryx):
+# - api/package.json uses file:../packages/* for workspace deps. Those paths do NOT exist on Azure after zip upload.
+# - Therefore scm-do-build-during-deployment / enable-oryx-build MUST stay false, and CI must vendor real copies
+#   into api/node_modules/@rightsnow/* before deploy (no symlinks to repo root).
 name: Deploy Azure Functions (IterLaw)
 
 on:
@@ -49,7 +54,7 @@ jobs:
           cp -a packages/shared api/node_modules/@rightsnow/shared
           cp -a packages/legal-core api/node_modules/@rightsnow/legal-core
 
-      - name: Pre-deploy debug (Functions root = api/)
+      - name: Pre-deploy debug & validate (api/ must be standalone)
         run: |
           set -e
           echo "PWD=$(pwd)"
@@ -62,6 +67,24 @@ jobs:
           test -f api/host.json
           test -f api/package.json
           test -f api/dist/index.js
+          main=$(node -p "require('./api/package.json').main")
+          if [ "$main" != "dist/index.js" ]; then
+            echo "::error::api/package.json main must be dist/index.js (got: $main)"
+            exit 1
+          fi
+          if [ -L api/node_modules/@rightsnow/shared ] || [ -L api/node_modules/@rightsnow/legal-core ]; then
+            echo '::error::@rightsnow/* must be vendored directories, not npm symlinks to ../packages (breaks zip deploy)'
+            ls -la api/node_modules/@rightsnow || true
+            exit 1
+          fi
+          if find api/node_modules/@rightsnow -type l 2>/dev/null | grep -q .; then
+            echo '::error::Unexpected symlinks under api/node_modules/@rightsnow:'
+            find api/node_modules/@rightsnow -type l
+            exit 1
+          fi
+          node -e "require('./api/node_modules/@rightsnow/shared'); require('./api/node_modules/@rightsnow/legal-core');"
+          node -e "require('./api/dist/index.js'); console.log('bootstrap: api/dist/index.js loaded');"
+          echo "node=$(node -v) npm=$(npm -v)"
 
       - name: Require AZURE_CREDENTIALS
         env:

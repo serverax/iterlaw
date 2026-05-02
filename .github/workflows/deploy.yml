@@ -69,7 +69,7 @@ jobs:
           cp -a packages/shared api/node_modules/@rightsnow/shared
           cp -a packages/legal-core api/node_modules/@rightsnow/legal-core
 
-      - name: Debug — Functions deploy folder (api/)
+      - name: Debug — Functions deploy folder (api/ must be standalone)
         run: |
           set -e
           echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
@@ -85,7 +85,24 @@ jobs:
           test -f api/host.json || { echo '::error::api/host.json missing'; exit 1; }
           test -f api/package.json || { echo '::error::api/package.json missing'; exit 1; }
           test -f api/dist/index.js || { echo '::error::api/dist/index.js missing — build step failed'; exit 1; }
-          echo "package.json main=$(node -p "require('./api/package.json').main")"
+          main=$(node -p "require('./api/package.json').main")
+          if [ "$main" != "dist/index.js" ]; then
+            echo "::error::api/package.json main must be dist/index.js (got: $main)"
+            exit 1
+          fi
+          if [ -L api/node_modules/@rightsnow/shared ] || [ -L api/node_modules/@rightsnow/legal-core ]; then
+            echo '::error::@rightsnow/* must be vendored directories, not npm symlinks (breaks zip deploy)'
+            ls -la api/node_modules/@rightsnow || true
+            exit 1
+          fi
+          if find api/node_modules/@rightsnow -type l 2>/dev/null | grep -q .; then
+            echo '::error::Unexpected symlinks under api/node_modules/@rightsnow:'
+            find api/node_modules/@rightsnow -type l
+            exit 1
+          fi
+          node -e "require('./api/node_modules/@rightsnow/shared'); require('./api/node_modules/@rightsnow/legal-core');"
+          node -e "require('./api/dist/index.js'); console.log('bootstrap: api/dist/index.js loaded');"
+          echo "package.json main=$main"
           echo "node=$(node -v) npm=$(npm -v)"
 
       - name: Check Azure RBAC credentials secret
@@ -102,6 +119,7 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      # Pre-built api/ only: api uses file:../packages/* — remote Oryx/Kudu npm install cannot resolve those paths on Azure.
       - name: Deploy Azure Function
         uses: Azure/functions-action@v1
         with:

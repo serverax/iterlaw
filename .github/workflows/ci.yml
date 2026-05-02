@@ -1,3 +1,5 @@
+on:
+  workflow_dispatch:
 # Runs on every branch push (feature branches, PR sync, merges).
 # Pull requests targeting `master` are also validated via pull-request.yml (same reusable job).
 name: CI

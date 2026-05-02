@@ -111,15 +111,20 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## Project phases (roadmap)
+## Project phases (IterLaw / RightsNow roadmap)
+
+High-level phased plan for the **product** (distinct from early Cruser “Phase 0 step” handoff docs under `docs/CRUSER_*`).
 
 | Phase | Focus |
 |-------|--------|
-| **0** | Tooling, env templates, documentation (this package). |
-| **1** | Gov API clients + router + in-memory / edge cache prototype. |
-| **2** | Supabase schema for users, questions, and answer cache; RLS policies. |
-| **3** | UI: dispute intake, question flow, citations panel, export for advisers. |
-| **4** | Safety: prompt injection hardening, refusal patterns, audit logging. |
+| **0** | CI/CD + Azure deployment (Functions, Static Web Apps, secrets, RBAC). |
+| **1** | Controlled Legal Answer Engine (AEE → ART → LVC → safety gate; citations; cache). |
+| **2** | **Vision Engine / Document OCR** — upload or photo of employment documents; extract and clean text only; user confirmation before AEE/ART; audit + confidence; no legal advice from OCR. |
+| **3** | Legal Review UI (queue, statuses, human oversight when answers are not approved). |
+| **4** | AI Drafting Engine (e.g. SEA) **only** when upstream gates approve. |
+| **5** | Case Workspace / User Documents (persistent matter context and libraries). |
+
+**Full plan (flows, requirements, planned tables):** [`docs/ITERLAW_PROJECT_PLAN.md`](docs/ITERLAW_PROJECT_PLAN.md).
 
 ---
 

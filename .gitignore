@@ -39,3 +39,7 @@ yarn-error.log*
 
 # TypeScript
 *.tsbuildinfo
+
+# Standalone API (backend/)
+backend/node_modules
+backend/dist

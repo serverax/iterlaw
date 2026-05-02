@@ -53,4 +53,6 @@ npm run build
 
 ## Phase 1
 
-Surgical dashboard can import **`useAxiomEngine`** and **`AxiomStreamWidget`** (or compose its own UI) against **`POST /api/axiom/process`**.
+**Orchestration spec (AEE / ART / SEA, PHASE 1A–1D, wording guardrails):** see **`docs/PHASE_1_AXIOM_PIPELINE.md`** — documentation only; no dashboard UI required for that doc.
+
+Surgical dashboard can import **`useAxiomEngine`** and **`AxiomStreamWidget`** (or compose its own UI) against **`POST /api/axiom/process`**. **PHASE 1D (Case Value Dashboard)** remains design-only until scheduled; avoid “victory” or guaranteed-outcome copy when implementing.

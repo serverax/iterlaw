@@ -113,5 +113,6 @@ jobs:
           app_location: /
           api_location: ''
           output_location: ''
-          app_build_command: 'npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web'
+          # Root Next app (no apps/web workspace on this branch); @rightsnow/shared is a workspace package.
+          app_build_command: 'npm run build -w @rightsnow/shared && npm run build'
           skip_app_build: false

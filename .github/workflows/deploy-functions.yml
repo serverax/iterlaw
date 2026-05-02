@@ -1,33 +1,82 @@
+# IterLaw — Azure Functions only (RBAC). Replaces broken publish-profile + package: '.' flow.
+# Triggers: manual + push to master/main.
+#
+# Secret: AZURE_CREDENTIALS (JSON from az ad sp create-for-rbac ... --json-auth, role Website Contributor on iterlaw-api-001).
+# Do NOT set AZURE_FUNCTIONAPP_PUBLISH_PROFILE — Kudu basic auth is disabled / returns 401.
 name: Deploy Azure Functions (IterLaw)
 
 on:
   push:
     branches:
+      - master
       - main
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: package-lock.json
 
-      - name: Install deps
-        run: npm install
+      - name: Install monorepo dependencies
+        run: npm ci
 
-      - name: Build
-        run: npm run build || true
+      - name: Build API and its workspace dependencies
+        run: npm run build -w @rightsnow/shared && npm run build -w @rightsnow/legal-core && npm run build -w @rightsnow/api
+
+      - name: Install API production dependencies
+        working-directory: api
+        run: |
+          rm -rf node_modules
+          npm ci --omit=dev
+
+      - name: Vendor workspace packages into api/node_modules
+        run: |
+          set -e
+          mkdir -p api/node_modules/@rightsnow
+          rm -rf api/node_modules/@rightsnow/shared api/node_modules/@rightsnow/legal-core
+          cp -a packages/shared api/node_modules/@rightsnow/shared
+          cp -a packages/legal-core api/node_modules/@rightsnow/legal-core
+
+      - name: Pre-deploy debug (Functions root = api/)
+        run: |
+          set -e
+          echo "PWD=$(pwd)"
+          ls -la
+          find . -maxdepth 4 \( -name host.json -o -name function.json -o -name package.json \) 2>/dev/null | head -n 120
+          echo "--- api/ ---"
+          ls -la api
+          echo "--- api/dist ---"
+          ls -la api/dist
+          test -f api/host.json
+          test -f api/package.json
+          test -f api/dist/index.js
+
+      - name: Require AZURE_CREDENTIALS
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+        run: test -n "$AZURE_CREDENTIALS" || { echo '::error::Set secret AZURE_CREDENTIALS'; exit 1; }
+
+      - name: Azure Login (RBAC)
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
         with:
           app-name: iterlaw-api-001
-          package: .
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          package: api
+          scm-do-build-during-deployment: 'false'
+          enable-oryx-build: 'false'

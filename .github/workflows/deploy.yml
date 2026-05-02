@@ -1,42 +1,117 @@
-name: Deploy IterLaw Backend (Azure Functions)
+# IterLaw — Azure Static Web Apps + Azure Functions (RBAC via azure/login; no publish profile / no Kudu basic auth).
+#
+# Secrets (GitHub → Settings → Secrets and variables → Actions):
+#   AZURE_CREDENTIALS — JSON from: az ad sp create-for-rbac --name "github-iterlaw-deploy" --role "Website Contributor" \
+#     --scopes /subscriptions/<SUB_ID>/resourceGroups/<RG>/providers/Microsoft.Web/sites/iterlaw-api-001 --json-auth
+#   AZURE_STATIC_WEB_APPS_API_TOKEN — SWA → Manage deployment token
+#
+# OIDC alternative (no client secret in GitHub): grant the identity Website Contributor on iterlaw-api-001, add a
+# federated credential for this repo, then replace the Azure Login step with client-id / tenant-id / subscription-id
+# and set job permissions: id-token: write. See https://github.com/Azure/functions-action#use-oidc-recommended
+name: Deploy IterLaw
 
 on:
   push:
     branches:
+      - master
       - main
   workflow_dispatch:
 
-env:
-  NODE_VERSION: '20.x'
+permissions:
+  contents: read
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # 1. Checkout code
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: package-lock.json
 
-      # 3. Install dependencies
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      # 4. Build project (if using TypeScript)
-      - name: Build
-        run: npm run build
-        continue-on-error: true
+      - name: Build Azure Functions app (@rightsnow/api)
+        run: npm run build -w @rightsnow/shared && npm run build -w @rightsnow/legal-core && npm run build -w @rightsnow/api
 
-      # 5. Deploy to Azure Functions
-      - name: Deploy to Azure Functions
+      - name: Install API production dependencies
+        working-directory: api
+        run: |
+          rm -rf node_modules
+          npm ci --omit=dev
+
+      - name: Vendor workspace packages into api/node_modules
+        run: |
+          set -e
+          mkdir -p api/node_modules/@rightsnow
+          rm -rf api/node_modules/@rightsnow/shared api/node_modules/@rightsnow/legal-core
+          cp -a packages/shared api/node_modules/@rightsnow/shared
+          cp -a packages/legal-core api/node_modules/@rightsnow/legal-core
+
+      - name: Debug — Functions deploy folder (api/)
+        run: |
+          set -e
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          echo "PWD=$(pwd)"
+          ls -la
+          find . -maxdepth 4 \( -name host.json -o -name function.json -o -name package.json \) 2>/dev/null | head -n 120
+          echo "--- api/ (Azure/functions-action package: api) ---"
+          ls -la api
+          echo "--- api/dist ---"
+          ls -la api/dist
+          echo "--- api/dist/functions ---"
+          ls -la api/dist/functions
+          test -f api/host.json || { echo '::error::api/host.json missing'; exit 1; }
+          test -f api/package.json || { echo '::error::api/package.json missing'; exit 1; }
+          test -f api/dist/index.js || { echo '::error::api/dist/index.js missing — build step failed'; exit 1; }
+          echo "package.json main=$(node -p "require('./api/package.json').main")"
+          echo "node=$(node -v) npm=$(npm -v)"
+
+      - name: Check Azure RBAC credentials secret
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+        run: |
+          if [ -z "$AZURE_CREDENTIALS" ]; then
+            echo '::error::Set repository secret AZURE_CREDENTIALS (see workflow header comment)'
+            exit 1
+          fi
+
+      - name: Azure Login (RBAC)
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Azure Function
         uses: Azure/functions-action@v1
         with:
           app-name: iterlaw-api-001
-          package: .
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          package: api
+          scm-do-build-during-deployment: 'false'
+          enable-oryx-build: 'false'
+
+      - name: Check Static Web Apps deployment token
+        env:
+          AZURE_STATIC_WEB_APPS_API_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+        run: |
+          if [ -z "$AZURE_STATIC_WEB_APPS_API_TOKEN" ]; then
+            echo '::error::Set repository secret AZURE_STATIC_WEB_APPS_API_TOKEN'
+            exit 1
+          fi
+
+      - name: Deploy Static Web App
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: /
+          api_location: ''
+          output_location: ''
+          app_build_command: 'npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web'
+          skip_app_build: false

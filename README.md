@@ -119,10 +119,11 @@ High-level phased plan for the **product** (distinct from early Cruser “Phase 
 |-------|--------|
 | **0** | CI/CD + Azure deployment (Functions, Static Web Apps, secrets, RBAC). |
 | **1** | Controlled Legal Answer Engine (AEE → ART → LVC → safety gate; citations; cache). |
-| **2** | **Vision Engine / Document OCR** — upload or photo of employment documents; extract and clean text only; user confirmation before AEE/ART; audit + confidence; no legal advice from OCR. |
-| **3** | Legal Review UI (queue, statuses, human oversight when answers are not approved). |
-| **4** | AI Drafting Engine (e.g. SEA) **only** when upstream gates approve. |
-| **5** | Case Workspace / User Documents (persistent matter context and libraries). |
+| **2** | Legal Review Pipeline — queues, statuses, human oversight when automated output is not approved. |
+| **3** | **Vision Engine / Document OCR** — upload or photo of employment documents; extract and clean text only; user confirmation before downstream legal pipeline; audit + confidence; no legal advice from OCR. |
+| **4** | **Legal Risk Assessment Engine** (planned, not implemented) — rule-based risk level, topics, missing facts, deadlines, next steps; **after** Phase 1 + 2 + 3 stable; no direct generative AI for scoring in v1. |
+| **5** | AI Drafting Engine / SEA **only** when upstream gates approve. |
+| **6** | Case Workspace / User Documents (persistent matter context and libraries). |
 
 **Full plan (flows, requirements, planned tables):** [`docs/ITERLAW_PROJECT_PLAN.md`](docs/ITERLAW_PROJECT_PLAN.md).
 

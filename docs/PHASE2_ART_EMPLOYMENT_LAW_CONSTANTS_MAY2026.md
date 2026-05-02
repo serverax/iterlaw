@@ -1,6 +1,8 @@
-# Phase 2 ART — employment-law constants (design notes, May 2026)
+# ART employment-law constants (design notes, May 2026)
 
-**Status:** design documentation only for a future **constants catalogue** used by the **ART** (Axiom Reasoning Trace) layer in **Phase 2**.  
+**Naming:** the filename `PHASE2_ART_*` is an **ART artefact** label (design-before-code). On the **IterLaw roadmap** (`docs/ITERLAW_PROJECT_PLAN.md`), **Phase 2** is the **Legal Review Pipeline**; these constants are for future **ART** and related rule-backed engines (e.g. **Phase 4 Legal Risk Assessment Engine**), not a commitment that they ship in “roadmap phase 2.”
+
+**Status:** design documentation only for a future **constants catalogue** used by the **ART** (Axiom Reasoning Trace) layer.  
 **Not implemented:** there is **no** TypeScript module, no imports, and no runtime use of these figures in this commit.
 
 **Non-advice:** this file is a **data dictionary** for engineering. It does **not** provide legal advice, tribunal strategy, or employer/employee guidance. ART must not treat these rows as permission to “generate advice” without separate product, legal, and safety review.

@@ -83,7 +83,8 @@ This repo uses **one reusable CI definition** (lint → typecheck → tests with
 ```bash
 npm run lint        # next lint
 npm run typecheck   # tsc --noEmit
-npm run test        # jest (add --coverage in CI)
+npm run test        # jest (local / npm run ci)
+npm run test:ci     # jest --coverage --passWithNoTests (used in ci-reusable.yml)
 npm run ci          # lint + typecheck + test + build
 ```
 

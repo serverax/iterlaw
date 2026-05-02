@@ -147,11 +147,12 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          app_location: /
+          # Next lives under apps/web; hybrid SWA needs this so Oryx can find artifacts
+          # (app_location / + output '' => "unable to determine the location of the app artifacts").
+          app_location: apps/web
           api_location: ''
-          # Hybrid Next.js on SWA: empty output_location (not .next / out). See
-          # https://learn.microsoft.com/en-us/azure/static-web-apps/deploy-nextjs-hybrid
           output_location: ''
           is_static_export: false
-          app_build_command: 'npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web'
+          # Install/build from monorepo root so workspaces + @rightsnow/shared compile.
+          app_build_command: 'cd ../.. && npm ci && npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web'
           skip_app_build: false

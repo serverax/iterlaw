@@ -1,0 +1,24 @@
+{
+  "name": "@rightsnow/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "RightsNow Azure Functions — sole AI + legal pipeline + review_queue",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "watch": "tsc -p tsconfig.json -w",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "start": "func start"
+  },
+  "dependencies": {
+    "@azure/functions": "^4.6.0",
+    "@rightsnow/legal-core": "file:../packages/legal-core",
+    "@rightsnow/shared": "file:../packages/shared",
+    "@supabase/supabase-js": "^2.45.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "typescript": "^5.5.4"
+  }
+}

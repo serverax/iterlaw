@@ -1,0 +1,21 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "SUPABASE_URL": "https://YOUR_PROJECT.supabase.co",
+    "SUPABASE_SERVICE_ROLE_KEY": "your-service-role-key",
+    "OPENROUTER_API_KEY": "",
+    "GOOGLE_AI_API_KEY": "",
+    "DEFAULT_AI_MODEL": "google/gemini-2.0-flash-001",
+    "FREE_USER_DAILY_AI_LIMIT": "3",
+    "REGISTERED_USER_DAILY_AI_LIMIT": "10",
+    "ADMIN_DAILY_AI_LIMIT": "50",
+    "MAX_UPLOAD_MB": "5",
+    "ENABLE_BACKGROUND_POLLING": "false",
+    "AUTO_RUN_AI": "false",
+    "PREMIUM_MODEL_REQUIRES_ADMIN": "true",
+    "CACHE_REPEATED_QUESTIONS": "true",
+    "LOG_ESTIMATED_AI_COST": "true"
+  }
+}

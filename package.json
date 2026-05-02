@@ -2,6 +2,10 @@
   "name": "rightsnow",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "api",
+    "packages/*"
+  ],
   "description": "UK employment law assistant — Gov APIs first, AI fallback, cached answers",
   "scripts": {
     "dev": "next dev",
@@ -13,7 +17,9 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:ci": "jest --coverage --passWithNoTests",
-    "ci": "npm run lint && npm run typecheck && npm run test && npm run build"
+    "ci": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "build:packages": "npm run build -w @rightsnow/shared && npm run build -w @rightsnow/legal-core",
+    "build:api": "npm run build -w @rightsnow/api"
   },
   "dependencies": {
     "@supabase/auth-helpers-nextjs": "^0.10.0",

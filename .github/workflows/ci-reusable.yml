@@ -7,6 +7,9 @@ jobs:
     name: Lint, typecheck, test, build
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://example.supabase.co' }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDc5NzI4MDAsImV4cCI6MTk2MzU0ODgwMH0.E316OMskv_dswTnvNDcDsFkXORI_MTO1SmIzsTbfvsQ' }}
 
     steps:
       - name: Checkout

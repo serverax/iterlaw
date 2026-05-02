@@ -35,4 +35,14 @@ if (fs.existsSync(pub)) {
   cpDir(pub, standalonePub);
 }
 
-console.log('post-next-standalone: static + public copied into standalone bundle');
+// Standalone output is deployed without the monorepo `packages/` tree; file:../../packages/shared
+// breaks Azure SWA's follow-up `npm install` (invalid / missing path). Shared code is already traced
+// into the server bundle — drop the workspace dependency from the deploy manifest.
+const pkgPath = path.join(standaloneApp, 'package.json');
+const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+if (pkg.dependencies && pkg.dependencies['@rightsnow/shared']) {
+  delete pkg.dependencies['@rightsnow/shared'];
+  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
+}
+
+console.log('post-next-standalone: static + public copied; trimmed workspace dep from standalone package.json');

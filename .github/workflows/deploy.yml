@@ -1,10 +1,15 @@
-# IterLaw — Azure Static Web Apps + Azure Functions (RBAC via azure/login; no publish profile / no Kudu basic auth).
+# IterLaw Phase 0 — Azure Static Web Apps + Azure Functions (RBAC via azure/login; no publish profile).
 #
-# Secrets (GitHub → Settings → Secrets and variables → Actions):
-#   AZURE_CREDENTIALS — JSON from: az ad sp create-for-rbac --name "github-iterlaw-deploy" --role "Website Contributor" \
-#     --scopes /subscriptions/<SUB_ID>/resourceGroups/<RG>/providers/Microsoft.Web/sites/iterlaw-api-001 --json-auth
-#   AZURE_STATIC_WEB_APPS_API_TOKEN — SWA → Manage deployment token
-#   NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY — optional; override CI build defaults below for production prerender
+# GitHub → Settings → Secrets and variables → Actions
+#
+# Required (workflow hard-fails or cannot deploy without these):
+#   AZURE_CREDENTIALS — JSON from: az ad sp create-for-rbac --name "github-iterlaw-deploy" \
+#     --role "Website Contributor" --scopes /subscriptions/<SUB>/resourceGroups/<RG>/providers/Microsoft.Web/sites/iterlaw-api-001 --json-auth
+#   AZURE_STATIC_WEB_APPS_API_TOKEN — Azure Portal → Static Web App → Manage deployment token
+#
+# Optional (Next prerender uses demo-style defaults in this file when unset; set for production-accurate builds):
+#   NEXT_PUBLIC_SUPABASE_URL
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY
 #
 # OIDC alternative (no client secret in GitHub): grant the identity Website Contributor on iterlaw-api-001, add a
 # federated credential for this repo, then replace the Azure Login step with client-id / tenant-id / subscription-id

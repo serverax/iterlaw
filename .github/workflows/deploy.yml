@@ -49,9 +49,16 @@ jobs:
             echo '::notice::NEXT_PUBLIC_SUPABASE_* not set in secrets; using CI-safe defaults for prerender. Set secrets for production.'
           fi
 
-      # Same command as SWA Oryx (app_build_command); fails here before Azure deploy if the web app cannot build.
+      # Same logic as SWA Oryx (app_build_command); fails here before Azure deploy if the web app cannot build.
+      # Copy @rightsnow/shared into apps/web/node_modules so it is not a workspace symlink — SWA's hybrid Next
+      # api zip step breaks on symlinks to ../../packages/shared outside the staged tree.
       - name: Verify Static Web App build (Oryx parity)
-        run: npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web
+        run: |
+          set -e
+          mkdir -p apps/web/node_modules/@rightsnow
+          rm -rf apps/web/node_modules/@rightsnow/shared
+          cp -a packages/shared apps/web/node_modules/@rightsnow/shared
+          npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web
 
       - name: Build Azure Functions app (@rightsnow/api)
         run: npm run build -w @rightsnow/shared && npm run build -w @rightsnow/legal-core && npm run build -w @rightsnow/api
@@ -153,6 +160,6 @@ jobs:
           api_location: ''
           output_location: ''
           is_static_export: false
-          # Install/build from monorepo root so workspaces + @rightsnow/shared compile.
-          app_build_command: 'cd ../.. && npm ci && npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web'
+          # Install/build from monorepo root; vendor shared into apps/web so Oryx hybrid api zip has no broken symlinks.
+          app_build_command: 'cd ../.. && npm ci && mkdir -p apps/web/node_modules/@rightsnow && rm -rf apps/web/node_modules/@rightsnow/shared && cp -a packages/shared apps/web/node_modules/@rightsnow/shared && npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web'
           skip_app_build: false

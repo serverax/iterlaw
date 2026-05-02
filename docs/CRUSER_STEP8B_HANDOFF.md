@@ -1,7 +1,7 @@
 # Cruser: Phase 0 Step 8b — Handoff (shipped)
 
 **Commit:** `e494fa3` (`feat(axiom): SSE /api/axiom/process + useAxiomEngine`)  
-**Handoff doc:** `8cd38cb` adds this file (after `e494fa3`).  
+**Handoff doc:** `8cd38cb` adds this file; **`c979b19`** tightens contracts (pin **branch tip** or `c979b19` for doc accuracy).  
 **Branch (current):** `phase0/step7-qa-pool` — rename to `phase0/step8b-streaming` if your process requires it.  
 
 ---
@@ -30,7 +30,7 @@
 
 ## Contracts (do not copy older drafts)
 
-- **Schemas live in:** `@/lib/agents/extraction-schema` and `@/lib/agents/reasoning-schema` — **not** `lib/axiom/schemas`.  
+- **Schemas live in:** `@/lib/agents/extraction-schema` and `@/lib/agents/reasoning-schema` — there is **no** `lib/axiom/schemas.ts` (do not invent that path).  
 - **Extract:** `extractRequestSchema` — `caseId`, `documentText` (min **20** chars), `currentState?` — **no `jurisdiction` on extract** (jurisdiction is only on the **reason** request).  
 - **Reason:** `reasonRequestSchema` — `caseId`, `jurisdiction?`, **`facts[]`**, `currentState?`.  
 - **Mode:** non-empty **`facts`** → reason path; else **`documentText`** → extract path.  

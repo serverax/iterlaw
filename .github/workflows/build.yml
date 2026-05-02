@@ -1,0 +1,10 @@
+# Optional manual "full CI" — same as `npm run ci` locally. Use when debugging Actions.
+name: Build & Lint
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/ci-reusable.yml
+    secrets: inherit

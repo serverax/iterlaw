@@ -12,6 +12,7 @@
     "format": "prettier --write .",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "test:ci": "jest --coverage --passWithNoTests",
     "ci": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {

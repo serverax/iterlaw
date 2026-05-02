@@ -1,0 +1,13 @@
+# Optional: run the same CI job on a schedule or manual dispatch without a push.
+# Does not run on every push (ci.yml + pull-request.yml already cover that).
+name: Unit Tests
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 12 * * 1'
+
+jobs:
+  test:
+    uses: ./.github/workflows/ci-reusable.yml
+    secrets: inherit

@@ -1,10 +1,10 @@
-# Database backup template — run manually until Supabase / AWS credentials are configured.
-# Scheduled runs are disabled by default to avoid failing cron jobs in forks.
-name: Database backup
+# Database backup — gated so forks and new repos do not fail nightly.
+# Enable: set variable DATABASE_BACKUP_ENABLED=true and configure secrets (see .github/DEVOPS.md).
+name: Daily backup
 
 on:
   workflow_dispatch:
-  # Uncomment when secrets SUPABASE_DB_URL (or discrete PG vars) and AWS creds are set:
+  # Uncomment after secrets are set:
   # schedule:
   #   - cron: '0 2 * * *'
 
@@ -23,7 +23,7 @@ jobs:
           test -n "$DATABASE_URL"
           pg_dump "$DATABASE_URL" --no-owner --format=custom -f backup.dump
 
-      - name: Configure AWS (optional)
+      - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -32,3 +32,14 @@ jobs:
 
       - name: Upload to S3
         run: aws s3 cp backup.dump "s3://${{ secrets.AWS_BACKUP_BUCKET }}/$(date -u +%Y-%m-%d)/rightsnow.dump"
+
+      - name: Notify Slack
+        if: vars.SLACK_NOTIFY_ENABLED == 'true'
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+          payload: |
+            {
+              "text": "✅ Database backup completed for ${{ github.repository }}"
+            }

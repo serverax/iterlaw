@@ -37,6 +37,26 @@ jobs:
           working-directory: ./
           vercel-args: '--prod=false'
 
+      - name: Notify Slack
+        if: vars.SLACK_NOTIFY_ENABLED == 'true'
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+          payload: |
+            {
+              "text": "✅ Staging deploy: ${{ github.repository }} @ ${{ github.sha }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "✅ *Staging*\nCommit: `${{ github.sha }}`\nSet `STAGING_URL` variable for links in future."
+                  }
+                }
+              ]
+            }
+
       # Add Playwright or API smoke tests here when E2E_BASE_URL and tests exist.
       # - name: E2E smoke
       #   run: npm run test:e2e

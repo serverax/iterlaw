@@ -1,0 +1,54 @@
+# Shared CI job — invoked by ci.yml (push) and pull-request.yml (PRs to master).
+on:
+  workflow_call:
+
+jobs:
+  validate:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: ESLint (Next.js)
+        run: npm run lint
+
+      - name: TypeScript
+        run: npm run typecheck
+
+      - name: Unit tests + coverage
+        run: npm run test:ci -- --coverageReporters=lcov --coverageReporters=text-summary
+        env:
+          CI: true
+          NODE_ENV: test
+
+      - name: Production build
+        run: npm run build
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-lcov
+          path: coverage/lcov.info
+          retention-days: 14
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: hashFiles('coverage/lcov.info') != ''
+        continue-on-error: true
+        with:
+          files: coverage/lcov.info
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}

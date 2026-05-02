@@ -1,0 +1,15 @@
+# Matches "PR Validation" in the setup guide — required checks for merges into master.
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [master]
+
+concurrency:
+  group: ci-pr-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    uses: ./.github/workflows/ci-reusable.yml
+    secrets: inherit

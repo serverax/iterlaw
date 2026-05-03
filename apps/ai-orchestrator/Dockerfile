@@ -1,5 +1,7 @@
 # Build from repo root:
-#   docker build -t iterlawacr3729.azurecr.io/ai-orchestrator:1.0.2 -f apps/ai-orchestrator/Dockerfile apps/ai-orchestrator
+#   docker build -t iterlawacr3729.azurecr.io/ai-orchestrator:1.0.3 -f apps/ai-orchestrator/Dockerfile apps/ai-orchestrator
+#
+# 1.0.3 scope: landing page waitlist + AI waitlist controller (see release branch notes).
 #
 # --- Stage 1: builder ---
 FROM node:20-alpine AS builder

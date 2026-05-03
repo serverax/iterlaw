@@ -24,14 +24,14 @@ jobs:
       - name: Build Docker image (runner)
         run: |
           docker build \
-            -t iterlawacr3729.azurecr.io/ai-orchestrator:1.0.2 \
+            -t iterlawacr3729.azurecr.io/ai-orchestrator:1.0.3 \
             -t iterlawacr3729.azurecr.io/ai-orchestrator:latest \
             -f apps/ai-orchestrator/Dockerfile \
             apps/ai-orchestrator
 
       - name: Push image to ACR
         run: |
-          docker push iterlawacr3729.azurecr.io/ai-orchestrator:1.0.2
+          docker push iterlawacr3729.azurecr.io/ai-orchestrator:1.0.3
           docker push iterlawacr3729.azurecr.io/ai-orchestrator:latest
 
       - name: Get AKS credentials

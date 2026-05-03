@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: ai-orchestrator
-          image: iterlawacr3729.azurecr.io/ai-orchestrator:1.0.2
+          image: iterlawacr3729.azurecr.io/ai-orchestrator:1.0.3
           ports:
             - containerPort: 3001
 ---

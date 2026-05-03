@@ -1,0 +1,48 @@
+name: Deploy AKS
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Log in to ACR
+        run: az acr login --name iterlawacr3729
+
+      - name: Build Docker image (runner)
+        run: |
+          docker build \
+            -t iterlawacr3729.azurecr.io/ai-orchestrator:1.0.2 \
+            -t iterlawacr3729.azurecr.io/ai-orchestrator:latest \
+            -f apps/ai-orchestrator/Dockerfile \
+            apps/ai-orchestrator
+
+      - name: Push image to ACR
+        run: |
+          docker push iterlawacr3729.azurecr.io/ai-orchestrator:1.0.2
+          docker push iterlawacr3729.azurecr.io/ai-orchestrator:latest
+
+      - name: Get AKS credentials
+        run: |
+          az aks get-credentials \
+            --resource-group rg-iterlaw-we-prod \
+            --name aks-iterlaw-we-prod \
+            --overwrite-existing
+
+      - name: Apply Kubernetes manifest
+        run: kubectl apply -f k8s/deploy.yaml
+
+      - name: Wait for rollout
+        run: kubectl rollout status deployment/ai-orchestrator --timeout=5m

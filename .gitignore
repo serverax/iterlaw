@@ -1,7 +1,11 @@
 # dependencies
 /node_modules
+**/node_modules
 /.pnp
 .pnp.js
+
+# local env (never commit)
+.env
 
 # testing
 /coverage

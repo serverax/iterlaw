@@ -9,6 +9,10 @@
 
 # testing
 /coverage
+**/coverage/
+
+# logs (all apps)
+*.log
 
 # next.js
 /.next/
@@ -17,6 +21,10 @@
 
 # production
 /build
+
+# compiled TypeScript output (per-app + monorepo-wide)
+apps/*/dist/
+**/dist/
 
 # misc
 .DS_Store

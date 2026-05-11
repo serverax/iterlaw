@@ -1,0 +1,11 @@
+# Sprint 5A — local / generated (never commit)
+node_modules/
+dist/
+
+# Secrets & env (allow documented templates)
+.env
+.env.*
+!.env.example
+
+coverage/
+*.log

@@ -1,11 +1,30 @@
-// Mother Brain HTTP surface. Skeleton only: /health, /ready, POST /api/legal/ask.
-// /ready is intentionally a static OK in the skeleton — the real /ready will
-// check DB + Ollama reachability once those dependencies are wired.
+// Mother Brain HTTP surface: /health, /ready, POST /api/legal/ask.
+// Default retrieval is wired via createRagService() (mock-safe without DATABASE_URL;
+// PostgresRetrieval when DATABASE_URL is set — no secrets or raw errors on /ready).
 
 import express, { Request, Response, NextFunction, ErrorRequestHandler } from "express";
 import { z } from "zod";
 import { handleLegalRequest } from "./pipeline/handleLegalRequest.js";
 import type { LegalRequest } from "./types/legal.js";
+import { createRagService } from "./rag/rag.service.js";
+import type { RagService } from "./rag/rag.service.js";
+
+type RagReadySlice = {
+  configured: boolean;
+  mode: "mock" | "postgres" | "custom";
+  database: "not_configured" | "configured";
+};
+
+/** Maps RagService.describe() to a safe /ready payload (no URLs, hosts, or credentials). */
+export function ragReadyFromDescribe(d: ReturnType<RagService["describe"]>): RagReadySlice {
+  if (d.strategy === "postgres" && d.live) {
+    return { configured: true, mode: "postgres", database: "configured" };
+  }
+  if (d.strategy === "explicit_port") {
+    return { configured: true, mode: "custom", database: "configured" };
+  }
+  return { configured: false, mode: "mock", database: "not_configured" };
+}
 
 // Express body-parser raises a SyntaxError as a 4xx error BEFORE the route
 // handler runs. Default behaviour is the HTML "Cannot ..." page with full
@@ -28,8 +47,15 @@ const internalErrorHandler: ErrorRequestHandler = (_err, _req: Request, res: Res
   res.status(500).json({ error: "internal_error" });
 };
 
-export function createApp() {
+export interface CreateAppOptions {
+  /** Override the retrieval service (for tests). Defaults to createRagService(). */
+  ragService?: RagService;
+}
+
+export function createApp(opts: CreateAppOptions = {}) {
   const app = express();
+  const retrieval: RagService = opts.ragService ?? createRagService();
+
   app.use(express.json({ limit: "1mb" }));
 
   app.get("/health", (_req: Request, res: Response) => {
@@ -37,9 +63,18 @@ export function createApp() {
   });
 
   app.get("/ready", (_req: Request, res: Response) => {
+    const rag = ragReadyFromDescribe(retrieval.describe());
     res.status(200).json({
       status: "ready",
-      note: "skeleton — DB + ollama reachability not yet checked",
+      service: "legal-orchestrator",
+      rag,
+      llm: {
+        external_llm_enabled: false,
+      },
+      legal_safety: {
+        citation_required: true,
+        zero_citation_answer_blocked: true,
+      },
     });
   });
 
@@ -64,7 +99,7 @@ export function createApp() {
       return;
     }
     try {
-      const response = await handleLegalRequest(parsed.data as LegalRequest);
+      const response = await handleLegalRequest(parsed.data as LegalRequest, { retrieval });
       res.status(200).json(response);
     } catch (err) {
       // Never leak stack traces. Even err.message could carry implementation detail.

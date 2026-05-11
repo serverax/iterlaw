@@ -1,9 +1,19 @@
-import { describe, it, expect } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import request from "supertest";
+import type { Express } from "express";
 import { createApp } from "../server";
 
 describe("/api/legal/ask end-to-end (skeleton)", () => {
-  const app = createApp();
+  let app: Express;
+
+  beforeEach(() => {
+    vi.stubEnv("DATABASE_URL", "");
+    app = createApp();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
 
   it("rejects malformed request with 400", async () => {
     const res = await request(app).post("/api/legal/ask").send({});
@@ -49,10 +59,23 @@ describe("/api/legal/ask end-to-end (skeleton)", () => {
     expect(res.body.status).toBe("ok");
   });
 
-  it("/ready returns ready (skeleton, no upstream checks yet)", async () => {
+  it("/ready returns safe RAG + legal_safety envelope", async () => {
     const res = await request(app).get("/ready");
     expect(res.status).toBe(200);
-    expect(res.body.status).toBe("ready");
+    expect(res.body).toMatchObject({
+      status: "ready",
+      service: "legal-orchestrator",
+      rag: {
+        configured: false,
+        mode: "mock",
+        database: "not_configured",
+      },
+      llm: { external_llm_enabled: false },
+      legal_safety: {
+        citation_required: true,
+        zero_citation_answer_blocked: true,
+      },
+    });
   });
 
   it("does not leak a stack trace when body is unparseable JSON", async () => {

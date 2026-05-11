@@ -1,83 +1,70 @@
 # apps/legal-orchestrator/db
 
-SQL migrations for the OrdinoxAI legal RAG schema.
+SQL migrations for the OrdinoxAI legal RAG schema (UK employment first).
 
 ## Status
 
-**This directory contains migration FILES ONLY. No migration has been
-applied to any database from this repository.** The schema must be
-executed manually by an operator with credentials.
+**This directory contains migration FILES ONLY.** Applying them to a database is an **operator** action (`psql`, migration runner, or cluster exec). Nothing here runs automatically from `npm test`.
 
 ## Files
 
 ```
 migrations/
-  001_legal_rag_foundation.sql   13 tables + indexes + safe seed (domain only)
+  001_legal_rag_foundation.sql   — Core domain, sources, documents, chunks,
+                                   citations, case law, ingestion (rag_*),
+                                   rag_query_audit, answer audit, pgvector
+                                   guard on legal_chunks.embedding (optional).
+  002_legal_rag_sprint6.sql      — Sprint 6: canonical ingestion_jobs,
+                                   ingestion_job_events, source_fetch_audit,
+                                   legal_document_versions, legal_chunk_embeddings,
+                                   citation_registry; extends rag_query_audit;
+                                   widens legal_sources.source_type CHECK;
+                                   denormalised legal_domain + dates on
+                                   sources/documents/chunks.
+  002_legal_rag_sprint6.down.sql — Rollback for 002 only (restores 001 CHECK).
 ```
 
-## Tables created by 001
-
-| Table | Purpose |
-|---|---|
-| `legal_domains` | One row per practice-area + jurisdiction (e.g. `uk_employment_law`). |
-| `legal_sources` | Upstream sources (statutes, guidance, cases). |
-| `legal_documents` | Versioned documents per source. |
-| `legal_chunks` | Searchable RAG units + denormalised metadata + tsvector. |
-| `legal_citations` | Stable citation labels referencing chunks. |
-| `legal_case_law` | Case metadata (ET + EAT base). |
-| `tribunal_decisions` | ET-specific fields (region, panel, etc.). |
-| `legislation_versions` | In-force-on versions of statutes. |
-| `rag_ingestion_jobs` | One row per ingestion run. |
-| `rag_ingestion_events` | Granular per-event log within a job. |
-| `rag_query_audit` | Audit of every RAG search. |
-| `answer_audit_log` | Audit of every generated answer (incl. failed ones). |
-| `source_quality_scores` | Solicitor + auto quality scores per source. |
-
-## How to apply (operator-only, not done automatically)
+## Apply order
 
 ```bash
-# Apply directly via psql (one-shot, idempotent):
 psql "$DATABASE_URL" -f apps/legal-orchestrator/db/migrations/001_legal_rag_foundation.sql
-
-# Or inside a K3s postgres pod:
-kubectl -n ordinox-ai exec -i deploy/postgres-pgvector -- \
-  psql -U ordinox_legal -d ordinox_legal_ai \
-  < apps/legal-orchestrator/db/migrations/001_legal_rag_foundation.sql
+psql "$DATABASE_URL" -f apps/legal-orchestrator/db/migrations/002_legal_rag_sprint6.sql
 ```
 
-The migration is **idempotent** — every CREATE uses `IF NOT EXISTS`,
-INSERTs use `ON CONFLICT DO NOTHING`, and triggers are dropped + recreated.
-Safe to run repeatedly.
+## Rollback (002 only)
+
+```bash
+psql "$DATABASE_URL" -f apps/legal-orchestrator/db/migrations/002_legal_rag_sprint6.down.sql
+```
+
+## Sprint 6 table summary
+
+| Table | Role |
+|-------|------|
+| `ingestion_jobs` | One row per ingestion run (fetch / bulk / reembed). |
+| `ingestion_job_events` | Append-only events with HTTP status, checksum, errors. |
+| `source_fetch_audit` | Per-URL fetch outcome, checksum, HTTP status, errors. |
+| `legal_document_versions` | Version hash + publication / effective dates per document. |
+| `legal_chunk_embeddings` | Embeddings per chunk + model; `embedding_bytea` always; optional `embedding vector(1536)` if pgvector. |
+| `citation_registry` | Stable citation rows: exact URL, title, section/para, `accessed_at`. |
+
+**Extended (001 tables):** `rag_query_audit` gains `retrieved_chunk_ids`, `ranking_scores`, `final_citation_ids`, `query_redacted`. `legal_sources`, `legal_documents`, `legal_chunks` gain `legal_domain`, date/check columns where listed in `002`.
 
 ## pgvector
 
-The migration creates the schema regardless of pgvector availability.
-The optional embedding column + IVFFlat index are added inside a guarded
-`DO $$ ... $$` block that checks `pg_extension` for `vector`. To enable
-vector search later:
+002 adds `legal_chunk_embeddings.embedding vector(1536)` **only if** the `vector` extension exists. **IVFFlat/HNSW** is intentionally **not** created in 002 (empty tables often fail IVFFlat); create an appropriate index **after bulk load**.
 
-```sql
-CREATE EXTENSION IF NOT EXISTS vector;
-\i 001_legal_rag_foundation.sql   -- re-run; idempotent
+## Static validation (CI / local)
+
+```bash
+cd apps/legal-orchestrator
+npm run validate:migrations
 ```
 
-## What this migration does NOT do
+This runs Vitest against the SQL files only (no live DB).
 
-- Does not enable Row-Level Security. Add via a separate migration if
-  needed; defaults are safe (no public read).
-- Does not insert real scraped law content.
-- Does not create database users / roles.
-- Does not configure pgvector (only uses it if already enabled).
-- Does not execute against any cluster from this repo — agent + CI run
-  scripts must invoke `psql` explicitly.
+## What migrations do NOT do
 
-## Verification queries after applying
-
-```sql
-SELECT table_name FROM information_schema.tables
-WHERE table_schema = 'public'
-  AND table_name LIKE 'legal\_%' ESCAPE '\\' ORDER BY table_name;
-
-SELECT domain_code, jurisdiction FROM legal_domains;
-SELECT EXISTS(SELECT 1 FROM pg_extension WHERE extname = 'vector') AS pgvector_installed;
-```
+- No scraping, no HTTP calls, no secrets.
+- No Row-Level Security (add a later migration if required).
+- No automatic execution from the Node HTTP server.

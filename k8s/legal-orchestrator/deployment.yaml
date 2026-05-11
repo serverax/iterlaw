@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: legal-orchestrator
+  namespace: iterlaw-ai
+  labels:
+    app: legal-orchestrator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: legal-orchestrator
+  template:
+    metadata:
+      labels:
+        app: legal-orchestrator
+    spec:
+      containers:
+        - name: legal-orchestrator
+          image: ghcr.io/serverax/rightsnow/legal-orchestrator:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3012
+          env:
+            - name: PORT
+              value: "3012"
+            - name: NODE_ENV
+              value: "production"
+            - name: RAG_MODE
+              value: "empty"
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3012
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3012
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"

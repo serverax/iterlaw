@@ -10,7 +10,10 @@
     "start": "node dist/server.js",
     "start:3012": "cross-env PORT=3012 node dist/server.js",
     "dev": "tsx src/server.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "validate:migrations": "vitest run src/tests/migrationSprint6Schema.test.ts",
+    "ingest:dry-run": "tsx scripts/ingest-cli.ts --limit 50",
+    "ingest:source": "tsx scripts/ingest-cli.ts"
   },
   "engines": {
     "node": ">=20"

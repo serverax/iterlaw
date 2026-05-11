@@ -6,6 +6,9 @@
 
 # local env (never commit)
 .env
+.env.*
+!.env.example
+!.env.local.example
 
 # testing
 /coverage
@@ -25,6 +28,12 @@
 # compiled TypeScript output (per-app + monorepo-wide)
 apps/*/dist/
 **/dist/
+
+# temp / caches
+tmp/
+temp/
+.cache/
+.turbo/
 
 # misc
 .DS_Store

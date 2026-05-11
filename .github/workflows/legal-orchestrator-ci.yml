@@ -1,0 +1,45 @@
+name: legal-orchestrator-ci
+
+on:
+  pull_request:
+    paths:
+      - "apps/legal-orchestrator/**"
+      - ".github/workflows/legal-orchestrator-ci.yml"
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - "apps/legal-orchestrator/**"
+      - ".github/workflows/legal-orchestrator-ci.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: apps/legal-orchestrator
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: apps/legal-orchestrator/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test

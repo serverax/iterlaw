@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iterlaw-legal-orchestrator-config
+  namespace: iterlaw
+  labels:
+    app.kubernetes.io/name: iterlaw-legal-orchestrator
+    app.kubernetes.io/part-of: iterlaw
+data:
+  NODE_ENV: production
+  AI_MODE: local
+  EXTERNAL_LLM_ENABLED: "false"
+  LEGAL_RAG_DB_ENABLED: "true"
+  LEGAL_OFFICIAL_SOURCES_ONLY: "true"
+  LEGAL_DEFAULT_JURISDICTION: england_wales
+  OLLAMA_BASE_URL: http://ollama.ordinox-ai.svc.cluster.local:11434
+  POSTGRES_HOST: iterlaw-postgres.iterlaw.svc.cluster.local
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: iterlaw
+  PORT: "3012"
+  LOG_LEVEL: info

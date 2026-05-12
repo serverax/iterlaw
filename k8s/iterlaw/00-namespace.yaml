@@ -1,0 +1,21 @@
+# IterLaw — single-namespace layout per the Master Order build.
+#
+# Note: this `iterlaw` namespace is the *new* canonical app namespace
+# requested by the Master Order. The previous IterLaw split layout
+# (iterlaw-ai + iterlaw-data) is documented under
+# infra/iterlaw/deployment-contract.md and remains in place under
+# k8s/iterlaw/{legal-orchestrator,redis,synthesis-worker,web,...} and
+# k8s/iterlaw-data/. The two layouts coexist deliberately while the
+# operator chooses one as the production target. No `kubectl apply`
+# was executed against the live cluster by this build.
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: iterlaw
+  labels:
+    app.kubernetes.io/name: iterlaw
+    app.kubernetes.io/part-of: iterlaw
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted

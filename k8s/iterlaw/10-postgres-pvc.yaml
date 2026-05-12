@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: iterlaw-postgres-data
+  namespace: iterlaw
+  labels:
+    app.kubernetes.io/name: iterlaw-postgres
+    app.kubernetes.io/part-of: iterlaw
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 20Gi

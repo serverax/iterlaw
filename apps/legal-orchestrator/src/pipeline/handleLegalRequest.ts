@@ -12,6 +12,7 @@ import { runLegalModulePipeline } from "../modules/modulePipeline.js";
 import type { Jurisdiction, RetrievedChunk } from "../modules/contracts.js";
 import { createRagService } from "../rag/rag.service.js";
 import type { RetrievalPort, RetrievedLegalChunk } from "../rag/retrieval.port.js";
+import { deriveApplicableLegalDate } from "../rag/temporalFilter.js";
 
 interface RagPort {
   search(input: { legal_pack: string; query: string; topic: string; jurisdiction: string; limit: number }): Promise<RagChunk[]>;
@@ -88,6 +89,9 @@ export async function handleLegalRequest(
   const classification = classifyRequest({ question: input.question, mode: input.mode });
   const facts = extractLegalFactsFromInput(input);
   const risk = immediateRiskCheck({ classification, facts });
+  const applicableOn = deriveApplicableLegalDate({
+    facts: facts as unknown as Record<string, unknown>,
+  }).applicableDate;
 
   if (risk.status === "needs_more_facts") {
     return {
@@ -135,14 +139,16 @@ export async function handleLegalRequest(
   // optional retrieval_notes.
   let chunks: RagChunk[] = [];
   let retrievalNotes: string[] = [];
+  const retrievalQuery = {
+    legal_pack: legalPack,
+    query_text: input.question ?? "",
+    topic: classification.area_of_law,
+    jurisdiction: classification.jurisdiction,
+    limit: 10,
+    ...(applicableOn ? { filters: { applicable_on: applicableOn } } : {}),
+  };
   if (deps?.retrieval) {
-    const r = await deps.retrieval.search({
-      legal_pack: legalPack,
-      query_text: input.question ?? "",
-      topic: classification.area_of_law,
-      jurisdiction: classification.jurisdiction,
-      limit: 10,
-    });
+    const r = await deps.retrieval.search(retrievalQuery);
     chunks = r.chunks.map((c) => retrievedLegalChunkToRagChunk(c));
     retrievalNotes = r.retrieval_notes ?? [];
   } else if (deps?.rag) {
@@ -156,13 +162,7 @@ export async function handleLegalRequest(
   } else {
     // Default: mock-safe service. Returns empty when DATABASE_URL is unset.
     const service = createRagService();
-    const r = await service.search({
-      legal_pack: legalPack,
-      query_text: input.question ?? "",
-      topic: classification.area_of_law,
-      jurisdiction: classification.jurisdiction,
-      limit: 10,
-    });
+    const r = await service.search(retrievalQuery);
     chunks = r.chunks.map((c) => retrievedLegalChunkToRagChunk(c));
     retrievalNotes = r.retrieval_notes ?? [];
   }
@@ -218,6 +218,7 @@ export async function handleLegalRequest(
       synthesis_mode: "redis_streams",
       citations: [],
       next_steps: [
+        ...(applicableOn ? ["temporal_filter:applied", `date=${applicableOn}`] : []),
         "Ingest the relevant statute / ACAS guidance / case law into the legal knowledge base.",
         "Re-submit once the source corpus contains at least one relevant chunk.",
         ...modulePipelineOut.warnings,

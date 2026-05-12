@@ -3,6 +3,7 @@
 
 import type { CorpusSourceType, RetrievalQuery } from "./rag.types";
 import type { RetrievalPort, RetrievalPortResult, RetrievedLegalChunk } from "./retrieval.port";
+import { isChunkApplicableOn } from "./temporalFilter";
 
 export interface MockCorpusChunk extends RetrievedLegalChunk {
   /** Optional: limit which legal_pack this chunk belongs to. */
@@ -75,7 +76,15 @@ export class MockRetrieval implements RetrievalPort {
     const notes: string[] = [];
     const limit = Number.isFinite(input.limit) && input.limit > 0 ? input.limit : this.defaultLimit;
 
-    const matched = this.corpus.filter((c) => chunkMatches(c, input));
+    const baseMatched = this.corpus.filter((c) => chunkMatches(c, input));
+
+    const applicableOn = input.filters?.applicable_on?.trim();
+    const matched =
+      applicableOn && applicableOn.length > 0
+        ? baseMatched.filter((c) =>
+            isChunkApplicableOn(applicableOn, c.effective_date, c.applicable_to)
+          )
+        : baseMatched;
 
     // Stable sort: authority_level DESC, then chunk_id ASC.
     matched.sort((a, b) => {
@@ -86,6 +95,9 @@ export class MockRetrieval implements RetrievalPort {
     const truncated = matched.slice(0, limit);
 
     notes.push(`mock_retrieval:matched=${matched.length}`);
+    if (applicableOn && applicableOn.length > 0) {
+      notes.push(`mock_retrieval:applicable_on=${applicableOn.slice(0, 10)}`);
+    }
     if (matched.length > truncated.length) {
       notes.push(`mock_retrieval:truncated_to=${truncated.length}`);
     }

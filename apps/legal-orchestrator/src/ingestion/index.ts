@@ -9,3 +9,5 @@ export * from "./ingestionAudit";
 export * from "./persistIngestionJob";
 export * from "./runIngestionPlan";
 export * from "./cliRunner";
+export * from "./citationExtractor";
+export * from "./ingestionPipeline";

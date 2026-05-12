@@ -33,6 +33,10 @@ export interface LegalChunk {
   paragraph_reference?: string;
   authority_level: number;
   embedding_model?: string;
+  /** ISO date (YYYY-MM-DD) when this chunk’s text is in force, if known. */
+  effective_date?: string;
+  /** ISO date (YYYY-MM-DD) last day this version applies, inclusive; null = open-ended. */
+  applicable_to?: string;
 }
 
 export interface LegalCitation {
@@ -54,6 +58,10 @@ export interface RetrievalQuery {
   limit: number;
   /** Optional filters for corpus slices. */
   source_types?: CorpusSourceType[];
+  /** Optional temporal filter: ISO date (YYYY-MM-DD) “law as at” selection. */
+  filters?: {
+    applicable_on?: string;
+  };
 }
 
 export interface RetrievalResult {

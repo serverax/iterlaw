@@ -1,7 +1,7 @@
 // Curated registry of *planned* upstream URLs — no crawling, no discovery.
 // Sprint 7 skeleton: fixed rows only. Expand via config-driven JSON later.
 
-import type { IngestionSourceKey, RegistryEntry } from "./types";
+import type { IngestionSourceKey, RegistryEntry, TrustedSource } from "./types";
 
 function u(host: string, path: string): { robotsHost: string; robotsPath: string; canonicalUrl: string } {
   const canonicalUrl = `https://${host}${path.startsWith("/") ? path : `/${path}`}`;
@@ -68,7 +68,7 @@ export function listRegistryEntries(filter: {
   return out;
 }
 
-/** Hard cap to prevent accidental mass fetch (env override). */
+/** Hard cap to prevent accidental mass URL pulls (env override). */
 export function getGlobalFetchCap(): number {
   const raw = process.env.INGESTION_MAX_URLS;
   if (!raw) return 50;
@@ -84,4 +84,79 @@ export function isKnownSourceKey(k: string): k is IngestionSourceKey {
     k === "et_public" ||
     k === "cac"
   );
+}
+
+const TRUSTED_TYPES = new Set<string>([
+  "legislation",
+  "gov_guidance",
+  "acas_guidance",
+  "tribunal_case",
+  "hmcts",
+  "internal_template",
+]);
+
+const TRUST_LEVELS = new Set<string>([
+  "primary_statute",
+  "primary_law",
+  "official_guidance",
+  "tribunal_authority",
+  "secondary_guidance",
+]);
+
+export function validateTrustedSource(src: TrustedSource): { ok: true } | { ok: false; code: string } {
+  if (!src.enabled) return { ok: false, code: "disabled" };
+  if (!TRUSTED_TYPES.has(src.sourceType)) return { ok: false, code: "unknown_source_type" };
+  if (!TRUST_LEVELS.has(src.trustLevel)) return { ok: false, code: "unknown_trust_level" };
+
+  let u: URL;
+  try {
+    u = new URL(src.baseUrl);
+  } catch {
+    return { ok: false, code: "non_https_base_url" };
+  }
+  if (u.protocol !== "https:") return { ok: false, code: "non_https_base_url" };
+  if (u.username || u.password) return { ok: false, code: "credential_url" };
+  const forbidden = ["javascript:", "file:", "data:", "ftp:"];
+  if (forbidden.some((p) => src.baseUrl.toLowerCase().startsWith(p))) {
+    return { ok: false, code: "forbidden_scheme" };
+  }
+  return { ok: true };
+}
+
+export function assertUrlBelongsToSource(
+  url: string,
+  src: TrustedSource
+): { ok: true } | { ok: false; code: string } {
+  let u: URL;
+  try {
+    u = new URL(url);
+  } catch {
+    return { ok: false, code: "invalid_url" };
+  }
+  if (u.protocol !== "https:") return { ok: false, code: "invalid_url" };
+  if (u.username || u.password) return { ok: false, code: "credentials" };
+
+  if (["javascript:", "file:", "data:", "ftp:"].some((p) => url.toLowerCase().startsWith(p))) {
+    return { ok: false, code: "scheme_blocked" };
+  }
+
+  let b: URL;
+  try {
+    b = new URL(src.baseUrl);
+  } catch {
+    return { ok: false, code: "invalid_url" };
+  }
+
+  const normOrigin = (x: URL) => `${x.protocol}//${x.hostname.toLowerCase()}${x.port ? `:${x.port}` : ""}`;
+  if (normOrigin(u) !== normOrigin(b)) return { ok: false, code: "out_of_domain" };
+
+  const baseNorm = b.pathname.replace(/\/+$/, "") || "";
+  const up = u.pathname;
+  if (baseNorm !== "" && !(up === baseNorm || up.startsWith(`${baseNorm}/`))) {
+    // Same semantic class as the origin mismatch above: the URL does
+    // not belong to this source. Tests assert a single "out_of_domain"
+    // code for both origin and path-prefix violations.
+    return { ok: false, code: "out_of_domain" };
+  }
+  return { ok: true };
 }

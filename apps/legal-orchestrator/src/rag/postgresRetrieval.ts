@@ -52,6 +52,13 @@ function coerceSourceType(value: unknown): CorpusSourceType {
   return "internal_template";
 }
 
+function formatIsoDate(v: unknown): string | undefined {
+  if (v === null || v === undefined) return undefined;
+  if (v instanceof Date && !Number.isNaN(v.getTime())) return v.toISOString().slice(0, 10);
+  if (typeof v === "string" && /^\d{4}-\d{2}-\d{2}/.test(v)) return v.slice(0, 10);
+  return undefined;
+}
+
 export function mapRowToRetrievedLegalChunk(row: unknown): RetrievedLegalChunk {
   const r = (row ?? {}) as Record<string, unknown>;
   const str = (v: unknown, fb = ""): string =>
@@ -79,6 +86,8 @@ export function mapRowToRetrievedLegalChunk(row: unknown): RetrievedLegalChunk {
     title: optStr(r.title),
     url: optStr(r.url),
     citation_label: optStr(r.citation_label),
+    effective_date: formatIsoDate(r.effective_date),
+    applicable_to: formatIsoDate(r.applicable_to),
   };
 }
 
@@ -104,7 +113,6 @@ export class PostgresRetrieval implements RetrievalPort {
       };
     }
 
-    // Lazy-require so this file doesn't require `pg` at build time.
     let PoolCtor: unknown;
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -119,23 +127,28 @@ export class PostgresRetrieval implements RetrievalPort {
     const pool: PgPool = new Ctor({ connectionString: this.databaseUrl! });
 
     const cap = Math.min(Math.max(1, input.limit), this.maxResults);
-    const sourceTypes = input.source_types && input.source_types.length > 0
-      ? input.source_types
-      : null;
+    const sourceTypes = input.source_types && input.source_types.length > 0 ? input.source_types : null;
+    const rawTemporalForSql = input.filters?.applicable_on ?? null;
+    let p6: string | null = null;
+    if (typeof rawTemporalForSql === "string") {
+      const t = rawTemporalForSql.trim().slice(0, 10);
+      if (/^\d{4}-\d{2}-\d{2}$/.test(t)) p6 = t;
+    }
     const notes: string[] = [];
 
     try {
-      const fts = await this.runFts(pool, input, cap, sourceTypes);
+      const fts = await this.runFts(pool, input, cap, sourceTypes, p6);
       if (fts.length > 0) {
         notes.push(`postgres_retrieval:fts_hits=${fts.length}`);
+        if (p6) notes.push(`postgres_retrieval:applicable_on=${p6}`);
         return { chunks: fts.map(mapRowToRetrievedLegalChunk), retrieval_notes: notes };
       }
       notes.push("postgres_retrieval:fts_empty");
-      const ilike = await this.runIlike(pool, input, cap, sourceTypes);
+      const ilike = await this.runIlike(pool, input, cap, sourceTypes, p6);
       notes.push(`postgres_retrieval:ilike_hits=${ilike.length}`);
+      if (p6) notes.push(`postgres_retrieval:applicable_on=${p6}`);
       return { chunks: ilike.map(mapRowToRetrievedLegalChunk), retrieval_notes: notes };
     } catch (_err) {
-      // Sanitise — never leak connection string, SQL, or pg-internal stacks.
       return {
         chunks: [],
         retrieval_notes: ["postgres_retrieval:query_failed"],
@@ -145,11 +158,18 @@ export class PostgresRetrieval implements RetrievalPort {
     }
   }
 
+  private temporalWhereSql(): string {
+    return `
+        AND ($6::date IS NULL OR c.effective_date IS NULL OR c.effective_date <= $6::date)
+        AND ($6::date IS NULL OR c.applicable_to IS NULL OR c.applicable_to >= $6::date)`;
+  }
+
   private async runFts(
     pool: PgPool,
     input: RetrievalQuery,
     cap: number,
-    sourceTypes: CorpusSourceType[] | null
+    sourceTypes: CorpusSourceType[] | null,
+    applicableOn: string | null
   ): Promise<unknown[]> {
     const sql = `
       SELECT
@@ -164,7 +184,9 @@ export class PostgresRetrieval implements RetrievalPort {
         c.authority_level   AS authority_level,
         c.title             AS title,
         c.url               AS url,
-        c.citation_label    AS citation_label
+        c.citation_label    AS citation_label,
+        c.effective_date    AS effective_date,
+        c.applicable_to     AS applicable_to
       FROM legal_chunks c
       JOIN legal_domains d ON d.id = c.domain_id
       WHERE d.domain_code = $1
@@ -172,18 +194,21 @@ export class PostgresRetrieval implements RetrievalPort {
         AND c.jurisdiction = $2
         AND c.search_vector @@ plainto_tsquery('english', $3)
         AND ($4::text[] IS NULL OR c.source_type = ANY($4::text[]))
+        ${this.temporalWhereSql()}
       ORDER BY
         ts_rank(c.search_vector, plainto_tsquery('english', $3)) DESC,
         c.authority_level DESC
       LIMIT $5
     `;
-    const res = await pool.query(sql, [
+    const params: unknown[] = [
       input.legal_pack,
       input.jurisdiction ?? "England and Wales",
       input.query_text,
       sourceTypes,
       cap,
-    ]);
+      applicableOn,
+    ];
+    const res = await pool.query(sql, params);
     return res.rows;
   }
 
@@ -191,7 +216,8 @@ export class PostgresRetrieval implements RetrievalPort {
     pool: PgPool,
     input: RetrievalQuery,
     cap: number,
-    sourceTypes: CorpusSourceType[] | null
+    sourceTypes: CorpusSourceType[] | null,
+    applicableOn: string | null
   ): Promise<unknown[]> {
     const sql = `
       SELECT
@@ -206,7 +232,9 @@ export class PostgresRetrieval implements RetrievalPort {
         c.authority_level   AS authority_level,
         c.title             AS title,
         c.url               AS url,
-        c.citation_label    AS citation_label
+        c.citation_label    AS citation_label,
+        c.effective_date    AS effective_date,
+        c.applicable_to     AS applicable_to
       FROM legal_chunks c
       JOIN legal_domains d ON d.id = c.domain_id
       WHERE d.domain_code = $1
@@ -214,16 +242,19 @@ export class PostgresRetrieval implements RetrievalPort {
         AND c.jurisdiction = $2
         AND c.chunk_text ILIKE '%' || $3 || '%'
         AND ($4::text[] IS NULL OR c.source_type = ANY($4::text[]))
+        ${this.temporalWhereSql()}
       ORDER BY c.authority_level DESC
       LIMIT $5
     `;
-    const res = await pool.query(sql, [
+    const params: unknown[] = [
       input.legal_pack,
       input.jurisdiction ?? "England and Wales",
       input.query_text,
       sourceTypes,
       cap,
-    ]);
+      applicableOn,
+    ];
+    const res = await pool.query(sql, params);
     return res.rows;
   }
 }

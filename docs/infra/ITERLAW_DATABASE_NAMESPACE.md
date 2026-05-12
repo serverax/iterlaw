@@ -7,11 +7,16 @@ is decoupled from application-tier rollouts.
 
 ## Workloads
 
-| Workload                       | Kind        | Exposure       | Image                  |
-| ------------------------------ | ----------- | -------------- | ---------------------- |
-| `iterlaw-postgres`             | StatefulSet | ClusterIP only | `postgres:16-alpine`   |
-| `iterlaw-postgres-backup`     | CronJob     | None           | `postgres:16-alpine`   |
-| `iterlaw-postgres-backup` PVC  | PVC         | n/a            | 20 Gi                  |
+| Workload                       | Kind        | Exposure       | Image                       |
+| ------------------------------ | ----------- | -------------- | --------------------------- |
+| `iterlaw-postgres`             | StatefulSet | ClusterIP only | `pgvector/pgvector:pg16`    |
+| `iterlaw-postgres-backup`      | CronJob     | None           | `postgres:16-alpine`        |
+| `iterlaw-postgres-backup` PVC  | PVC         | n/a            | 20 Gi                       |
+
+The StatefulSet image is `pgvector/pgvector:pg16` so the `vector`
+extension can be enabled by migration `000_pgvector_prerequisite.sql`.
+The backup CronJob only runs `pg_dump` and does not need the extension,
+so it stays on the smaller `postgres:16-alpine`.
 
 Nothing else runs in `iterlaw-data`.
 

@@ -1,5 +1,6 @@
 # Continuous integration — same checks as PR Validation, on every push to mainline branches.
-# Phase 0 gate: must stay green with Deploy IterLaw + Deploy Azure Functions.
+# CI only. Deployment workflows live under .github/workflows-disabled/ until
+# the K3s path is approved; see docs/infra/ITERLAW_WORKFLOW_INVENTORY.md.
 name: CI
 
 on:

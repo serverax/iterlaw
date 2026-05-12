@@ -1,0 +1,128 @@
+name: iterlaw-k3s-verify
+
+# Repo-only verification for the IterLaw K3s direction. This workflow:
+#   * does NOT deploy
+#   * does NOT use kubectl
+#   * does NOT require cluster credentials
+#   * does NOT publish artifacts
+#
+# It runs the static repo verifier and a forbidden-token grep over the
+# active IterLaw infra surface. See docs/infra/ITERLAW_WORKFLOW_INVENTORY.md.
+
+on:
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: iterlaw-k3s-verify-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Static verification (no deploy, no kubectl)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: List k8s/iterlaw and k8s/iterlaw-data
+        run: |
+          set -eu
+          echo "=== k8s/iterlaw ==="
+          if [ -d k8s/iterlaw ]; then
+            find k8s/iterlaw -maxdepth 4 -type f -print | sort
+          else
+            echo "(absent)"
+          fi
+          echo
+          echo "=== k8s/iterlaw-data ==="
+          if [ -d k8s/iterlaw-data ]; then
+            find k8s/iterlaw-data -maxdepth 4 -type f -print | sort
+          else
+            echo "(absent)"
+          fi
+
+      - name: Run scripts/infra/verify-iterlaw-repo.sh
+        run: |
+          set -eu
+          if [ ! -x scripts/infra/verify-iterlaw-repo.sh ]; then
+            chmod +x scripts/infra/verify-iterlaw-repo.sh
+          fi
+          bash scripts/infra/verify-iterlaw-repo.sh
+
+      # Independent grep so the workflow fails loudly even if the verifier
+      # script is somehow weakened. Active infra surface only — the
+      # naming-contract / verifier scripts / docs may legitimately enumerate
+      # these tokens.
+      - name: Forbidden tokens in active manifests
+        run: |
+          set -eu
+
+          ACTIVE_PATHS=(
+            k8s/iterlaw
+            k8s/iterlaw-data
+            infra/iterlaw/environment-contract.md
+            infra/iterlaw/deployment-contract.md
+            infra/iterlaw/wasm-contract.md
+            infra/iterlaw/synthesis-llm-contract.md
+            infra/iterlaw/database-contract.md
+          )
+
+          # Forbidden tokens that must never appear in active manifests/config.
+          FORBIDDEN_TOKENS=(
+            "rightsnow"
+            "iterlaw-rag-api"
+            "iterlaw-ingestion-worker"
+            "iterlaw-ollama"
+            "iterlaw_knowledge"
+            "legal_questions"
+            "/api/answer"
+            "CLAUDE_API_KEY"
+            "OPENAI_API_KEY"
+            "ANTHROPIC_API_KEY"
+          )
+
+          fail=0
+
+          for p in "${ACTIVE_PATHS[@]}"; do
+            [ -e "$p" ] || continue
+            for t in "${FORBIDDEN_TOKENS[@]}"; do
+              if grep -RIn --binary-files=without-match -F "$t" "$p" > /tmp/hits.txt 2>/dev/null; then
+                echo "FAIL forbidden token '$t' found in $p:"
+                sed 's/^/  /' /tmp/hits.txt
+                fail=1
+              fi
+            done
+          done
+
+          # OLLAMA_URL is banned specifically in legal-orchestrator manifests.
+          if [ -d k8s/iterlaw/legal-orchestrator ]; then
+            if grep -RIn --binary-files=without-match -F "OLLAMA_URL" k8s/iterlaw/legal-orchestrator > /tmp/hits.txt 2>/dev/null; then
+              echo "FAIL OLLAMA_URL must not appear in legal-orchestrator manifests:"
+              sed 's/^/  /' /tmp/hits.txt
+              fail=1
+            fi
+          fi
+
+          # ordinox-ai is allowed ONLY as the documented temporary Ollama
+          # endpoint inside synthesis-worker config/docs. Any other use
+          # (e.g. `namespace: ordinox-ai` in an IterLaw manifest) is a fail.
+          for p in k8s/iterlaw k8s/iterlaw-data; do
+            [ -d "$p" ] || continue
+            if grep -RIn --binary-files=without-match -E '^\s*namespace:\s*ordinox-ai\b' "$p" > /tmp/hits.txt 2>/dev/null; then
+              echo "FAIL 'namespace: ordinox-ai' must not appear in $p:"
+              sed 's/^/  /' /tmp/hits.txt
+              fail=1
+            fi
+          done
+
+          if [ "$fail" -ne 0 ]; then
+            exit 1
+          fi
+          echo "PASS: no forbidden tokens in active manifests/config"

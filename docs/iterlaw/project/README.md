@@ -59,11 +59,17 @@ Legacy `iterlaw-data` may remain. **Do not** create a bare `iterlaw` or `iterlaw
 
 ### Sprint + QA + ops
 
+- [`ITERLAW_PROJECT_STATUS.md`](ITERLAW_PROJECT_STATUS.md) — canonical project status.
 - [`07-sprints/SPRINT_INDEX.md`](07-sprints/SPRINT_INDEX.md) — current and planned sprints.
-- [`07-sprints/ROADMAP_REMAINING_SPRINTS.md`](07-sprints/ROADMAP_REMAINING_SPRINTS.md) — Sprints 18–57 future roadmap (architecture, not committed delivery).
+- [`07-sprints/ROADMAP_REMAINING_SPRINTS.md`](07-sprints/ROADMAP_REMAINING_SPRINTS.md) — remaining-sprint roadmap (Sprint 45 target).
 - [`07-sprints/SPRINT_10_DB_DECISIONS.md`](07-sprints/SPRINT_10_DB_DECISIONS.md) — locked Sprint 10 DB decisions.
 - [`08-qa/QA_PROCESS.md`](08-qa/QA_PROCESS.md) — evidence-based QA, no PASS without command output.
 - [`09-operations/OPERATIONS_RULES.md`](09-operations/OPERATIONS_RULES.md) — push / deploy / kubectl / secrets rules.
+
+### Decisions / AI governance
+
+- [`10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md) — offline-first ADR.
+- [`11-ai-governance/SUPERIOR_AI_ARCHITECT_AIA_SPECIFICATION.md`](11-ai-governance/SUPERIOR_AI_ARCHITECT_AIA_SPECIFICATION.md) — Superior AI Architect AIA governance specification.
 
 ### Deep / historical references (not loaded by default)
 

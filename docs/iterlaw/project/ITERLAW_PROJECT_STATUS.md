@@ -43,11 +43,16 @@ Sprint 46+ items previously documented (Workspace + RLS + Supreme Controller + A
 
 ## Naming + guardrails
 
-- **Active product name:** IterLaw. Use only IterLaw in active material.
+- **Active product name:** IterLaw.
+- **Wider platform / company brain:** OrdinoxAI (used in AIA governance specifications — see [`11-ai-governance/SUPERIOR_AI_ARCHITECT_AIA_SPECIFICATION.md`](11-ai-governance/SUPERIOR_AI_ARCHITECT_AIA_SPECIFICATION.md)).
 - **Forbidden in active material:** RightsNow (legacy product name; allowed only in clearly marked legacy / disabled / archive material — see [`00-index/CANONICAL_NAMES.md`](00-index/CANONICAL_NAMES.md)).
 - **Canonical Kubernetes namespaces:** `iterlaw-ai`, `iterlaw-rag`, `iterlaw-api`, `iterlaw-monitoring`, `iterlaw-security`. **Forbidden:** `iterlaw-prod`, bare `iterlaw`.
 - **No external LLM call** in the orchestrator request path.
 - **No `:latest`** in any active deployable manifest.
+
+## AI governance
+
+The **Superior AI Architect AIA** governs IterLaw's AI architecture decisions — model identifiers, prompt changes, RAG / retrieval changes, transport policy, WASM modules, evaluation harnesses, and adoption of GraphRAG / Self-RAG / long-context / reranking. Specification: [`11-ai-governance/SUPERIOR_AI_ARCHITECT_AIA_SPECIFICATION.md`](11-ai-governance/SUPERIOR_AI_ARCHITECT_AIA_SPECIFICATION.md).
 
 ## Next sprint recommendation
 

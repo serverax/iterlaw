@@ -13,7 +13,7 @@ Standing rules for every agent (Claude Code, Cursor, future AIAs) and every oper
 - Printing secret values in chat, logs, reports, or commits.
 - Calling external LLMs from the orchestrator request path.
 - Adding scripts that hit unpinned remote URLs at apply time.
-- Renaming IterLaw or the canonical namespaces.
+- Renaming IterLaw / OrdinoxAI / the canonical namespaces.
 - Re-introducing `RightsNow` to active code, config, or docs.
 - Creating `iterlaw-prod` or bare `iterlaw` namespace.
 

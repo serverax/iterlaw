@@ -105,6 +105,20 @@ export interface RiskCheck {
   warnings: string[];
 }
 
+// Synthesis status reflects what legal-orchestrator did about the request.
+// The orchestrator never calls a model — synthesis is performed by the
+// out-of-band synthesis-worker reached over Redis Streams. These two
+// fields describe the orchestrator's behaviour, not the model used.
+export type SynthesisStatus =
+  | "not_attempted"   // The orchestrator did not enqueue a synthesis job.
+  | "queued"          // Enqueued on the synthesis request stream.
+  | "completed"       // Response received from synthesis-worker.
+  | "unavailable"     // Synthesis subsystem reported synthesis_unavailable.
+  | "timeout"         // No response within SYNTHESIS_TIMEOUT_MS.
+  | "error";          // synthesis_internal_error from the worker.
+
+export type SynthesisMode = "redis_streams" | "disabled";
+
 export interface LegalResponse {
   request_id: string;
   status: AnswerStatus;
@@ -113,9 +127,10 @@ export interface LegalResponse {
   answer: string;
   risk_level: RiskLevel;
   confidence_score: number;
-  model_used?: string;
   rag_used: boolean;
   external_llm_used: boolean;
+  synthesis_status: SynthesisStatus;
+  synthesis_mode: SynthesisMode;
   citations: Citation[];
   missing_facts?: string[];
   next_steps: string[];

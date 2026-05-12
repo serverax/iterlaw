@@ -7,7 +7,6 @@
 import type { LegalRequest, LegalResponse, ExtractedFacts, RagChunk } from "../types/legal.js";
 import { classifyRequest } from "./classifyRequest.js";
 import { immediateRiskCheck } from "./immediateRiskCheck.js";
-import { selectModel } from "./selectModel.js";
 import { buildLegalPrompt } from "./buildLegalPrompt.js";
 import { runLegalModulePipeline } from "../modules/modulePipeline.js";
 import type { Jurisdiction, RetrievedChunk } from "../modules/contracts.js";
@@ -101,6 +100,8 @@ export async function handleLegalRequest(
       confidence_score: 0,
       rag_used: false,
       external_llm_used: false,
+      synthesis_status: "not_attempted",
+      synthesis_mode: "redis_streams",
       citations: [],
       missing_facts: risk.missing_facts,
       next_steps: ["Provide the missing facts and re-submit the request."],
@@ -118,6 +119,8 @@ export async function handleLegalRequest(
       confidence_score: 0,
       rag_used: false,
       external_llm_used: false,
+      synthesis_status: "not_attempted",
+      synthesis_mode: "redis_streams",
       citations: [],
       next_steps: [
         "Contact ACAS for Early Conciliation if not yet started.",
@@ -164,9 +167,9 @@ export async function handleLegalRequest(
     retrievalNotes = r.retrieval_notes ?? [];
   }
 
-  // Build the prompt + select the model even if we're not going to call it,
-  // so the verification layer can see them. These are the audit-trail values.
-  const model = selectModel(classification);
+  // Build the prompt so the verification layer can audit it. The
+  // orchestrator does NOT select or call a model — model selection
+  // belongs to synthesis-worker, reached over Redis Streams.
   const prompt = buildLegalPrompt({
     question: input.question ?? "",
     classification,
@@ -209,9 +212,10 @@ export async function handleLegalRequest(
         "No supporting legal sources are available for this question in the current knowledge base. No legal answer has been generated.",
       risk_level: risk.risk_level,
       confidence_score: 0,
-      model_used: model.ollama_model,
       rag_used: true,
       external_llm_used: false,
+      synthesis_status: "not_attempted",
+      synthesis_mode: "redis_streams",
       citations: [],
       next_steps: [
         "Ingest the relevant statute / ACAS guidance / case law into the legal knowledge base.",
@@ -236,9 +240,10 @@ export async function handleLegalRequest(
           : `Policy gate rejected the draft answer: ${modulePipelineOut.policyStatus.failures.join(", ")}.`,
       risk_level: risk.risk_level,
       confidence_score: 0,
-      model_used: model.ollama_model,
       rag_used: true,
       external_llm_used: false,
+      synthesis_status: "not_attempted",
+      synthesis_mode: "redis_streams",
       citations: [],
       next_steps: ["Operator review required.", ...modulePipelineOut.blockedReasons],
     };
@@ -252,9 +257,10 @@ export async function handleLegalRequest(
     answer: "(skeleton: real LLM call not wired)",
     risk_level: risk.risk_level,
     confidence_score: 0.5,
-    model_used: model.ollama_model,
     rag_used: true,
     external_llm_used: false,
+    synthesis_status: "not_attempted",
+    synthesis_mode: "redis_streams",
     citations: [],
     next_steps: [],
   };

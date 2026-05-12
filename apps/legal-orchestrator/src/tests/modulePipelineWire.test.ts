@@ -156,12 +156,17 @@ describe("handleLegalRequest + module pipeline", () => {
       jurisdiction: "England and Wales",
       rag_used: true,
       external_llm_used: false,
+      synthesis_status: "not_attempted",
+      synthesis_mode: "redis_streams",
       citations: [],
       confidence_score: 0,
     });
     expect(typeof res.answer).toBe("string");
     expect(Array.isArray(res.next_steps)).toBe(true);
     expect(res.next_steps.length).toBeGreaterThan(0);
-    expect(res.model_used).toBeDefined();
+    // model_used is not part of the orchestrator response surface — model
+    // selection belongs to synthesis-worker, not legal-orchestrator.
+    expect((res as Record<string, unknown>).model_used).toBeUndefined();
+    expect(res.external_llm_used).toBe(false);
   });
 });

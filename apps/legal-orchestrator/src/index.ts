@@ -3,7 +3,6 @@ export { createApp } from "./server.js";
 export { handleLegalRequest } from "./pipeline/handleLegalRequest.js";
 export { classifyRequest } from "./pipeline/classifyRequest.js";
 export { immediateRiskCheck } from "./pipeline/immediateRiskCheck.js";
-export { selectModel } from "./pipeline/selectModel.js";
 export { buildLegalPrompt } from "./pipeline/buildLegalPrompt.js";
 export { StructuralCitationVerifier } from "./pipeline/verifyCitations.js";
 export { policyGate } from "./pipeline/policyGate.js";

@@ -45,7 +45,8 @@ No other workload is allowed in either namespace.
 14. `k8s/iterlaw/redis/`
 15. `k8s/iterlaw/synthesis-worker/`
 16. `k8s/iterlaw/legal-orchestrator/`
-17. `k8s/iterlaw/web/`
+17. `k8s/iterlaw/wasm-rule-runner/` (ConfigMap assets consumed by `legal-orchestrator`)
+18. `k8s/iterlaw/web/`
 
 `scripts/infra/deploy-iterlaw-k3s.sh` applies these in order, but only when
 invoked manually by an operator. CI must not run it.

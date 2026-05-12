@@ -142,6 +142,38 @@ Sprint 10 remains PARTIAL until live dev/staging DB verification and smoke tests
 
 `/ready` now reports `llm.local_gateway_configured`, `llm.local_gateway_mode`, and `llm.local_gateway_available`. Base URLs, API keys, model paths, and `DATABASE_URL` are never returned. Tests assert no leakage.
 
+## Sprint 16 — Live Evolution and Safe Optimisation (Planned)
+
+Status: **Planned / Future.** Not started. Plan: [`docs/iterlaw/SPRINT_16_LIVE_EVOLUTION_AND_SAFE_OPTIMISATION_PLAN.md`](docs/iterlaw/SPRINT_16_LIVE_EVOLUTION_AND_SAFE_OPTIMISATION_PLAN.md).
+
+Every numeric / capability claim from the motivating proposal (02:00 trigger, 240ms inference, 68°C CPU, Wasm-AOT active, GraphRAG 4-hop, 42/128 GB buffer, autonomous DSPy adjustment, autonomous tribunal filing) is captured in the plan as a **target**, not the current state. No metric is populated; the metric contract reports `NOT_MEASURED` when a value is unavailable.
+
+Hard guardrails recorded in the plan:
+- No autonomous code commit, deployment, or prompt overwrite.
+- No external LLM call from the orchestrator request path.
+- No tribunal filing automation under any circumstance.
+- HITL approval is mandatory before any candidate prompt or rule activates.
+- Cross-case synthesis is anonymised at source (k ≥ 5 per emitted pattern).
+
+## Sprint 18 — Multimodal Evidence Grounding Beta (Planned, future backlog)
+
+Status: **Planned / Future backlog.** Not started, not deployed, not piloted. Plan: [`docs/iterlaw/SPRINT_18_MULTIMODAL_EVIDENCE_GROUNDING_BETA_PLAN.md`](docs/iterlaw/SPRINT_18_MULTIMODAL_EVIDENCE_GROUNDING_BETA_PLAN.md).
+
+Naming correction: the capability is referred to as **multimodal evidence grounding**, not "video analysis", so that the legal posture (evidence-assistance tool, not factual determination) is unambiguous.
+
+Hard guardrails recorded in the plan:
+- Local-only transcription. No cloud API, no external LLM in the media pipeline.
+- DPIA gate is mandatory before any pilot upload is enabled.
+- Article 22C and ICO workplace-monitoring obligations explicit.
+- Mandatory UX warning wording on every AI-flagged finding.
+- Forbidden outputs: "Manager lied", "Manager was hostile", "This proves discrimination" (or equivalents).
+- Pilot capped at **5 advanced users** with individual consent.
+- No tribunal filing automation, no employer-facing disclosure without user approval.
+
+## Sprint roadmap
+
+The authoritative index for all sprints is [`docs/iterlaw/ITERLAW_SPRINT_ROADMAP.md`](docs/iterlaw/ITERLAW_SPRINT_ROADMAP.md).
+
 ## Legal Source Correction
 
 The Employment Rights Act 2025 exists and received Royal Assent on 18 December 2025.

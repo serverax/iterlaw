@@ -21,3 +21,25 @@ export type { MockCorpusChunk, MockRetrievalOptions } from "./mockRetrieval";
 
 export { createRagService } from "./rag.service";
 export type { RagService, RagServiceConfig } from "./rag.service";
+
+export {
+  upsertLegalSource,
+  upsertLegalDocument,
+  insertLegalChunks,
+  insertLegalCitations,
+  markDocumentSuperseded,
+  queryChunks,
+  RagRepositoryValidationError,
+} from "./ragRepository";
+export type {
+  DbClient,
+  DbQueryResult,
+  UpsertLegalSourceInput,
+  UpsertLegalDocumentInput,
+  InsertLegalChunkInput,
+  InsertLegalCitationInput,
+  QueryChunksFilters,
+  RetrievedChunkRow,
+} from "./ragRepository";
+export { ALLOWED_SOURCE_TYPES } from "./ragRepository.types";
+export type { SourceTypeWide } from "./ragRepository.types";

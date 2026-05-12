@@ -13,30 +13,35 @@
 
 ```bash
 # 1. Write the raw secret on the operator workstation (NEVER commit this file).
-cat > /tmp/iterlaw-orchestrator-db.raw.yaml <<'EOF'
+cat > /tmp/iterlaw-db-secret.raw.yaml <<'EOF'
 apiVersion: v1
 kind: Secret
 metadata:
-  name: iterlaw-orchestrator-db
+  name: iterlaw-db-secret
   namespace: iterlaw-ai
 type: Opaque
 stringData:
-  DATABASE_URL: postgresql://USER:PASSWORD@HOST:5432/iterlaw?sslmode=require
+  DATABASE_URL: postgresql://USER:PASSWORD@iterlaw-postgres.iterlaw-data.svc.cluster.local:5432/iterlaw?sslmode=disable
 EOF
 
 # 2. Seal it against the controller's public key.
 kubeseal --controller-namespace kube-system \
   --controller-name sealed-secrets-controller \
   --format yaml \
-  < /tmp/iterlaw-orchestrator-db.raw.yaml \
-  > k8s/iterlaw/secrets/iterlaw-orchestrator-db.yaml
+  < /tmp/iterlaw-db-secret.raw.yaml \
+  > k8s/iterlaw/secrets/iterlaw-db-secret.yaml
 
 # 3. Shred the raw file.
-shred -u /tmp/iterlaw-orchestrator-db.raw.yaml
+shred -u /tmp/iterlaw-db-secret.raw.yaml
 ```
 
 Repeat for `iterlaw-synthesis-redis` and (only if needed)
 `iterlaw-synthesis-internal-model`.
+
+For `iterlaw-data`, seal `iterlaw-postgres-credentials` similarly,
+substituting `namespace: iterlaw-data`, `stringData` keys
+`POSTGRES_USER` and `POSTGRES_PASSWORD`, and writing the output to
+`k8s/iterlaw-data/secrets/iterlaw-postgres-credentials.yaml`.
 
 ## Rotation
 

@@ -10,7 +10,7 @@ permitted** in the listed workloads' deployment manifests or ConfigMaps.
 | `NODE_ENV`                        | ConfigMap             | `production` in cluster.                                         |
 | `PORT`                            | ConfigMap             | Must be `3012`.                                                  |
 | `LOG_LEVEL`                       | ConfigMap             | `info` default.                                                  |
-| `DATABASE_URL_FROM_SECRET`        | SealedSecret ref      | Postgres DSN. Never plaintext.                                   |
+| `DATABASE_URL_FROM_SECRET`        | SealedSecret ref      | Postgres DSN sourced from `iterlaw-db-secret`. Target is `iterlaw-postgres.iterlaw-data.svc.cluster.local:5432`. Never plaintext. |
 | `RAG_MODE`                        | ConfigMap             | Must be `postgres`.                                              |
 | `SYNTHESIS_MODE`                  | ConfigMap             | Must be `redis_streams`.                                         |
 | `SYNTHESIS_REDIS_URL_FROM_SECRET` | SealedSecret ref      | Redis DSN (in-cluster).                                          |
@@ -52,6 +52,14 @@ to every request and never attempts to call any model endpoint.
 | `NEXT_PUBLIC_APP_NAME`         | ConfigMap  | `IterLaw`.                                       |
 | `ORCHESTRATOR_INTERNAL_URL`    | ConfigMap  | `http://legal-orchestrator:3012`.                |
 | `NEXT_PUBLIC_API_BASE`         | ConfigMap  | `/api`.                                          |
+
+`iterlaw-web` MUST NOT carry any database environment variable. The web
+tier never connects to Postgres directly.
+
+## `synthesis-worker` — database boundary
+
+`synthesis-worker` MUST NOT carry any database environment variable.
+Database access is the sole responsibility of `legal-orchestrator`.
 
 ## Rules
 

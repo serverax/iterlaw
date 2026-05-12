@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: iterlaw-postgres
+  namespace: iterlaw-data
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: iterlaw-postgres
+  policyTypes: ["Ingress", "Egress"]
+  ingress:
+    # Only legal-orchestrator (in iterlaw-ai) may reach Postgres on 5432.
+    # The backup CronJob, scheduled in iterlaw-data, is permitted to reach
+    # it on 5432 as well — it is in the same namespace and carries its
+    # own label.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: iterlaw-ai
+          podSelector:
+            matchLabels:
+              app: legal-orchestrator
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: iterlaw-postgres-backup
+      ports:
+        - protocol: TCP
+          port: 5432
+  egress:
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53

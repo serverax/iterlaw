@@ -1,25 +1,47 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: iterlaw-postgres
+  namespace: iterlaw-data
+automountServiceAccountToken: false
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: iterlaw-postgres
   namespace: iterlaw-data
+  labels:
+    app.kubernetes.io/name: iterlaw-postgres
+    app.kubernetes.io/part-of: iterlaw
 spec:
   serviceName: iterlaw-postgres
   replicas: 1
   selector:
     matchLabels:
-      app: iterlaw-postgres
+      app.kubernetes.io/name: iterlaw-postgres
   template:
     metadata:
       labels:
-        app: iterlaw-postgres
+        app.kubernetes.io/name: iterlaw-postgres
+        app.kubernetes.io/part-of: iterlaw
     spec:
-      serviceAccountName: iterlaw-data
+      serviceAccountName: iterlaw-postgres
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70
+        runAsGroup: 70
+        fsGroup: 70
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: postgres
           image: postgres:16-alpine
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 5432
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
           envFrom:
             - configMapRef:
                 name: iterlaw-postgres-config
@@ -27,30 +49,60 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: iterlaw-postgres-secret
+                  name: iterlaw-postgres-credentials
                   key: POSTGRES_USER
-                  optional: false
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: iterlaw-postgres-secret
+                  name: iterlaw-postgres-credentials
                   key: POSTGRES_PASSWORD
-                  optional: false
-          volumeMounts:
-            - name: postgres-data
-              mountPath: /var/lib/postgresql/data
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
           resources:
             requests:
-              cpu: "250m"
-              memory: "512Mi"
+              cpu: 250m
+              memory: 512Mi
             limits:
-              cpu: "2"
-              memory: "2Gi"
+              cpu: "1"
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+            - name: run
+              mountPath: /var/run/postgresql
+      volumes:
+        - name: run
+          emptyDir:
+            sizeLimit: 32Mi
   volumeClaimTemplates:
     - metadata:
-        name: postgres-data
+        name: data
+        labels:
+          app.kubernetes.io/name: iterlaw-postgres
+          app.kubernetes.io/part-of: iterlaw
       spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: 50Gi
+            storage: 10Gi

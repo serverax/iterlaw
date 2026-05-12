@@ -7,6 +7,7 @@
 set -uo pipefail
 
 NS="iterlaw-ai"
+DATA_NS="iterlaw-data"
 
 report() { printf "%-12s %s\n" "$1" "$2"; }
 
@@ -19,78 +20,95 @@ if ! kubectl version --client > /dev/null 2>&1; then
   exit 0
 fi
 
-if ! kubectl get ns "${NS}" > /dev/null 2>&1; then
+if kubectl get ns "${NS}" > /dev/null 2>&1; then
+  report "PASS" "namespace ${NS} exists"
+else
   report "NOT DEPLOYED" "namespace ${NS}"
-  exit 0
 fi
-report "PASS" "namespace ${NS} exists"
+
+if kubectl get ns "${DATA_NS}" > /dev/null 2>&1; then
+  report "PASS" "namespace ${DATA_NS} exists"
+else
+  report "NOT DEPLOYED" "namespace ${DATA_NS}"
+fi
 
 check_deploy() {
-  local name="$1"
-  if kubectl -n "${NS}" get deploy "${name}" > /dev/null 2>&1; then
-    report "PASS" "deployment ${name}"
+  local ns="$1" name="$2"
+  if kubectl -n "${ns}" get deploy "${name}" > /dev/null 2>&1; then
+    report "PASS" "deployment ${ns}/${name}"
   else
-    report "NOT DEPLOYED" "deployment ${name}"
+    report "NOT DEPLOYED" "deployment ${ns}/${name}"
   fi
 }
 
 check_sts() {
-  local name="$1"
-  if kubectl -n "${NS}" get sts "${name}" > /dev/null 2>&1; then
-    report "PASS" "statefulset ${name}"
+  local ns="$1" name="$2"
+  if kubectl -n "${ns}" get sts "${name}" > /dev/null 2>&1; then
+    report "PASS" "statefulset ${ns}/${name}"
   else
-    report "NOT DEPLOYED" "statefulset ${name}"
+    report "NOT DEPLOYED" "statefulset ${ns}/${name}"
   fi
 }
 
 check_svc_port() {
-  local name="$1" port="$2"
-  if ! kubectl -n "${NS}" get svc "${name}" > /dev/null 2>&1; then
-    report "NOT DEPLOYED" "service ${name}"
+  local ns="$1" name="$2" port="$3"
+  if ! kubectl -n "${ns}" get svc "${name}" > /dev/null 2>&1; then
+    report "NOT DEPLOYED" "service ${ns}/${name}"
     return
   fi
   local actual
-  actual=$(kubectl -n "${NS}" get svc "${name}" -o jsonpath='{.spec.ports[0].port}' 2>/dev/null || true)
+  actual=$(kubectl -n "${ns}" get svc "${name}" -o jsonpath='{.spec.ports[0].port}' 2>/dev/null || true)
   if [[ "${actual}" == "${port}" ]]; then
-    report "PASS" "service ${name} exposes port ${port}"
+    report "PASS" "service ${ns}/${name} exposes port ${port}"
   else
-    report "FAIL" "service ${name} expected port ${port}, got '${actual:-<empty>}'"
+    report "FAIL" "service ${ns}/${name} expected port ${port}, got '${actual:-<empty>}'"
   fi
 }
 
 check_svc_clusterip() {
-  local name="$1"
-  if ! kubectl -n "${NS}" get svc "${name}" > /dev/null 2>&1; then
-    report "NOT DEPLOYED" "service ${name}"
+  local ns="$1" name="$2"
+  if ! kubectl -n "${ns}" get svc "${name}" > /dev/null 2>&1; then
+    report "NOT DEPLOYED" "service ${ns}/${name}"
     return
   fi
   local type
-  type=$(kubectl -n "${NS}" get svc "${name}" -o jsonpath='{.spec.type}' 2>/dev/null || true)
+  type=$(kubectl -n "${ns}" get svc "${name}" -o jsonpath='{.spec.type}' 2>/dev/null || true)
   if [[ "${type}" == "ClusterIP" ]]; then
-    report "PASS" "service ${name} is ClusterIP"
+    report "PASS" "service ${ns}/${name} is ClusterIP"
   else
-    report "FAIL" "service ${name} expected ClusterIP, got '${type:-<empty>}'"
+    report "FAIL" "service ${ns}/${name} expected ClusterIP, got '${type:-<empty>}'"
   fi
 }
 
-check_deploy legal-orchestrator
-check_deploy synthesis-worker
-check_sts synthesis-redis
-check_deploy iterlaw-web
-
-check_svc_port legal-orchestrator 3012
-check_svc_clusterip synthesis-redis
-check_svc_clusterip synthesis-worker
-
-# synthesis-worker must not be exposed publicly.
-if kubectl -n "${NS}" get svc synthesis-worker > /dev/null 2>&1; then
-  type=$(kubectl -n "${NS}" get svc synthesis-worker -o jsonpath='{.spec.type}' 2>/dev/null || true)
-  if [[ "${type}" == "LoadBalancer" || "${type}" == "NodePort" ]]; then
-    report "FAIL" "synthesis-worker is publicly exposed (${type})"
-  else
-    report "PASS" "synthesis-worker not public"
+check_not_public() {
+  local ns="$1" name="$2"
+  if ! kubectl -n "${ns}" get svc "${name}" > /dev/null 2>&1; then
+    report "NOT DEPLOYED" "service ${ns}/${name}"
+    return
   fi
-fi
+  local type
+  type=$(kubectl -n "${ns}" get svc "${name}" -o jsonpath='{.spec.type}' 2>/dev/null || true)
+  if [[ "${type}" == "LoadBalancer" || "${type}" == "NodePort" ]]; then
+    report "FAIL" "${ns}/${name} is publicly exposed (${type})"
+  else
+    report "PASS" "${ns}/${name} not public"
+  fi
+}
+
+check_deploy "${NS}" legal-orchestrator
+check_deploy "${NS}" synthesis-worker
+check_sts    "${NS}" synthesis-redis
+check_deploy "${NS}" iterlaw-web
+check_sts    "${DATA_NS}" iterlaw-postgres
+
+check_svc_port      "${NS}"      legal-orchestrator 3012
+check_svc_port      "${DATA_NS}" iterlaw-postgres   5432
+check_svc_clusterip "${NS}"      synthesis-redis
+check_svc_clusterip "${NS}"      synthesis-worker
+check_svc_clusterip "${DATA_NS}" iterlaw-postgres
+
+check_not_public "${NS}"      synthesis-worker
+check_not_public "${DATA_NS}" iterlaw-postgres
 
 # Sanity: no rightsnow workloads anywhere in the cluster.
 if kubectl get deploy,sts --all-namespaces -o name 2>/dev/null | grep -i rightsnow > /dev/null; then

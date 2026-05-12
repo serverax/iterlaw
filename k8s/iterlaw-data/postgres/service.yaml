@@ -3,11 +3,15 @@ kind: Service
 metadata:
   name: iterlaw-postgres
   namespace: iterlaw-data
+  labels:
+    app.kubernetes.io/name: iterlaw-postgres
+    app.kubernetes.io/part-of: iterlaw
 spec:
   type: ClusterIP
   selector:
-    app: iterlaw-postgres
+    app.kubernetes.io/name: iterlaw-postgres
   ports:
     - name: postgres
       port: 5432
       targetPort: 5432
+      protocol: TCP

@@ -3,5 +3,12 @@ kind: ConfigMap
 metadata:
   name: iterlaw-postgres-config
   namespace: iterlaw-data
+  labels:
+    app.kubernetes.io/name: iterlaw-postgres
+    app.kubernetes.io/part-of: iterlaw
 data:
-  POSTGRES_DB: "iterlaw"
+  POSTGRES_DB: iterlaw
+  PGDATA: /var/lib/postgresql/data/pgdata
+  # Schema and table names are policy. The actual `CREATE SCHEMA` runs
+  # as a migration on first boot; values are duplicated here for audit:
+  ITERLAW_DB_SCHEMA: uk_emp_rag

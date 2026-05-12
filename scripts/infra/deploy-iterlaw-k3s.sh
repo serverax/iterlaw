@@ -28,10 +28,12 @@ if ! command -v kubectl > /dev/null 2>&1; then
 fi
 kubectl config current-context
 
-echo "==> ensuring namespace iterlaw-ai exists (pre-flight)"
-if ! kubectl get ns iterlaw-ai > /dev/null 2>&1; then
-  echo "namespace iterlaw-ai is NOT DEPLOYED"
-fi
+echo "==> ensuring namespaces exist (pre-flight)"
+for ns in iterlaw-ai iterlaw-data; do
+  if ! kubectl get ns "${ns}" > /dev/null 2>&1; then
+    echo "namespace ${ns} is NOT DEPLOYED"
+  fi
+done
 
 if [[ ${APPLY} -ne 1 ]]; then
   echo
@@ -41,6 +43,12 @@ fi
 
 # Apply order matches infra/iterlaw/deployment-contract.md.
 APPLY_PATHS=(
+  # iterlaw-data first — orchestrator readiness depends on Postgres being up.
+  "${ROOT}/k8s/iterlaw-data/namespace.yaml"
+  "${ROOT}/k8s/iterlaw-data/secrets/"
+  "${ROOT}/k8s/iterlaw-data/postgres/"
+  "${ROOT}/k8s/iterlaw-data/backups/"
+  # iterlaw-ai application tier.
   "${ROOT}/k8s/iterlaw/namespace.yaml"
   "${ROOT}/k8s/iterlaw/serviceaccount.yaml"
   "${ROOT}/k8s/iterlaw/resourcequotas.yaml"
@@ -64,4 +72,7 @@ done
 
 echo
 echo "==> snapshot"
-kubectl get all -n iterlaw-ai
+echo "--- iterlaw-data ---"
+kubectl get all -n iterlaw-data || true
+echo "--- iterlaw-ai ---"
+kubectl get all -n iterlaw-ai || true

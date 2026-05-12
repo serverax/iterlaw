@@ -9,11 +9,24 @@ reject them.
 
 ## Secret names
 
+### Namespace `iterlaw-ai`
+
 | SealedSecret name                  | Keys                          | Consumed by                              |
 | ---------------------------------- | ----------------------------- | ---------------------------------------- |
-| `iterlaw-orchestrator-db`          | `DATABASE_URL`                | `legal-orchestrator`                     |
+| `iterlaw-db-secret`                | `DATABASE_URL`                | `legal-orchestrator` only                |
 | `iterlaw-synthesis-redis`          | `SYNTHESIS_REDIS_URL`         | `legal-orchestrator`, `synthesis-worker` |
 | `iterlaw-synthesis-internal-model` | `INTERNAL_MODEL_ENDPOINT`     | `synthesis-worker` only                  |
+
+`iterlaw-db-secret` holds a Postgres DSN whose host is
+`iterlaw-postgres.iterlaw-data.svc.cluster.local`. Neither `iterlaw-web`
+nor `synthesis-worker` is permitted to reference this SealedSecret.
+
+### Namespace `iterlaw-data`
+
+| SealedSecret name                              | Keys                                         | Consumed by                                 |
+| ---------------------------------------------- | -------------------------------------------- | ------------------------------------------- |
+| `iterlaw-postgres-credentials`                 | `POSTGRES_USER`, `POSTGRES_PASSWORD`         | `iterlaw-postgres` StatefulSet, backup CronJob |
+| `iterlaw-postgres-replication-credentials`     | `REPLICATION_USER`, `REPLICATION_PASSWORD`   | Placeholder for future streaming replica.   |
 
 `iterlaw-synthesis-internal-model` is optional. When absent, the
 synthesis-worker must run in `MODEL_MODE=disabled` and return
@@ -34,11 +47,17 @@ if it finds them.
 ## Sealing workflow
 
 ```bash
-# Encrypt a literal secret value:
+# Encrypt a literal secret value targeting iterlaw-ai:
 kubeseal --controller-namespace kube-system \
   --controller-name sealed-secrets-controller \
   --format yaml \
   < raw-secret.yaml > k8s/iterlaw/secrets/iterlaw-<name>.yaml
+
+# Encrypt a literal secret value targeting iterlaw-data:
+kubeseal --controller-namespace kube-system \
+  --controller-name sealed-secrets-controller \
+  --format yaml \
+  < raw-secret.yaml > k8s/iterlaw-data/secrets/iterlaw-<name>.yaml
 ```
 
 The unencrypted `raw-secret.yaml` MUST NOT be committed. It should live only

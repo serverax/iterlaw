@@ -11,11 +11,15 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: legal-orchestrator
+      app: legal-orchestrator
   template:
     metadata:
       labels:
         app.kubernetes.io/name: legal-orchestrator
         app.kubernetes.io/part-of: iterlaw
+        # Short `app` label is required by the iterlaw-data NetworkPolicy
+        # which selects orchestrator pods by `app=legal-orchestrator`.
+        app: legal-orchestrator
     spec:
       serviceAccountName: legal-orchestrator
       automountServiceAccountToken: false
@@ -41,7 +45,7 @@ spec:
             - name: DATABASE_URL_FROM_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: iterlaw-orchestrator-db
+                  name: iterlaw-db-secret
                   key: DATABASE_URL
             - name: SYNTHESIS_REDIS_URL_FROM_SECRET
               valueFrom:

@@ -32,11 +32,16 @@ Without `--apply` the script is a pre-flight only.
 
 Before applying workload manifests, the operator must seal at least:
 
-- `iterlaw-orchestrator-db` (key `DATABASE_URL`)
-- `iterlaw-synthesis-redis` (key `SYNTHESIS_REDIS_URL`)
+- `iterlaw-postgres-credentials` in `iterlaw-data` (keys `POSTGRES_USER`,
+  `POSTGRES_PASSWORD`)
+- `iterlaw-db-secret` in `iterlaw-ai` (key `DATABASE_URL`, value pointing
+  at `iterlaw-postgres.iterlaw-data.svc.cluster.local:5432`)
+- `iterlaw-synthesis-redis` in `iterlaw-ai` (key `SYNTHESIS_REDIS_URL`)
 
 `iterlaw-synthesis-internal-model` is optional — only required when running
 the synthesis-worker in `MODEL_MODE=internal`.
+`iterlaw-postgres-replication-credentials` is a placeholder for future
+streaming-replica setup and is not consumed by current workloads.
 
 See `ITERLAW_SECRETS_RUNBOOK.md` for the workflow.
 
@@ -50,15 +55,20 @@ Expect the following PASS lines on a healthy first deploy:
 
 ```
 PASS namespace iterlaw-ai exists
+PASS namespace iterlaw-data exists
 PASS deployment legal-orchestrator
 PASS deployment synthesis-worker
 PASS statefulset synthesis-redis
 PASS deployment iterlaw-web
+PASS statefulset iterlaw-postgres
 PASS service legal-orchestrator exposes port 3012
+PASS service iterlaw-postgres exposes port 5432
+PASS service iterlaw-postgres is ClusterIP
 PASS service synthesis-redis is ClusterIP
 PASS service synthesis-worker is ClusterIP
 PASS synthesis-worker not public
-PASS no rightsnow workloads in cluster
+PASS iterlaw-postgres not public
+PASS no legacy workload in cluster
 PASS no IterLaw workload in ordinox-ai
 ```
 

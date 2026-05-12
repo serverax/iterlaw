@@ -9,6 +9,8 @@ action.
 
 ## Workloads
 
+### Namespace `iterlaw-ai` (application)
+
 | Workload                | Kind        | Exposure       | Image tag                          |
 | ----------------------- | ----------- | -------------- | ---------------------------------- |
 | `legal-orchestrator`    | Deployment  | ClusterIP only | `iterlaw/legal-orchestrator:local` |
@@ -16,19 +18,30 @@ action.
 | `synthesis-redis`       | StatefulSet | ClusterIP only | `redis:7-alpine`                   |
 | `iterlaw-web`           | Deployment  | Ingress        | `iterlaw/web:local`                |
 
-No other workload is allowed.
+### Namespace `iterlaw-data` (database)
+
+| Workload                       | Kind        | Exposure       | Image tag           |
+| ------------------------------ | ----------- | -------------- | ------------------- |
+| `iterlaw-postgres`             | StatefulSet | ClusterIP only | `postgres:16-alpine`|
+| `iterlaw-postgres-backup`      | CronJob     | None           | `postgres:16-alpine`|
+
+No other workload is allowed in either namespace.
 
 ## Apply order
 
-1. `k8s/iterlaw/namespace.yaml`
-2. `k8s/iterlaw/serviceaccount.yaml`
-3. `k8s/iterlaw/resourcequotas.yaml`
-4. `k8s/iterlaw/limitranges.yaml`
-5. `k8s/iterlaw/secrets/` (operator-supplied SealedSecrets)
-6. `k8s/iterlaw/redis/`
-7. `k8s/iterlaw/synthesis-worker/`
-8. `k8s/iterlaw/legal-orchestrator/`
-9. `k8s/iterlaw/web/`
+1. `k8s/iterlaw-data/namespace.yaml`
+2. `k8s/iterlaw-data/secrets/` (operator-supplied SealedSecrets)
+3. `k8s/iterlaw-data/postgres/`
+4. `k8s/iterlaw-data/backups/`
+5. `k8s/iterlaw/namespace.yaml`
+6. `k8s/iterlaw/serviceaccount.yaml`
+7. `k8s/iterlaw/resourcequotas.yaml`
+8. `k8s/iterlaw/limitranges.yaml`
+9. `k8s/iterlaw/secrets/` (operator-supplied SealedSecrets)
+10. `k8s/iterlaw/redis/`
+11. `k8s/iterlaw/synthesis-worker/`
+12. `k8s/iterlaw/legal-orchestrator/`
+13. `k8s/iterlaw/web/`
 
 `scripts/infra/deploy-iterlaw-k3s.sh` applies these in order, but only when
 invoked manually by an operator. CI must not run it.

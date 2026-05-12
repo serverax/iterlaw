@@ -7,23 +7,38 @@ This contract is **load-bearing**. CI and the infra verification scripts under
 
 | Facet                | Value                                       |
 | -------------------- | ------------------------------------------- |
-| Product name         | IterLaw                                     |
-| GitHub repo          | https://github.com/serverax/iterlaw.git     |
-| Local checkout       | `C:\Users\kalsh\projects\iterlaw`           |
-| K3s namespace        | `iterlaw-ai`                                |
-| Backend workload     | `legal-orchestrator`                        |
-| Backend port         | `3012`                                      |
-| Public API endpoint  | `POST /api/legal/ask`                       |
-| Web workload         | `iterlaw-web`                               |
-| Synthesis workload   | `synthesis-worker`                          |
-| Queue                | Redis Streams                               |
-| Redis workload       | `synthesis-redis`                           |
-| Database schema      | `uk_emp_rag`                                |
-| Documents table      | `uk_emp_rag.legal_documents`                |
-| Chunks table         | `uk_emp_rag.legal_document_chunks`          |
-| Embeddings table     | `uk_emp_rag.legal_chunk_embeddings`         |
-| Statutory rates      | `uk_emp_rag.statutory_rate`                 |
-| Secrets backend      | SealedSecrets                               |
+| Product name              | IterLaw                                     |
+| GitHub repo               | https://github.com/serverax/iterlaw.git     |
+| Local checkout            | `C:\Users\kalsh\projects\iterlaw`           |
+| Application namespace     | `iterlaw-ai`                                |
+| Database namespace        | `iterlaw-data`                              |
+| Backend workload          | `legal-orchestrator` (in `iterlaw-ai`)      |
+| Backend port              | `3012`                                      |
+| Public API endpoint       | `POST /api/legal/ask`                       |
+| Web workload              | `iterlaw-web` (in `iterlaw-ai`)             |
+| Synthesis workload        | `synthesis-worker` (in `iterlaw-ai`)        |
+| Queue                     | Redis Streams                               |
+| Redis workload            | `synthesis-redis` (in `iterlaw-ai`)         |
+| Postgres workload         | `iterlaw-postgres` (in `iterlaw-data`)      |
+| Postgres internal DNS     | `iterlaw-postgres.iterlaw-data.svc.cluster.local` |
+| Database name             | `iterlaw`                                   |
+| Database schema           | `uk_emp_rag`                                |
+| Documents table           | `uk_emp_rag.legal_documents`                |
+| Chunks table              | `uk_emp_rag.legal_document_chunks`          |
+| Embeddings table          | `uk_emp_rag.legal_chunk_embeddings`         |
+| Statutory rates           | `uk_emp_rag.statutory_rate`                 |
+| Secrets backend           | SealedSecrets                               |
+
+## Namespace split
+
+| Namespace      | Owns                                                                                         |
+| -------------- | -------------------------------------------------------------------------------------------- |
+| `iterlaw-ai`   | `iterlaw-web`, `legal-orchestrator`, `synthesis-worker`, `synthesis-redis`, WASM rule config |
+| `iterlaw-data` | `iterlaw-postgres`, backup CronJob, database PVCs, database SealedSecret templates           |
+
+PostgreSQL is **never** deployed in `iterlaw-ai`. The web tier and the
+synthesis-worker never talk to PostgreSQL — only `legal-orchestrator`
+connects, using `iterlaw-db-secret` in `iterlaw-ai`.
 
 ## Image tags
 
@@ -40,7 +55,6 @@ project.
 - `rightsnow`
 - `ordinox-ai` (only as an *IterLaw* namespace — the ordinox-ai namespace is a
   separate, retired environment)
-- `iterlaw-postgres`
 - `iterlaw-ollama`
 - `iterlaw-rag-api`
 - `iterlaw-ingestion-worker`
@@ -53,6 +67,11 @@ project.
 - `OLLAMA_URL` in `legal-orchestrator`
 - `CLAUDE_API_KEY` in `legal-orchestrator`
 - `OPENAI_API_KEY` in `legal-orchestrator`
+
+> `iterlaw-postgres` was previously on this list. It is now the canonical
+> workload name for the PostgreSQL StatefulSet in the dedicated
+> `iterlaw-data` namespace. It is permitted in active manifests under
+> `k8s/iterlaw-data/`.
 
 `scripts/infra/verify-iterlaw-repo.sh` enforces this list against the
 `infra/iterlaw`, `k8s/iterlaw`, `docs/infra`, and `scripts/infra` trees.

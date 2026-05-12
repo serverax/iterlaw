@@ -2,3 +2,8 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: iterlaw-data
+  labels:
+    app.kubernetes.io/name: iterlaw-data
+    app.kubernetes.io/part-of: iterlaw
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/warn: restricted

@@ -17,7 +17,7 @@ spec:
         - protocol: TCP
           port: 3012
   egress:
-    # synthesis-redis (in-cluster)
+    # synthesis-redis (in-cluster, iterlaw-ai)
     - to:
         - podSelector:
             matchLabels:
@@ -25,6 +25,17 @@ spec:
       ports:
         - protocol: TCP
           port: 6379
+    # iterlaw-postgres (in-cluster, iterlaw-data)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: iterlaw-data
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: iterlaw-postgres
+      ports:
+        - protocol: TCP
+          port: 5432
     # DNS for in-cluster lookups
     - to:
         - namespaceSelector: {}
@@ -36,6 +47,3 @@ spec:
           port: 53
         - protocol: TCP
           port: 53
-    # Postgres egress is intentionally unrestricted at this layer; the
-    # database may live outside the cluster. Cluster-network restriction
-    # is enforced at the cluster firewall, not here.

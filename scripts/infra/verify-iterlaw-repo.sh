@@ -28,7 +28,6 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # ---------------------------------------------------------------------------
 FORBIDDEN_NAMES=(
   "rightsnow"
-  "iterlaw-postgres"
   "iterlaw-ollama"
   "iterlaw-rag-api"
   "iterlaw-ingestion-worker"
@@ -38,10 +37,16 @@ FORBIDDEN_NAMES=(
   "/api/answer"
 )
 
-# `ordinox-ai` is forbidden only as an IterLaw namespace value. We assert it
-# is absent from k8s/iterlaw manifests (which target iterlaw-ai exclusively)
-# rather than blanket-banning the word.
-ORDINOX_FORBIDDEN_PATH="${ROOT}/k8s/iterlaw"
+# `iterlaw-postgres` was previously forbidden. It is now the canonical
+# workload name for the Postgres StatefulSet in iterlaw-data and is
+# explicitly NOT in FORBIDDEN_NAMES.
+
+# `ordinox-ai` is forbidden only as an IterLaw namespace value. Assert it
+# is absent from any k8s manifest in either IterLaw namespace.
+ORDINOX_FORBIDDEN_PATHS=(
+  "${ROOT}/k8s/iterlaw"
+  "${ROOT}/k8s/iterlaw-data"
+)
 
 # Banned env-var names in legal-orchestrator manifests.
 BANNED_ORCHESTRATOR_VARS=(
@@ -55,7 +60,8 @@ BANNED_ORCHESTRATOR_VARS=(
 # ---------------------------------------------------------------------------
 # ACTIVE — strict. A forbidden name in any of these files is a FAIL.
 ACTIVE_GLOBS=(
-  "${ROOT}/k8s/iterlaw"                          # all manifests
+  "${ROOT}/k8s/iterlaw"                          # iterlaw-ai manifests
+  "${ROOT}/k8s/iterlaw-data"                     # iterlaw-data manifests
   "${ROOT}/infra/iterlaw/environment-contract.md"
   "${ROOT}/infra/iterlaw/deployment-contract.md"
   "${ROOT}/infra/iterlaw/wasm-contract.md"
@@ -111,15 +117,19 @@ for name in "${FORBIDDEN_NAMES[@]}"; do
   fi
 done
 
-# `ordinox-ai` may not appear as a namespace value in k8s/iterlaw manifests.
-if [[ -d "${ORDINOX_FORBIDDEN_PATH}" ]]; then
-  if grep -RIn --binary-files=without-match -F "ordinox-ai" "${ORDINOX_FORBIDDEN_PATH}" \
+# `ordinox-ai` is forbidden only as an IterLaw *namespace value*. It IS
+# permitted as part of a cross-namespace DNS reference such as
+#   http://ollama.ordinox-ai.svc.cluster.local:11434
+# (used by synthesis-worker to reach the existing internal Ollama).
+for p in "${ORDINOX_FORBIDDEN_PATHS[@]}"; do
+  [[ -d "${p}" ]] || continue
+  if grep -RIn --binary-files=without-match -E '^\s*namespace:\s*ordinox-ai\b' "${p}" \
        > /tmp/iterlaw-ordinox.txt 2>/dev/null; then
-    echo "FAIL 'ordinox-ai' must not appear in k8s/iterlaw manifests:"
+    echo "FAIL 'namespace: ordinox-ai' must not appear in ${p}:"
     sed 's/^/  /' /tmp/iterlaw-ordinox.txt
     FAIL=1
   fi
-fi
+done
 
 # ---------------------------------------------------------------------------
 # 2. Banned env vars in legal-orchestrator manifests.
@@ -136,25 +146,74 @@ if [[ -d "${ROOT}/k8s/iterlaw/legal-orchestrator" ]]; then
 fi
 
 # ---------------------------------------------------------------------------
-# 3. Plaintext Secret manifests are forbidden under k8s/iterlaw.
+# 3. Plaintext Secret manifests are forbidden under either k8s/iterlaw tree.
 # ---------------------------------------------------------------------------
-if [[ -d "${ROOT}/k8s/iterlaw" ]]; then
+K8S_DIRS=(
+  "${ROOT}/k8s/iterlaw"
+  "${ROOT}/k8s/iterlaw-data"
+)
+for dir in "${K8S_DIRS[@]}"; do
+  [[ -d "${dir}" ]] || continue
   while IFS= read -r f; do
     if grep -q "^kind: Secret\$" "${f}"; then
       echo "FAIL plaintext Secret manifest: ${f}"
       FAIL=1
     fi
-  done < <(find "${ROOT}/k8s/iterlaw" -type f -name '*.yaml' -print)
+  done < <(find "${dir}" -type f -name '*.yaml' -print)
+done
 
-  # 4. Every k8s/iterlaw manifest (except Namespace) must target iterlaw-ai.
+# ---------------------------------------------------------------------------
+# 4. Every manifest (except Namespaces) must target its namespace correctly.
+#    k8s/iterlaw/**       -> namespace: iterlaw-ai
+#    k8s/iterlaw-data/**  -> namespace: iterlaw-data
+# ---------------------------------------------------------------------------
+check_namespace_for_dir() {
+  local dir="$1" expected_ns="$2"
+  [[ -d "${dir}" ]] || return 0
   while IFS= read -r f; do
     if [[ "$(basename "${f}")" == "namespace.yaml" ]]; then continue; fi
-    if ! grep -q "namespace: iterlaw-ai" "${f}"; then
-      echo "FAIL manifest missing namespace iterlaw-ai: ${f}"
+    if ! grep -q "namespace: ${expected_ns}" "${f}"; then
+      echo "FAIL manifest missing namespace ${expected_ns}: ${f}"
+      FAIL=1
+    fi
+  done < <(find "${dir}" -type f -name '*.yaml' -print)
+}
+check_namespace_for_dir "${ROOT}/k8s/iterlaw"      iterlaw-ai
+check_namespace_for_dir "${ROOT}/k8s/iterlaw-data" iterlaw-data
+
+# Cross-namespace contamination: nothing under k8s/iterlaw may declare
+# `namespace: iterlaw-data`, and vice versa.
+if [[ -d "${ROOT}/k8s/iterlaw" ]]; then
+  while IFS= read -r f; do
+    if grep -q "namespace: iterlaw-data" "${f}"; then
+      echo "FAIL iterlaw-ai manifest declares iterlaw-data namespace: ${f}"
       FAIL=1
     fi
   done < <(find "${ROOT}/k8s/iterlaw" -type f -name '*.yaml' -print)
 fi
+if [[ -d "${ROOT}/k8s/iterlaw-data" ]]; then
+  while IFS= read -r f; do
+    if grep -q "namespace: iterlaw-ai" "${f}"; then
+      echo "FAIL iterlaw-data manifest declares iterlaw-ai namespace: ${f}"
+      FAIL=1
+    fi
+  done < <(find "${ROOT}/k8s/iterlaw-data" -type f -name '*.yaml' -print)
+fi
+
+# Web and synthesis-worker MUST NOT carry any DATABASE_URL / DB env reference.
+DB_BANNED_PATHS=(
+  "${ROOT}/k8s/iterlaw/web"
+  "${ROOT}/k8s/iterlaw/synthesis-worker"
+)
+for p in "${DB_BANNED_PATHS[@]}"; do
+  [[ -d "${p}" ]] || continue
+  if grep -RIn --binary-files=without-match -E "DATABASE_URL|iterlaw-postgres|iterlaw-db-secret" "${p}" \
+       > /tmp/iterlaw-db-leak.txt 2>/dev/null; then
+    echo "FAIL database reference found outside legal-orchestrator: ${p}"
+    sed 's/^/  /' /tmp/iterlaw-db-leak.txt
+    FAIL=1
+  fi
+done
 
 # ---------------------------------------------------------------------------
 # 5. Policy files — diagnostic only. We surface a note but never fail here.

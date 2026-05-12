@@ -1,18 +1,25 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
-export async function getSession() {
-  const supabase = createServerComponentClient({ cookies })
-  try {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-    return session
-  } catch (error) {
-    console.error('Error getting session:', error)
-    return null
-  }
+// Local-first auth stub.
+//
+// IterLaw is self-hosted; the default build path has no public-cloud
+// auth provider wired. Once a self-hosted auth path (Keycloak /
+// Authentik / Zitadel / local Postgres-backed) lands, this file is
+// the replacement target.
+//
+// For now the helpers below return `null`. Server-side callers should
+// treat that as "not signed in" and use the anonymous case-session
+// path in `apps/web/lib/anon-session/anon-session-store` instead.
+//
+// IMPORTANT: no caller of these helpers should reach across the
+// browser/server boundary with a DB credential. Server-side API
+// routes are the only place that opens a DB connection.
+
+export type IterLawSession = null;
+export type IterLawUser = null;
+
+export async function getSession(): Promise<IterLawSession> {
+  return null;
 }
-export async function getUser() {
-  const session = await getSession()
-  return session?.user ?? null
+
+export async function getUser(): Promise<IterLawUser> {
+  return null;
 }

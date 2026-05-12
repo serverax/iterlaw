@@ -1,29 +1,15 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
-import { NextRequest, NextResponse } from 'next/server'
-export async function middleware(request: NextRequest) {
-  const response = NextResponse.next()
-  const supabase = createMiddlewareClient({ req: request, res: response })
-  await supabase.auth.getSession()
-  const protectedRoutes = ['/dashboard', '/questions', '/cases']
-  const pathname = request.nextUrl.pathname
-  if (protectedRoutes.some((route) => pathname.startsWith(route))) {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-    if (!session) {
-      return NextResponse.redirect(new URL('/auth/login', request.url))
-    }
-  }
-  if (pathname === '/auth/login') {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-    if (session) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
-    }
-  }
-  return response
+import { NextRequest, NextResponse } from 'next/server';
+
+// Local-first build: there is no public-cloud session to validate
+// here. Until a self-hosted auth path lands, the middleware is a
+// pass-through. Route-level access control lives in the API route
+// handlers themselves (e.g. /api/case enforces the iterlaw_anon_sid
+// cookie at runtime).
+
+export async function middleware(_request: NextRequest) {
+  return NextResponse.next();
 }
+
 export const config = {
   matcher: ['/dashboard/:path*', '/questions/:path*', '/cases/:path*', '/auth/login'],
-}
+};

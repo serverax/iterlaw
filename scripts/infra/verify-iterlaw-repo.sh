@@ -91,13 +91,15 @@ FAIL=0
 # ---------------------------------------------------------------------------
 collect_active_files() {
   # Emit one absolute path per line for every ACTIVE file that exists.
+  # Files under k8s/iterlaw-disabled-* are intentionally parked and
+  # are excluded from the active scan.
   for target in "${ACTIVE_GLOBS[@]}"; do
     if [[ -d "${target}" ]]; then
       find "${target}" -type f \( -name '*.yaml' -o -name '*.yml' -o -name '*.md' -o -name '*.ts' -o -name '*.js' \) -print
     elif [[ -f "${target}" ]]; then
       printf '%s\n' "${target}"
     fi
-  done
+  done | grep -v '/iterlaw-disabled-' || true
 }
 
 # ---------------------------------------------------------------------------

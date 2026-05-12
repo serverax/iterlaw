@@ -1,5 +1,27 @@
 -- =====================================================================
--- 100_iterlaw_core_rag_foundation.sql
+-- 100_iterlaw_core_rag_foundation.sql  ⚠ DRAFT / DO NOT APPLY ⚠
+-- =====================================================================
+--
+-- STATUS: DRAFT — superseded by 101_reconcile_legal_rag_schema.sql.
+--
+-- See docs/iterlaw/RAG_SCHEMA_CANONICAL_DECISION.md.
+--
+-- This file was committed in 0ad96ab as a draft "single-file RAG
+-- foundation" per the Master Order. The canonical schema is the
+-- 001-chain that already shipped (commits f1cb6b9, 54a4b1e, ...).
+-- The four genuinely-new tables this file introduces are now
+-- created by the additive `101_reconcile_legal_rag_schema.sql`
+-- migration. The other tables defined here (legal_sources,
+-- legal_documents, legal_chunks, legal_cases) overlap with the
+-- 001-chain but with INCOMPATIBLE column shapes.
+--
+-- DO NOT apply this migration on top of the 001-chain. Mixing the
+-- two schemas produces a partial state the application's SQL
+-- adapters cannot query. The file is retained only for column-
+-- inventory reference; the verifier rejects any attempt to wire
+-- it into a real apply pipeline.
+-- =====================================================================
+-- (original header retained below)
 -- =====================================================================
 -- Master-Order canonical RAG foundation.
 --

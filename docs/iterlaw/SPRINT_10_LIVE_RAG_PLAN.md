@@ -1,7 +1,28 @@
-# Sprint 10 — Live RAG retrieval + UK employment law corpus ingestion (plan only)
+# Sprint 10 — Live RAG retrieval + UK employment law corpus ingestion
 
-This document is **plan only**. No code is shipped here. The
-implementation lands in Sprint 10 itself.
+**Status update (2026-05-12 — post-audit):**
+
+- WP1 (DB retrieval alignment) — **DONE.** Audit confirmed
+  `apps/legal-orchestrator/src/rag/postgresRetrieval.ts` already
+  targets the canonical 001-chain schema (`public.legal_chunks` JOIN
+  `public.legal_domains`), with `legal_pack`, jurisdiction,
+  source_types, `is_active`, and temporal filters all applied. No
+  `uk_emp_rag.*` reference appears in the active retrieval SQL.
+- WP4 (RAG query flow) — **DONE.** `handleLegalRequest.ts` derives
+  `applicable_on` from facts (dismissal_date first, incident_date
+  fallback), passes it to retrieval, runs the citation gate, and
+  returns `insufficient_sources` / `citation_failed` when chunks are
+  absent or uncited. No external LLM call. Wiring locked in by
+  `src/tests/sprint10LiveRagWiring.test.ts` (13 new tests).
+- WP5 (Local LLM gateway preparation) — **NOT STARTED** (Sprint 11).
+- WP2 (source seed list) + WP3 (corpus ingestion pipeline) —
+  **OPERATOR-SIDE PENDING.** Code path exists; the live DB needs the
+  migrations applied and at least one source seeded before retrieval
+  returns rows.
+
+This document originally read "plan only"; sections below remain the
+authoritative plan for the WP2 / WP3 / WP5 work that has not yet
+landed.
 
 ## Goal
 

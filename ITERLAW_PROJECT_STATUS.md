@@ -73,12 +73,25 @@ Known remaining items:
 Estimated remaining: 6 sprints.
 
 ### Sprint 10: Live RAG DB wiring
-Goal:
-- Wire legal-orchestrator retrieval to the live Postgres RAG DB.
-- Apply migrations safely.
-- Verify pgvector.
-- Run smoke tests against non-production first.
+Status: PARTIAL — code-side DONE, operator-side PENDING.
+
+Code-side completed (audit + lock-in this update):
+- `apps/legal-orchestrator/src/rag/postgresRetrieval.ts` queries the canonical 001-chain schema (`public.legal_chunks` JOIN `public.legal_domains`). No `uk_emp_rag.*` reference in the active retrieval SQL.
+- Filters applied: `legal_pack` (domain_code), jurisdiction, source_types, `is_active = true`, temporal `effective_date <= applicable_on` AND `applicable_to IS NULL OR applicable_to >= applicable_on`.
+- Citation evidence returned: chunk_id, document_id, title, url, citation_label, section_reference, paragraph_reference, authority_level, source_type, effective_date, applicable_to.
+- `applicable_on` derived from `dismissal_date` first; `incident_date` is the documented fallback.
+- Mock-safe paths: `db_url_missing`, `pg_driver_unavailable`, `query_failed`. Errors sanitised — connection string never appears in thrown messages.
+- Zero-citation blocking preserved: empty chunks → `insufficient_sources`; chunks without citations → `citation_failed`. No external LLM call.
+- Sprint 10 wiring contract locked in by `apps/legal-orchestrator/src/tests/sprint10LiveRagWiring.test.ts` (13 tests). Total: 494 tests / 45 files PASS.
+
+Operator-side pending (Sprint 10 → DONE):
+- Apply the canonical migration chain to a live dev/staging DB: 000, 001–010, 101, 102.
+- Verify `pgvector` extension is present (000_pgvector_prerequisite).
+- Seed at least one UK employment source row in `public.legal_sources` (or via 103 if added in a follow-up).
+- Run a smoke test against the live dev DB only — never production.
 - Keep zero-citation blocking active.
+
+No deploy, no production `psql`, no `kubectl apply`, no real secrets created.
 
 ### Sprint 11: Official source ingestion
 Goal:

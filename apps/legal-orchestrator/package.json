@@ -11,7 +11,7 @@
     "start:3012": "cross-env PORT=3012 node dist/server.js",
     "dev": "tsx src/server.ts",
     "test": "vitest run",
-    "validate:migrations": "vitest run src/tests/migrationSprint6Schema.test.ts src/tests/migrationSprint9Schema.test.ts src/tests/migrationSprint10SourceRegistry.test.ts src/tests/postgresRetrievalTemporalSql.test.ts src/tests/migrationSprint11RagSupersededBy.test.ts src/tests/migrationSprint11QaCacheSchema.test.ts src/tests/migrationSprint11RateCalculationHistory.test.ts",
+    "validate:migrations": "vitest run src/tests/migrationSprint6Schema.test.ts src/tests/migrationSprint9Schema.test.ts src/tests/migrationSprint10SourceRegistry.test.ts src/tests/postgresRetrievalTemporalSql.test.ts src/tests/migrationSprint11RagSupersededBy.test.ts src/tests/migrationSprint11QaCacheSchema.test.ts src/tests/migrationSprint11RateCalculationHistory.test.ts src/tests/migration010LegalDocumentsStatutorySeed.test.ts",
     "ingest:dry-run": "tsx scripts/ingest-cli.ts --limit 50",
     "ingest:source": "tsx scripts/ingest-cli.ts"
   },

@@ -31,6 +31,12 @@ describe("Sprint 8 — /ready envelope", () => {
         database: "not_configured",
       },
       llm: { external_llm_enabled: false },
+      synthesis: {
+        configured: false,
+        reachable: false,
+        queue: null,
+        last_seen_at: null,
+      },
       legal_safety: {
         citation_required: true,
         zero_citation_answer_blocked: true,

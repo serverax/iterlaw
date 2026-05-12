@@ -8,6 +8,11 @@ import { handleLegalRequest } from "./pipeline/handleLegalRequest.js";
 import type { LegalRequest } from "./types/legal.js";
 import { createRagService } from "./rag/rag.service.js";
 import type { RagService } from "./rag/rag.service.js";
+import {
+  UnconfiguredSynthesisHealth,
+  sanitiseSnapshot,
+} from "./synthesis/synthesisHealth.js";
+import type { SynthesisHealthPort } from "./synthesis/synthesisHealth.js";
 
 type RagReadySlice = {
   configured: boolean;
@@ -50,11 +55,19 @@ const internalErrorHandler: ErrorRequestHandler = (_err, _req: Request, res: Res
 export interface CreateAppOptions {
   /** Override the retrieval service (for tests). Defaults to createRagService(). */
   ragService?: RagService;
+  /**
+   * Override the synthesis-worker health probe (for tests, or once
+   * §10.3.c wires a real port). Defaults to UnconfiguredSynthesisHealth
+   * which honestly reports configured=false / reachable=false.
+   */
+  synthesisHealth?: SynthesisHealthPort;
 }
 
 export function createApp(opts: CreateAppOptions = {}) {
   const app = express();
   const retrieval: RagService = opts.ragService ?? createRagService();
+  const synthesisHealth: SynthesisHealthPort =
+    opts.synthesisHealth ?? new UnconfiguredSynthesisHealth();
 
   app.use(express.json({ limit: "1mb" }));
 
@@ -64,6 +77,7 @@ export function createApp(opts: CreateAppOptions = {}) {
 
   app.get("/ready", (_req: Request, res: Response) => {
     const rag = ragReadyFromDescribe(retrieval.describe());
+    const synthesis = sanitiseSnapshot(synthesisHealth.describe());
     res.status(200).json({
       status: "ready",
       service: "legal-orchestrator",
@@ -71,6 +85,7 @@ export function createApp(opts: CreateAppOptions = {}) {
       llm: {
         external_llm_enabled: false,
       },
+      synthesis,
       legal_safety: {
         citation_required: true,
         zero_citation_answer_blocked: true,

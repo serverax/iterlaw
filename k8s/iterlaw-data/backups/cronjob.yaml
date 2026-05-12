@@ -39,6 +39,12 @@ spec:
             app.kubernetes.io/part-of: iterlaw
         spec:
           restartPolicy: Never
+          # Reuse the iterlaw-postgres SA. Both the StatefulSet pod and
+          # the backup pod are bound to the same no-api Role in
+          # k8s/iterlaw-data/rbac.yaml, so neither has any Kubernetes
+          # API permissions. Defense-in-depth keeps the default SA
+          # in iterlaw-data unreferenced by any IterLaw workload.
+          serviceAccountName: iterlaw-postgres
           automountServiceAccountToken: false
           securityContext:
             runAsNonRoot: true

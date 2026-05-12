@@ -1,4 +1,11 @@
 'use client'
+
+// Skip static prerender. The dashboard reads the signed-in user from
+// the Supabase client at runtime; there is nothing meaningful to
+// prerender, and prerender crashes when the public Supabase env is
+// absent in CI / fresh checkouts.
+export const dynamic = 'force-dynamic'
+
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'

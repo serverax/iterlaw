@@ -1,4 +1,11 @@
 'use client'
+
+// Skip static prerender. createClientComponentClient evaluates the
+// public Supabase env at module load; in CI / fresh checkouts those
+// vars are not set, and Next.js's prerender step crashes. The page
+// is a client component anyway, so there is no SEO benefit lost.
+export const dynamic = 'force-dynamic'
+
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'

@@ -47,5 +47,7 @@ Owner approved `TEXT NOT NULL` columns with `CHECK (… IN (...))` constraints �
 ## Deployment gate
 
 - **Code-side DONE.** Migrations 104 / 105 / 106 committed in `c646879`. Tests + verifier extended.
-- **Staging DB verification PENDING.** Must complete before production unblocks.
-- **Production deployment BLOCKED** until staging verification passes (Appendix B + C of `reports/ITERLAW_QA_REPORT_SPRINT_10_DB_IMPLEMENTATION.md`).
+- **Local Docker DB migration-chain verification PASS (2026-05-12).** Full safe forward chain (`000 → 010, 101, 102, 104, 105, 106`) applied cleanly against `pgvector/pgvector:pg16`. All 9 user-data tables exist, indexes + RLS policies materialise as designed, `relrowsecurity = t` on user-data tables, corpus tables remain RLS-OFF. Evidence: `reports/ITERLAW_SPRINT_10_LOCAL_DOCKER_DB_VERIFY.md`. **This is NOT real staging verification.**
+- **Real staging DB verification PENDING.** Must complete before production unblocks. Requires a confirmed non-production staging Postgres + the full operator checklist §0–§13.
+- **AKS DB verification blocked** until a non-production kubeconfig context exists. The currently observed AKS context (`aks-iterlaw-we-prod`) is production-only; the staging verification cannot run against it.
+- **Production deployment BLOCKED** until real staging verification passes (Appendix B + C of `reports/ITERLAW_QA_REPORT_SPRINT_10_DB_IMPLEMENTATION.md`).

@@ -69,6 +69,10 @@ Legacy `iterlaw-data` may remain. **Do not** create a bare `iterlaw` or `iterlaw
 ### Decisions / AI governance
 
 - [`10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md) — offline-first ADR.
+- [`11-ai-governance/AI_GOVERNANCE_INDEX.md`](11-ai-governance/AI_GOVERNANCE_INDEX.md) — AI governance index (read first).
+- [`11-ai-governance/AIA_OPERATING_MODEL.md`](11-ai-governance/AIA_OPERATING_MODEL.md) — how named AIAs operate.
+- [`11-ai-governance/DOCUMENTATION_TRUTH_PROTOCOL.md`](11-ai-governance/DOCUMENTATION_TRUTH_PROTOCOL.md) — status vocabulary + evidence requirements.
+- [`11-ai-governance/NAMING_CONSISTENCY_POLICY.md`](11-ai-governance/NAMING_CONSISTENCY_POLICY.md) — IterLaw / OrdinoxAI / no-RightsNow + canonical namespaces.
 - [`11-ai-governance/SUPERIOR_AI_ARCHITECT_AIA_SPECIFICATION.md`](11-ai-governance/SUPERIOR_AI_ARCHITECT_AIA_SPECIFICATION.md) — Superior AI Architect AIA governance specification.
 
 ### Deep / historical references (not loaded by default)

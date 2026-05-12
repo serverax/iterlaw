@@ -333,6 +333,225 @@ No push performed. Branch remains local at ahead 17 + the new commit.
 
 ---
 
+## Appendix A — Executive status
+
+- **apps/legal-orchestrator:** **PASS** (typecheck, build, vitest 615 / 51 — includes 95 new + the operator-added `migrationChainSprint10Convention.test.ts`).
+- **Whole repo:** **PARTIAL** (root `npm test` mixes vitest under jest; pre-existing, unrelated to this sprint; operator-tracked).
+- **Staging deployment:** **READY** — see §9 + Appendix B for verification queries.
+- **Production deployment:** **BLOCKED** — operator authorisation + first end-to-end staging verification required.
+
+## Appendix B — Post-apply SQL verification queries
+
+Run these against the **dev / staging** database **after** `104` / `105` / `106` are applied. Expected: every row returned.
+
+### B.1 Table existence
+
+```sql
+SELECT tablename
+FROM pg_tables
+WHERE tablename IN (
+  'users',
+  'workspaces',
+  'workspace_members',
+  'legal_case_records',
+  'legal_case_facts',
+  'legal_case_documents',
+  'legal_case_drafts',
+  'legal_case_timeline',
+  'legal_case_sources'
+)
+ORDER BY tablename;
+```
+
+Expected: 9 rows.
+
+### B.2 Indexes per table
+
+```sql
+SELECT tablename, indexname
+FROM pg_indexes
+WHERE tablename IN (
+  'users',
+  'workspaces',
+  'workspace_members',
+  'legal_case_records',
+  'legal_case_facts',
+  'legal_case_documents',
+  'legal_case_drafts',
+  'legal_case_timeline',
+  'legal_case_sources'
+)
+ORDER BY tablename, indexname;
+```
+
+Expected: at least the primary-key index plus every `idx_*` named in 104 / 105 (see §3 for the list).
+
+### B.3 RLS policies
+
+```sql
+SELECT schemaname, tablename, policyname
+FROM pg_policies
+WHERE tablename IN (
+  'users',
+  'workspaces',
+  'workspace_members',
+  'legal_case_records',
+  'legal_case_facts',
+  'legal_case_documents',
+  'legal_case_drafts',
+  'legal_case_timeline',
+  'legal_case_sources'
+)
+ORDER BY tablename, policyname;
+```
+
+Expected: ~17 rows covering the policies listed in §3.
+
+### B.4 RLS is ON
+
+```sql
+SELECT relname, relrowsecurity, relforcerowsecurity
+FROM pg_class
+WHERE relname IN (
+  'users','workspaces','workspace_members','legal_case_records',
+  'legal_case_facts','legal_case_documents','legal_case_drafts',
+  'legal_case_timeline','legal_case_sources'
+);
+```
+
+Expected: `relrowsecurity = t` for every row.
+
+### B.5 Corpus tables remain RLS-OFF
+
+```sql
+SELECT relname, relrowsecurity
+FROM pg_class
+WHERE relname IN (
+  'legal_sources','legal_documents','legal_chunks','legal_cases',
+  'legal_citations','legal_case_law','tribunal_decisions',
+  'rag_runs','rag_query_audit','answer_audit_log',
+  'verified_answers_cache','source_update_log','answer_verification_log'
+);
+```
+
+Expected: `relrowsecurity = f` for every row.
+
+## Appendix C — RLS staging test plan
+
+Each test runs inside a transaction with `SET LOCAL` so it leaves no side effects. Substitute real UUIDs created by your seed.
+
+### C.1 User-A cannot see User-B's cases
+
+```sql
+-- Seed (one transaction, before testing):
+INSERT INTO public.users (id, email) VALUES
+  ('aaaa1111-...', 'user-a@test.invalid'),
+  ('bbbb2222-...', 'user-b@test.invalid');
+INSERT INTO public.workspaces (id, name, owner_user_id) VALUES
+  ('aaaa1111-w...', 'A WS', 'aaaa1111-...'),
+  ('bbbb2222-w...', 'B WS', 'bbbb2222-...');
+INSERT INTO public.workspace_members (workspace_id, user_id, role) VALUES
+  ('aaaa1111-w...', 'aaaa1111-...', 'owner'),
+  ('bbbb2222-w...', 'bbbb2222-...', 'owner');
+INSERT INTO public.legal_case_records (workspace_id, owner_user_id, title, primary_issue) VALUES
+  ('aaaa1111-w...', 'aaaa1111-...', 'A case', 'unfair_dismissal'),
+  ('bbbb2222-w...', 'bbbb2222-...', 'B case', 'redundancy');
+
+-- Test as User A:
+BEGIN;
+SET LOCAL app.user_id = 'aaaa1111-...';
+SET LOCAL app.user_role = 'user';
+SELECT count(*) FROM public.legal_case_records;  -- EXPECT 1 (A only)
+SELECT title FROM public.legal_case_records;     -- EXPECT 'A case'
+ROLLBACK;
+
+-- Test as User B:
+BEGIN;
+SET LOCAL app.user_id = 'bbbb2222-...';
+SET LOCAL app.user_role = 'user';
+SELECT count(*) FROM public.legal_case_records;  -- EXPECT 1 (B only)
+SELECT title FROM public.legal_case_records;     -- EXPECT 'B case'
+ROLLBACK;
+```
+
+### C.2 Missing session variables return zero rows (fail-closed)
+
+```sql
+BEGIN;
+-- intentionally no SET LOCAL app.user_id
+SELECT count(*) FROM public.legal_case_records;  -- EXPECT 0
+SELECT count(*) FROM public.users;               -- EXPECT 0
+ROLLBACK;
+```
+
+### C.3 Solicitor sees only assigned cases
+
+```sql
+-- Add a solicitor user to Workspace A, plus assign one case.
+INSERT INTO public.users (id, email) VALUES ('cccc3333-...', 'solicitor@test.invalid');
+INSERT INTO public.workspace_members (workspace_id, user_id, role)
+  VALUES ('aaaa1111-w...', 'cccc3333-...', 'solicitor');
+UPDATE public.legal_case_records
+  SET assigned_user_id = 'cccc3333-...'
+  WHERE title = 'A case';
+
+BEGIN;
+SET LOCAL app.user_id = 'cccc3333-...';
+SET LOCAL app.user_role = 'user';
+SELECT count(*) FROM public.legal_case_records;  -- EXPECT 1 (assigned)
+-- Solicitor cannot write a non-assigned case:
+SAVEPOINT s;
+UPDATE public.legal_case_records SET status = 'closed' WHERE title = 'B case';
+-- EXPECT: zero rows updated (RLS hides the row from UPDATE).
+ROLLBACK TO SAVEPOINT s;
+ROLLBACK;
+```
+
+### C.4 Admin override works only when `app.user_role = 'admin'`
+
+```sql
+BEGIN;
+SET LOCAL app.user_id = 'aaaa1111-...';
+SET LOCAL app.user_role = 'admin';
+SELECT count(*) FROM public.legal_case_records;  -- EXPECT 2 (sees both)
+ROLLBACK;
+
+BEGIN;
+SET LOCAL app.user_id = 'aaaa1111-...';
+SET LOCAL app.user_role = 'user';
+SELECT count(*) FROM public.legal_case_records;  -- EXPECT 1 (A only)
+ROLLBACK;
+```
+
+### C.5 Timeline + sources inherit visibility from the parent case
+
+```sql
+INSERT INTO public.legal_case_timeline (workspace_id, case_id, event_type, title)
+SELECT workspace_id, id, 'user_event', 'pilot'
+FROM public.legal_case_records WHERE title = 'A case';
+
+BEGIN;
+SET LOCAL app.user_id = 'bbbb2222-...';
+SET LOCAL app.user_role = 'user';
+SELECT count(*) FROM public.legal_case_timeline;  -- EXPECT 0
+ROLLBACK;
+
+BEGIN;
+SET LOCAL app.user_id = 'aaaa1111-...';
+SET LOCAL app.user_role = 'user';
+SELECT count(*) FROM public.legal_case_timeline;  -- EXPECT 1
+ROLLBACK;
+```
+
+## Appendix D — Final truth statement
+
+> No push performed.
+> No deployment performed.
+> No kubectl mutating command performed.
+> No production DB touched.
+> No external LLM calls performed.
+> No secret values printed.
+
 ## Final status: **PASS**
 
-The user-workspace + case-workspace + RLS block is committed at 104/105/106. 612 tests pass. All four repo verifiers PASS. The chain is safe to apply on a confirmed dev / staging DB by following §9 — the application of the live migration is an operator action, not an agent action.
+The user-workspace + case-workspace + RLS block is committed at 104/105/106. 615 tests pass (50 file gains + 3 from the operator's `migrationChainSprint10Convention.test.ts`). All four repo verifiers PASS. The chain is safe to apply on a confirmed dev / staging DB by following §9 + Appendix B/C — the live migration is an operator action, not an agent action.

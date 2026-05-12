@@ -8,10 +8,23 @@ Streams only. Even then, the worker may run with no model at all.
 
 ## State table
 
-| `MODEL_MODE`     | Effect                                                                      |
-| ---------------- | --------------------------------------------------------------------------- |
-| `disabled`       | Every synthesis request returns `synthesis_unavailable`. No model contact.  |
-| `internal`       | The worker POSTs to `INTERNAL_MODEL_ENDPOINT` (in-cluster only).            |
+| `MODEL_MODE`     | Effect                                                                                                                |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `disabled`       | Every synthesis request returns `synthesis_unavailable`. No model contact.                                            |
+| `internal`       | The worker POSTs to `INTERNAL_MODEL_ENDPOINT` (in-cluster only). Short-term: `http://ollama.ordinox-ai.svc.cluster.local:11434`. |
+
+## Model routing (when `MODEL_MODE=internal`)
+
+| Task                  | Model                              | Env var                  |
+| --------------------- | ---------------------------------- | ------------------------ |
+| Legal answer synthesis | `uk-employment-qwen:latest`        | `INTERNAL_MODEL_DEFAULT` |
+| Drafting letters/docs  | `uk-employment-drafting:latest`    | `INTERNAL_MODEL_DRAFTING`|
+| Document extraction    | `uk-employment-document:latest`    | `INTERNAL_MODEL_DOCUMENT`|
+
+`synthesis-worker` is the ONLY IterLaw workload permitted to reach
+Ollama. Its NetworkPolicy (`k8s/iterlaw/synthesis-worker/networkpolicy.yaml`)
+allows egress to `ordinox-ai/ollama:11434`; the
+`legal-orchestrator` NetworkPolicy does not.
 
 `EXTERNAL_LLM_ENABLED` is `false` in both modes. Setting it to `true` is a
 contract breach and CI rejects the change.

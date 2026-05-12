@@ -33,7 +33,11 @@ For deeper specifics, follow the cross-references at the foot of each section.
                                             +-----------------+
 ```
 
-All four workloads live in namespace `iterlaw-ai`.
+Application workloads live in namespace `iterlaw-ai`. PostgreSQL lives
+in the dedicated namespace `iterlaw-data` (StatefulSet + nightly backup
+CronJob). For synthesis, the worker temporarily calls the pre-existing
+Ollama service in the unrelated `ordinox-ai` namespace; that is the only
+permitted cross-namespace LLM hop.
 
 ## Required reading before any deploy
 
@@ -43,6 +47,7 @@ All four workloads live in namespace `iterlaw-ai`.
 4. `infra/iterlaw/deployment-contract.md`
 5. `infra/iterlaw/wasm-contract.md`
 6. `infra/iterlaw/synthesis-llm-contract.md`
+7. `infra/iterlaw/database-contract.md`
 
 ## Day-1 deploy
 

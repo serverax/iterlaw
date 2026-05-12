@@ -36,7 +36,18 @@ spec:
           port: 53
         - protocol: TCP
           port: 53
-    # When MODEL_MODE=internal, an additional NetworkPolicy must be applied
-    # by the operator to permit egress to the in-cluster internal model
-    # endpoint. This file deliberately does not whitelist any model
-    # destination.
+    # When MODEL_MODE=internal, the worker reaches the existing internal
+    # Ollama service in ordinox-ai (ClusterIP 11434). This is the ONLY
+    # cross-namespace egress permitted from synthesis-worker. The
+    # legal-orchestrator NetworkPolicy does NOT permit this rule — the
+    # boundary is enforced here, in the worker only.
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ordinox-ai
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ollama
+      ports:
+        - protocol: TCP
+          port: 11434

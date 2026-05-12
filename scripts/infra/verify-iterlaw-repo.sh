@@ -51,8 +51,11 @@ ORDINOX_FORBIDDEN_PATHS=(
 # Banned env-var names in legal-orchestrator manifests.
 BANNED_ORCHESTRATOR_VARS=(
   "OLLAMA_URL"
+  "INTERNAL_MODEL_ENDPOINT"
   "CLAUDE_API_KEY"
   "OPENAI_API_KEY"
+  "ANTHROPIC_API_KEY"
+  "MODEL_USED"
 )
 
 # ---------------------------------------------------------------------------
@@ -66,6 +69,7 @@ ACTIVE_GLOBS=(
   "${ROOT}/infra/iterlaw/deployment-contract.md"
   "${ROOT}/infra/iterlaw/wasm-contract.md"
   "${ROOT}/infra/iterlaw/synthesis-llm-contract.md"
+  "${ROOT}/infra/iterlaw/database-contract.md"
 )
 
 # POLICY — relaxed. Forbidden tokens are expected here as references.
@@ -214,6 +218,55 @@ for p in "${DB_BANNED_PATHS[@]}"; do
     FAIL=1
   fi
 done
+
+# ---------------------------------------------------------------------------
+# 5. PostgreSQL must live only in iterlaw-data. Any `image: postgres:`
+#    reference under k8s/iterlaw/ is a contract breach.
+# ---------------------------------------------------------------------------
+if [[ -d "${ROOT}/k8s/iterlaw" ]]; then
+  if grep -RIn --binary-files=without-match -E '^\s*image:\s*postgres:' "${ROOT}/k8s/iterlaw" \
+       > /tmp/iterlaw-pg-misplaced.txt 2>/dev/null; then
+    echo "FAIL PostgreSQL image found outside iterlaw-data:"
+    sed 's/^/  /' /tmp/iterlaw-pg-misplaced.txt
+    FAIL=1
+  fi
+fi
+
+# ---------------------------------------------------------------------------
+# 6. Positive checks on the synthesis-worker ConfigMap.
+#    The synthesis backend is short-term routed to the existing Ollama
+#    service in ordinox-ai with three named UK-employment models.
+# ---------------------------------------------------------------------------
+SW_CM="${ROOT}/k8s/iterlaw/synthesis-worker/configmap.yaml"
+if [[ -f "${SW_CM}" ]]; then
+  REQUIRED_SW_KEYS=(
+    "MODEL_MODE: internal"
+    "INTERNAL_MODEL_ENDPOINT: http://ollama.ordinox-ai.svc.cluster.local:11434"
+    "INTERNAL_MODEL_DEFAULT: uk-employment-qwen:latest"
+    "INTERNAL_MODEL_DRAFTING: uk-employment-drafting:latest"
+    "INTERNAL_MODEL_DOCUMENT: uk-employment-document:latest"
+    "EXTERNAL_LLM_ENABLED: \"false\""
+  )
+  for k in "${REQUIRED_SW_KEYS[@]}"; do
+    if ! grep -qF "${k}" "${SW_CM}"; then
+      echo "FAIL synthesis-worker ConfigMap missing required entry: ${k}"
+      FAIL=1
+    fi
+  done
+fi
+
+# ---------------------------------------------------------------------------
+# 7. legal-orchestrator source must not import an LLM client.
+# ---------------------------------------------------------------------------
+LO_SRC="${ROOT}/apps/legal-orchestrator/src"
+if [[ -d "${LO_SRC}" ]]; then
+  if grep -RIn --binary-files=without-match -E "from ['\"](openai|@anthropic-ai/sdk|ollama|node-fetch|undici|axios)['\"]" "${LO_SRC}" \
+       > /tmp/iterlaw-llm-import.txt 2>/dev/null; then
+    echo "FAIL LLM client import in legal-orchestrator source:"
+    sed 's/^/  /' /tmp/iterlaw-llm-import.txt
+    FAIL=1
+  fi
+fi
 
 # ---------------------------------------------------------------------------
 # 5. Policy files — diagnostic only. We surface a note but never fail here.

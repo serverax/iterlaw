@@ -50,7 +50,10 @@ show `backend: "fallback_ts"` for those calls.
 
 ## Runtime guarantees
 
-- Wall-clock timeout (default 1000 ms) is enforced per call.
+- Wall-clock timeout per call: `WASM_RULE_TIMEOUT_MS` (policy `50` ms).
+- Max input size: `WASM_RULE_MAX_INPUT_BYTES` (policy `32768`).
+- Fallback to the TypeScript implementation when the .wasm is missing:
+  `WASM_RULE_FALLBACK_ENABLED` (policy `true`).
 - Linear memory is capped at 64 pages (4 MiB) by default.
 - Path resolution rejects `..` and absolute paths before any FS access.
 - Module IDs are matched against a closed allow-list.

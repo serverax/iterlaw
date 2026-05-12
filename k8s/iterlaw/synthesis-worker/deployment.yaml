@@ -38,11 +38,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            - name: SYNTHESIS_REDIS_URL_FROM_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: iterlaw-synthesis-redis
-                  key: SYNTHESIS_REDIS_URL
+            # Optional SealedSecret override. When set, the worker should
+            # prefer this value over the ConfigMap's INTERNAL_MODEL_ENDPOINT.
             - name: INTERNAL_MODEL_ENDPOINT_FROM_SECRET
               valueFrom:
                 secretKeyRef:

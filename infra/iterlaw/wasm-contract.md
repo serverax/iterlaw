@@ -30,13 +30,16 @@ Any other ID is rejected at the runner boundary.
 
 ## Runtime constraints
 
-| Constraint           | Setting                                       |
-| -------------------- | --------------------------------------------- |
-| Network              | Forbidden. No host import provides a socket.  |
-| Filesystem write     | Forbidden. The mount is read-only.            |
-| Wall-clock timeout   | Default 1000 ms per call.                     |
-| Linear memory cap    | Default 64 pages (4 MiB).                     |
-| Imports              | `env.memory` only.                            |
+| Constraint           | Setting                                                                            |
+| -------------------- | ---------------------------------------------------------------------------------- |
+| Network              | Forbidden. No host import provides a socket. No Ollama / model endpoint.           |
+| Filesystem write     | Forbidden. The mount is read-only and the pod root FS is read-only.                |
+| Wall-clock timeout   | Per-call budget, configured via `WASM_RULE_TIMEOUT_MS` (ConfigMap, policy `50`).   |
+| Max input size       | `WASM_RULE_MAX_INPUT_BYTES` (ConfigMap, policy `32768`).                           |
+| Linear memory cap    | Default 64 pages (4 MiB).                                                          |
+| Fallback             | Controlled by `WASM_RULE_FALLBACK_ENABLED` (ConfigMap, policy `true`).             |
+| Imports              | `env.memory` only.                                                                 |
+| User-uploaded WASM   | Forbidden. The ConfigMap is the only source of binaries.                           |
 
 ## Fallback
 

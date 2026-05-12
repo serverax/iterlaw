@@ -47,11 +47,6 @@ spec:
                 secretKeyRef:
                   name: iterlaw-db-secret
                   key: DATABASE_URL
-            - name: SYNTHESIS_REDIS_URL_FROM_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: iterlaw-synthesis-redis
-                  key: SYNTHESIS_REDIS_URL
           readinessProbe:
             httpGet:
               path: /ready

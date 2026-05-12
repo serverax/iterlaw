@@ -14,12 +14,16 @@ reject them.
 | SealedSecret name                  | Keys                          | Consumed by                              |
 | ---------------------------------- | ----------------------------- | ---------------------------------------- |
 | `iterlaw-db-secret`                | `DATABASE_URL`                | `legal-orchestrator` only                |
-| `iterlaw-synthesis-redis`          | `SYNTHESIS_REDIS_URL`         | `legal-orchestrator`, `synthesis-worker` |
-| `iterlaw-synthesis-internal-model` | `INTERNAL_MODEL_ENDPOINT`     | `synthesis-worker` only                  |
+| `iterlaw-synthesis-internal-model` | `INTERNAL_MODEL_ENDPOINT`     | `synthesis-worker` only (optional override) |
 
 `iterlaw-db-secret` holds a Postgres DSN whose host is
 `iterlaw-postgres.iterlaw-data.svc.cluster.local`. Neither `iterlaw-web`
 nor `synthesis-worker` is permitted to reference this SealedSecret.
+
+The Redis URL (`redis://synthesis-redis:6379`) is non-sensitive — Redis
+runs ClusterIP-only with no authentication — so it lives in plaintext
+ConfigMaps for both `legal-orchestrator` and `synthesis-worker`. It is
+deliberately NOT a SealedSecret.
 
 ### Namespace `iterlaw-data`
 

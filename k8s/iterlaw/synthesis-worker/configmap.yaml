@@ -9,9 +9,18 @@ metadata:
 data:
   NODE_ENV: production
   LOG_LEVEL: info
+  SYNTHESIS_REDIS_URL: redis://synthesis-redis:6379
   SYNTHESIS_REQUEST_STREAM: iterlaw:synthesis:requests
   SYNTHESIS_RESPONSE_STREAM: iterlaw:synthesis:responses
   SYNTHESIS_WORKER_GROUP: iterlaw-synthesis-workers
-  MODEL_MODE: disabled
-  INTERNAL_MODEL_NAME: not-configured
+  # Short-term routing: reuse the existing internal Ollama service in the
+  # ordinox-ai namespace. Per the synthesis-llm contract this endpoint is
+  # consumed by synthesis-worker only. legal-orchestrator and WASM modules
+  # must never reference it.
+  MODEL_MODE: internal
+  INTERNAL_MODEL_ENDPOINT: http://ollama.ordinox-ai.svc.cluster.local:11434
+  INTERNAL_MODEL_DEFAULT: uk-employment-qwen:latest
+  INTERNAL_MODEL_DRAFTING: uk-employment-drafting:latest
+  INTERNAL_MODEL_DOCUMENT: uk-employment-document:latest
+  INTERNAL_MODEL_NAME: uk-employment-qwen:latest
   EXTERNAL_LLM_ENABLED: "false"

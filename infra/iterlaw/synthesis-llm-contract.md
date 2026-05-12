@@ -3,23 +3,33 @@
 ## Architecture invariant
 
 ```
-iterlaw-web (Next.js)
+iterlaw-web (Next.js, iterlaw-ai)
         |
         |  HTTPS via Ingress
         v
-legal-orchestrator (Express, port 3012)
+legal-orchestrator (Express, port 3012, iterlaw-ai)
         |
         |  Redis Streams: iterlaw:synthesis:requests
         v
-synthesis-redis (StatefulSet, ClusterIP)
+synthesis-redis (StatefulSet, ClusterIP, iterlaw-ai)
         ^
         |  Redis Streams: iterlaw:synthesis:responses
         |
-synthesis-worker  ----+
-                      |  optional internal model call (HTTP)
-                      v
-            INTERNAL_MODEL_ENDPOINT (cluster-local only)
+synthesis-worker (iterlaw-ai)
+        |
+        |  HTTP POST (in-cluster only)
+        v
+ollama.ordinox-ai.svc.cluster.local:11434   (temporary)
+   uk-employment-qwen:latest      — default legal-answer synthesis
+   uk-employment-drafting:latest  — letters and documents
+   uk-employment-document:latest  — extraction and review
 ```
+
+The Ollama service in `ordinox-ai` is a pre-existing internal model
+service. IterLaw uses it as a short-term synthesis backend, **only**
+from `synthesis-worker`. Long-term, this endpoint will move to a
+dedicated `iterlaw-llm` namespace owned by IterLaw; that migration is
+out of scope here.
 
 ## Rules
 
@@ -38,12 +48,17 @@ synthesis-worker  ----+
    `synthesis_unavailable` on every request and never opens a model
    connection.
 6. When `MODEL_MODE=internal`, `synthesis-worker` calls
-   `INTERNAL_MODEL_ENDPOINT` over cluster-local HTTP only. The endpoint
-   value is supplied via the `iterlaw-synthesis-internal-model` SealedSecret.
+   `INTERNAL_MODEL_ENDPOINT` (a cluster-local Ollama service) over
+   in-cluster HTTP only. Short-term value:
+   `http://ollama.ordinox-ai.svc.cluster.local:11434`. Routing by task:
+   - `INTERNAL_MODEL_DEFAULT=uk-employment-qwen:latest` — answer synthesis.
+   - `INTERNAL_MODEL_DRAFTING=uk-employment-drafting:latest` — drafting.
+   - `INTERNAL_MODEL_DOCUMENT=uk-employment-document:latest` — extraction.
 7. No external (public-internet) LLM endpoint is permitted, in either mode.
    `EXTERNAL_LLM_ENABLED=false` on `synthesis-worker` is enforced.
 8. WASM is **not** an LLM substitute. WASM modules are deterministic rule
-   functions, not text generators. See `wasm-contract.md`.
+   functions, not text generators. WASM modules MUST NOT call Ollama or
+   any model endpoint. See `wasm-contract.md`.
 
 ## Boundary tests
 
@@ -65,3 +80,4 @@ The following invariants are checked in CI:
 | `synthesis-worker` timeout               | `legal-orchestrator` returns 504 with code `synthesis_timeout`. |
 | `MODEL_MODE=disabled` and synthesis req. | Worker returns `synthesis_unavailable` to the response stream.  |
 | Internal model returns 5xx               | Worker returns `synthesis_internal_error`; no retry of external models. |
+| Ollama service in `ordinox-ai` removed   | Operator updates the `synthesis-worker` ConfigMap to a new cluster-local endpoint, then restarts the worker. `legal-orchestrator` is unaffected. |

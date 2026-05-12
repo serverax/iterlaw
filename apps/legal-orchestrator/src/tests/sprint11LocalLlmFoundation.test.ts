@@ -407,8 +407,13 @@ describe("Sprint 11 static safety — legal/llm/ surface", () => {
 
   it("no external provider hostname appears in legal/llm/", () => {
     const banned = /api\.openai\.com|anthropic\.com|generativelanguage\.googleapis\.com|api\.cohere\.com|api\.mistral\.ai/i;
+    // Phase 2A: `localTransportPolicy.ts` legitimately contains these
+    // hostnames in a deny-list. Excluded; the import-shape scan below
+    // still applies.
+    const POLICY_FILE = "localTransportPolicy.ts";
     const offenders: string[] = [];
     for (const f of files) {
+      if (f.endsWith(POLICY_FILE)) continue;
       const body = readFileSync(f, "utf8");
       const stripped = body
         .replace(/\/\/[^\n]*\n/g, "\n")
@@ -445,8 +450,13 @@ describe("Sprint 11 static safety — legal/llm/ surface", () => {
 
   it("no DATABASE_URL or secret-shape literal in legal/llm/", () => {
     const banned = /DATABASE_URL\s*=|postgres:\/\/[^\s]+:[^\s]+@|github_pat_[A-Za-z0-9_]{20,}|ghp_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9]{48,}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|-----BEGIN/;
+    // Phase 2A: `llmAuditRedactor.ts` legitimately contains these
+    // shapes as DETECTION REGEXES used to reject unsafe audit events.
+    // Excluded from the substring scan.
+    const REDACTOR_FILE = "llmAuditRedactor.ts";
     const offenders: string[] = [];
     for (const f of files) {
+      if (f.endsWith(REDACTOR_FILE)) continue;
       const body = readFileSync(f, "utf8");
       const stripped = body
         .replace(/\/\/[^\n]*\n/g, "\n")

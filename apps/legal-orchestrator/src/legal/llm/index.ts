@@ -6,3 +6,7 @@ export * from "./modelRouter";
 export * from "./citationBoundPrompt";
 export * from "./llmOutputGuard";
 export * from "./runLocalDraftingStep";
+export * from "./llmAudit.types";
+export * from "./llmAuditRedactor";
+export * from "./llmAuditSink";
+export * from "./localTransportPolicy";

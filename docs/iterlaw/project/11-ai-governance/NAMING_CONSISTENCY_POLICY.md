@@ -1,155 +1,423 @@
 # Naming Consistency Policy
 
-**Status:** Planning and governance specification.
-**Author note:** Authored fresh against canonical HEAD `8c2c379`. Not an import of the unrecoverable Docs AIA commit `5cfb0a4`.
+**Status:** Active governance specification.
+**Last Updated:** May 2026
 
 ---
 
 ## Purpose
 
-Lock the names IterLaw uses in active code, configs, manifests, READMEs, and project docs. Earlier renames have produced drift; this policy is the single source of truth.
-
-Authoritative quick-reference list also lives at [`../00-index/CANONICAL_NAMES.md`](../00-index/CANONICAL_NAMES.md). Where the two disagree, the operator decides which to update — they must remain consistent.
+Consistent naming prevents confusion, enables tool automation, and makes handoffs between AIAs clear. Every file, folder, namespace, and reference must follow this policy.
 
 ---
 
-## Active product / platform names
+## 1. Product Names
 
-| Name | Meaning | Where used |
-| --- | --- | --- |
-| **IterLaw** | The active legal AI product. First beta: UK Employment Law. | Runtime UI, config, package names (`@iterlaw/*`), READMEs, project docs, repo name. |
-| **OrdinoxAI** | The wider AI management platform / company brain that hosts IterLaw and related products. | AIA governance specifications, platform-level architecture references. |
+### Active Product Name
 
-Use **IterLaw** for the product. Use **OrdinoxAI** for the wider platform brand. Do not introduce other product / platform names without an ADR.
+**IterLaw** — The UK employment law AI assistant.
 
----
+Use in:
+- Documentation (all)
+- User-facing messaging
+- Commit messages
+- Comments
+- Handoff documents
+- Sprint plans
 
-## Forbidden as active names
-
-| Name | Status | Where allowed (legacy only) |
-| --- | --- | --- |
-| **RightsNow** | **Forbidden** as an active product name. Legacy. | `docs/CRUSER_*`, `.github/workflows-disabled/`, `k8s/iterlaw-disabled-*`, sprint changelog text (e.g. "Sprint 9: rename RightsNow → IterLaw"), policy / verifier files that list `rightsnow` as a forbidden token, files carrying an explicit `Legacy name: RightsNow` marker. |
-| **rightsnow** (lowercase) | **Forbidden** as an active package name. Legacy. | Same as above. Package scopes renamed to `@iterlaw/*` in Sprint 9. |
-| **rightsnow-ai**, **rightsnow-*** | **Forbidden** as namespace, package, image, or domain. | Not allowed anywhere active. Allowed only inside legacy markers and verifier deny-lists. |
-
-Re-introducing any of the above to active code, config, or docs is a defect and is blocked by `scripts/qa/verify-iterlaw-v3-safety.sh` and `scripts/infra/verify-iterlaw-repo.sh`.
-
----
-
-## Canonical Kubernetes namespaces
-
-Only these five active namespaces:
-
-- `iterlaw-ai` — AI / orchestrator / user-facing AI workloads.
-- `iterlaw-rag` — RAG ingestion, retrieval, graph, reranking, source processing.
-- `iterlaw-api` — API gateway / backend APIs.
-- `iterlaw-monitoring` — metrics, logs, dashboards, alerts.
-- `iterlaw-security` — security scanners, policy controllers, secret controllers.
-
-Legacy `iterlaw-data` may remain in the data plane until safely retired.
-
-### Forbidden namespaces
-
-| Namespace | Reason |
-| --- | --- |
-| `iterlaw-prod` | **Do not create or reference.** Production-vs-non-production is signalled by **cluster context**, not by namespace name. |
-| Bare `iterlaw` | **Do not create.** Disabled standalone manifests live under `k8s/iterlaw-disabled-master-order/` and `k8s/iterlaw-disabled-standalone-legal-orchestrator/`. |
-| `rightsnow*` | Forbidden alongside the product-name rule above. |
-
-`iterlaw-prod` and bare `iterlaw` are checked by `scripts/infra/verify-iterlaw-canonical-namespaces.sh`.
-
----
-
-## Allowed legacy / historical references
-
-Legacy names are acceptable **only** when one of the following applies:
-
-1. The file is under a clearly legacy path: `docs/CRUSER_*`, `.github/workflows-disabled/`, `k8s/iterlaw-disabled-*`.
-2. The text is inside a **forbidden-name policy statement** (`"Do not use RightsNow"`, `"Forbidden: rightsnow*"`, `"Re-introducing RightsNow is forbidden"`).
-3. The text is a **deny-list / verifier deny-list entry** (e.g. inside `scripts/infra/verify-*.sh`).
-4. The file carries an explicit `Legacy name: RightsNow` marker.
-5. The text is a **historical sprint changelog** ("Sprint 9: rename RightsNow → IterLaw").
-
-Every other appearance is treated as a defect and must be either:
-
-- Rewritten to **IterLaw / OrdinoxAI**, or
-- Removed, or
-- Labelled clearly as legacy with one of the markers above.
-
----
-
-## Naming-consistency audit commands
-
-Run these before every doc commit that touches names:
-
-```text
-# Forbidden product-name regression
-grep -R -n "RightsNow" docs/iterlaw/project reports || true
-grep -R -n "rightsnow" docs/iterlaw/project reports || true
-
-# Forbidden namespace regression
-grep -R -n "iterlaw-prod" docs/iterlaw/project reports || true
-grep -R -n -E "namespace:[[:space:]]+iterlaw([[:space:]]|$)" docs/iterlaw/project reports k8s || true
-
-# Unsafe completion claims
-grep -R -n "Sprint 10 complete" docs/iterlaw/project reports || true
-grep -R -n -i "production verified" docs/iterlaw/project reports || true
-grep -R -n -i "production approved" docs/iterlaw/project reports || true
-grep -R -n -i "ready for production" docs/iterlaw/project reports || true
-grep -R -n -i "staging.*PASS" docs/iterlaw/project reports || true
-grep -R -n -i "deployed" docs/iterlaw/project reports || true
+Example:
+```
+IterLaw helps UK workers understand their employment rights during disputes.
 ```
 
-Classify every hit. Acceptable classifications:
+### Wider Platform
 
-- **allowed forbidden-policy text** — the text is a "Do not use X" / "Forbidden: X" statement.
-- **allowed historical / deprecated reference** — file is under a legacy path or carries an explicit legacy marker, or a dated sprint changelog.
-- **allowed conditional / forward-looking gate** — text states a future condition (e.g. "BLOCKED until ... PASS"), not a current claim.
-- **unsafe active usage** — must be fixed before commit.
-- **unsafe completion claim** — must be fixed before commit.
+**OrdinoxAI** — The AIA management platform and company brain.
 
-Repository-level enforcement:
+Use in:
+- Platform-level architecture docs
+- Company strategy
+- Multi-product coordination
+- Infrastructure shared by multiple products
 
-```text
-bash scripts/qa/verify-iterlaw-v3-safety.sh
-bash scripts/infra/verify-iterlaw-repo.sh
-bash scripts/infra/verify-iterlaw-canonical-namespaces.sh
+Example:
+```
+OrdinoxAI coordinates IterLaw, housing rights assistant, and future legal products.
 ```
 
-Run these before any push.
+### Deprecated Names (Never Use in Active Docs)
+
+- ~~RightsNow~~ — old codename, deprecated March 2026
+- ~~rightsnow~~ — old namespace, deprecated
+- ~~iterlaw-prod~~ — forbidden, use canonical namespaces instead
+
+**Rule:** Do not use RightsNow or rightsnow in any active documentation. Legacy references only when documenting migration history.
+
+Example of allowed legacy reference:
+```
+## Historical Note
+RightsNow was the original codename (2026-Q1). Product renamed to IterLaw in May 2026
+when operational scope expanded to include housing, benefits, and consumer rights assistants.
+```
 
 ---
 
-## Edge cases (resolved)
+## 2. Kubernetes Namespaces
 
-| Case | Resolution |
-| --- | --- |
-| Kubernetes manifest references a legacy `ordinox-ai` namespace for cross-namespace DNS | Allowed as a manifest fact in `06-infra/INFRA_SUMMARY.md`, framed as "legacy namespace name pending a separately tracked rename". Docs do not endorse the legacy name; they reflect manifest reality without renaming the manifest. |
-| Sprint changelog mentions "RightsNow → IterLaw" rename | Allowed as historical sprint description. |
-| Verifier script contains `rightsnow` in a deny-list array | Allowed as a deny-list literal. |
-| `package.json` history shows `@rightsnow/*` scopes | Forbidden in **current** `package.json`; rename to `@iterlaw/*` was completed in Sprint 9. Historical commit history is OK. |
-| New AIA spec needs to reference OrdinoxAI | Allowed and required — AIAs are part of OrdinoxAI. |
+### Canonical Namespaces
+
+Always use these exact names:
+
+```
+iterlaw-ai              # AI services (LLM, RAG, embeddings)
+iterlaw-rag             # RAG orchestration and vector DB
+iterlaw-api             # REST API and web service layer
+iterlaw-monitoring      # Observability (Prometheus, Loki, Grafana)
+iterlaw-security        # Security services (secrets, RBAC, audit)
+```
+
+### Forbidden Namespace Names
+
+❌ `iterlaw-prod` — promotes false impression of production readiness
+❌ `production` — too generic
+❌ `rightsnow` — deprecated codename
+❌ `rightsnow-*` — all variants forbidden
+
+### Namespace Usage
+
+- **Development:** `iterlaw-ai` (single dev namespace, not per-dev)
+- **Staging:** Use same `iterlaw-*` namespaces with `-staging` suffix in ConfigMaps only
+- **Production:** Same namespaces; operator controls via RBAC and NetworkPolicy
+
+Example:
+```yaml
+# Staging: same namespace structure, different ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iterlaw-config-staging
+  namespace: iterlaw-ai
+data:
+  environment: staging
+  api_endpoint: https://staging-api.iterlaw.local
+```
 
 ---
 
-## When this policy is unclear
+## 3. Git Repositories
 
-Escalate to the operator. Do not silently invent a name, namespace, or rename rule. New names require an ADR in `../10-decisions/`.
+### Repository Name
+
+```
+iterlaw
+```
+
+Not:
+- ❌ `rightsnow`
+- ❌ `iterlaw-prod`
+- ❌ `iterlaw-uat`
+
+### Git Branch Names
+
+**Main development branch:** `main` or `develop` (team choice)
+
+**Feature branches:**
+```
+feature/aia-governance-docs
+feature/staging-db-verify
+feature/graphrag-schema
+```
+
+**Hotfix branches:**
+```
+hotfix/citation-gate-bug
+hotfix/secret-rotation
+```
+
+**Never:**
+- ❌ `rightsnow-*`
+- ❌ `prod-*` (misleading; use main branch + tags)
+- ❌ Branch names with secrets or sensitive info
+
+### Git Tags
+
+Use semantic versioning:
+```
+v0.9.0-sprints-1-9      # Sprints 1–9 complete
+v0.10.0-sprint-10-pass  # Sprint 10 complete
+v1.0.0-launch           # Production launch
+```
+
+Never:
+- ❌ `rightsnow-*`
+- ❌ `production-ready` (too vague)
+- ❌ Tag with secrets
 
 ---
+
+## 4. File and Folder Structure
+
+### Top-level Folders
+
+```
+/mnt/project/
+  ├─ docs/
+  │  └─ iterlaw/
+  │     ├─ project/
+  │     │  ├─ 07-sprints/
+  │     │  ├─ 11-ai-governance/
+  │     │  ├─ ITERLAW_PROJECT_STATUS.md
+  │     │  └─ ...
+  │     └─ architecture/
+  ├─ src/
+  │  ├─ iterlaw-ai/
+  │  ├─ iterlaw-rag/
+  │  ├─ iterlaw-api/
+  │  └─ ...
+  ├─ k8s/
+  │  ├─ iterlaw-ai/
+  │  ├─ iterlaw-rag/
+  │  ├─ iterlaw-api/
+  │  └─ iterlaw-monitoring/
+  ├─ reports/
+  │  └─ ITERLAW_*.md
+  └─ tests/
+```
+
+### File Naming
+
+**Documents:**
+```
+ITERLAW_PROJECT_STATUS.md          ✅
+IterLaw_Project_Status.md           ❌ (use ITERLAW_PROJECT_STATUS.md)
+SPRINT_10_SUMMARY.md               ✅
+SPRINT_10_qa_report.md             ❌ (use SPRINT_10_QA_REPORT.md for consistency)
+```
+
+**Source code:**
+```
+iterlaw-ai/src/rag-engine.ts       ✅
+iterlaw-rag/src/embedding-service.ts ✅
+iterlaw_api_handler.ts             ❌ (use iterlaw-api/src/handler.ts)
+```
+
+**Kubernetes manifests:**
+```
+k8s/iterlaw-ai/deployment.yaml     ✅
+k8s/iterlaw-rag/postgre.yaml       ❌ (use k8s/iterlaw-rag/postgres.yaml)
+k8s/rightsnow-api.yaml             ❌ (use k8s/iterlaw-api/api-service.yaml)
+```
+
+---
+
+## 5. Configuration Variables
+
+### Environment Variables
+
+```
+ITERLAW_API_ENDPOINT=https://api.iterlaw.local
+ITERLAW_RAG_POSTGRES_HOST=postgres.iterlaw-rag
+ITERLAW_MONITORING_LOKI_URL=http://loki.iterlaw-monitoring
+
+# Not:
+RIGHTSNOW_API_ENDPOINT=...         ❌
+ITERLAW_PROD_API_ENDPOINT=...      ❌ (environment is dev/staging/prod, not part of var name)
+```
+
+### ConfigMap/Secret Names
+
+```
+iterlaw-config                     ✅ (in namespace iterlaw-ai)
+iterlaw-secrets                    ✅ (in namespace iterlaw-security)
+rightsnow-config                   ❌
+iterlaw-prod-secrets               ❌
+```
+
+---
+
+## 6. Documentation Naming
+
+### Status Documents
+
+```
+docs/iterlaw/project/ITERLAW_PROJECT_STATUS.md
+docs/iterlaw/project/07-sprints/SPRINT_INDEX.md
+docs/iterlaw/project/07-sprints/SPRINT_10_SUMMARY.md
+docs/iterlaw/project/11-ai-governance/AIA_OPERATING_MODEL.md
+```
+
+### Reports
+
+```
+reports/ITERLAW_DOCS_AIA_GOVERNANCE_UPDATE_REPORT.md
+reports/SPRINT_10_QA_REPORT.md
+reports/SECURITY_AUDIT_2026_05.md
+```
+
+### Architecture Decisions (ADRs)
+
+```
+docs/iterlaw/architecture/ADR_0001_raag_not_finetuning.md
+docs/iterlaw/architecture/ADR_0002_local_llm_first.md
+docs/iterlaw/architecture/ADR_0003_deterministic_gates.md
+```
+
+### Runbooks
+
+```
+docs/iterlaw/operations/DEPLOYMENT_RUNBOOK.md
+docs/iterlaw/operations/INCIDENT_RESPONSE_PLAYBOOK.md
+docs/iterlaw/operations/BACKUP_AND_RESTORE.md
+```
+
+---
+
+## 7. Naming Changes Require ADR
+
+If any of these need to change:
+
+- Product name (IterLaw → something else)
+- Namespace names (iterlaw-ai → different)
+- Repository name (iterlaw → different)
+- Config variable prefixes (ITERLAW_ → different)
+
+**Required:**
+1. Write an ADR explaining why
+2. Get all AIAs to review and sign off
+3. Plan migration for all existing uses
+4. Commit ADR to git before making change
+5. Update all docs and examples
+
+Example ADR template:
+```
+# ADR-0004: [Proposed naming change]
 
 ## Status
+PROPOSED
 
-- Policy: **draft / planning**. Not a code change. Not deployed.
-- Sprint 10: **PENDING** real staging DB verification.
-- Sprint 11: **PLANNED / BLOCKED**.
-- Production: **BLOCKED**.
+## Context
+[Why change is needed]
 
-## Related
+## Decision
+[Exact change: old name → new name, all affected areas]
 
-- [`../00-index/CANONICAL_NAMES.md`](../00-index/CANONICAL_NAMES.md)
-- [`../00-index/AI_TOOL_START_HERE.md`](../00-index/AI_TOOL_START_HERE.md)
-- [`AIA_OPERATING_MODEL.md`](AIA_OPERATING_MODEL.md)
-- [`DOCUMENTATION_TRUTH_PROTOCOL.md`](DOCUMENTATION_TRUTH_PROTOCOL.md)
-- [`AI_GOVERNANCE_INDEX.md`](AI_GOVERNANCE_INDEX.md)
-- `../09-operations/OPERATIONS_RULES.md`
+## Consequences
+[What breaks, what needs updating, timeline]
+
+## Sign-off Required
+- Docs AIA: ___
+- Infra AIA: ___
+- Security AIA: ___
+- All others: ___
+```
+
+---
+
+## 8. Consistency Audit Checklist
+
+Before every sprint or major release, run:
+
+```bash
+# Search for deprecated names
+grep -r "rightsnow" docs/ src/ k8s/ --exclude-dir=.git
+grep -r "iterlaw-prod" docs/ src/ k8s/ --exclude-dir=.git
+grep -r "RightsNow" docs/ src/ k8s/ --exclude-dir=.git
+
+# Should return nothing. If found, fix before merging.
+```
+
+Document results in ITERLAW_PROJECT_STATUS.md as "Naming consistency check: PASS".
+
+---
+
+## 9. Handoff Format: Naming
+
+When handing off between AIAs, state:
+
+```
+## Naming Verification
+
+- Product name used: IterLaw ✅
+- No deprecated names found: ✅
+- Namespaces canonical: ✅ (iterlaw-ai, iterlaw-rag, iterlaw-api, iterlaw-monitoring, iterlaw-security)
+- File names consistent: ✅
+- Env vars use ITERLAW_ prefix: ✅
+- Config names lowercase: ✅
+
+Naming check: PASS
+```
+
+---
+
+## 10. Legacy References (Allowed in Specific Contexts)
+
+You may reference old names **only** when documenting history:
+
+```markdown
+## Historical Context
+
+The product was originally codenamed RightsNow (2026-Q1) and deployed under that name.
+In May 2026, the scope expanded beyond employment law to include housing, benefits, and 
+consumer rights. The product was renamed to IterLaw and infrastructure migrated to 
+canonical namespaces (iterlaw-ai, iterlaw-rag, etc.).
+
+All references to rightsnow, iterlaw-prod, and RightsNow in operational docs are outdated.
+Use IterLaw and canonical namespace names in all current work.
+```
+
+Never use deprecated names in:
+- ❌ Active source code
+- ❌ Active Kubernetes manifests
+- ❌ Active environment variables
+- ❌ Active sprint plans
+- ❌ Current handoffs
+
+---
+
+## 11. Naming Violations & Resolution
+
+**If a violation is discovered:**
+
+1. **Immediately:** Document it in ITERLAW_PROJECT_STATUS.md under "Naming Debt"
+2. **Timeline:** Fix within same sprint or next sprint
+3. **Fix:** Rename file/variable/config, update all references
+4. **Verification:** Run grep audit (section 8), confirm clean
+5. **Document:** Add ADR explaining how violation was introduced and how fix prevents recurrence
+
+**Example:**
+```
+## Naming Debt
+
+### Found: rightsnow-k3s-manifests.yaml
+- Status: PENDING FIX
+- Fix: Rename to iterlaw-k3s-manifests.yaml
+- Scope: update references in docs/, CI/CD, operator runbooks
+- Sprint: fix target Sprint 11
+```
+
+---
+
+## 12. Onboarding New AIAs
+
+Every new AIA receives this policy as part of onboarding. Confirm understanding with checklist:
+
+```
+New AIA Onboarding Checklist
+
+[ ] Read Naming Consistency Policy
+[ ] Product name is IterLaw
+[ ] Wider platform is OrdinoxAI
+[ ] Never use RightsNow or rightsnow
+[ ] Canonical namespaces are iterlaw-{ai,rag,api,monitoring,security}
+[ ] Never use iterlaw-prod
+[ ] File names follow UPPERCASE_WITH_UNDERSCORES
+[ ] Env vars use ITERLAW_ prefix
+[ ] Violations are documented in PROJECT_STATUS.md
+[ ] Naming changes require ADR and all-AIA approval
+
+Confirmed: [Date] [AIA Name]
+```
+
+---
+
+*Naming Consistency Policy — May 2026 — IterLaw Docs AIA Governance*

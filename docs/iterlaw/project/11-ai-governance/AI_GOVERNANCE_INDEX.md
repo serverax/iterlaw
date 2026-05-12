@@ -1,122 +1,262 @@
-# AI Governance Index
+# IterLaw AI Governance Index
 
-**Status:** Planning and governance index.
-**Author note:** Authored fresh against canonical HEAD `8c2c379`. Not an import of the unrecoverable Docs AIA commit `5cfb0a4`.
-
-Single entry point into IterLaw's AI governance documents. AIAs read this first; operators come here to see what governance exists.
+**Status:** Active governance documentation.
+**Last Updated:** May 2026
 
 ---
 
-## Read order
+## Purpose
 
-Read these in order before acting on any AI governance task:
-
-1. **[`../ITERLAW_PROJECT_STATUS.md`](../ITERLAW_PROJECT_STATUS.md)** — current sprint state + blockers + locked decisions snapshot.
-2. **[`../00-index/AI_TOOL_START_HERE.md`](../00-index/AI_TOOL_START_HERE.md)** — locked decisions you may not re-litigate.
-3. **[`../00-index/CANONICAL_NAMES.md`](../00-index/CANONICAL_NAMES.md)** — IterLaw / OrdinoxAI / no-RightsNow + canonical namespaces.
-4. **[`NAMING_CONSISTENCY_POLICY.md`](NAMING_CONSISTENCY_POLICY.md)** — naming policy + audit commands.
-5. **[`DOCUMENTATION_TRUTH_PROTOCOL.md`](DOCUMENTATION_TRUTH_PROTOCOL.md)** — what PASS / PARTIAL / FAIL / BLOCKED mean + evidence requirements.
-6. **[`AIA_OPERATING_MODEL.md`](AIA_OPERATING_MODEL.md)** — who the AIAs are, what they can / cannot do, hand-off contract, veto rights.
-7. **[`SUPERIOR_AI_ARCHITECT_AIA_SPECIFICATION.md`](SUPERIOR_AI_ARCHITECT_AIA_SPECIFICATION.md)** — the AI architecture contract: legal request pipeline, RAG, model routing, transport policy, audit, human approval.
-8. **[`../10-decisions/`](../10-decisions/)** — ADRs (currently: offline-first legal DB model).
-9. **[`../09-operations/OPERATIONS_RULES.md`](../09-operations/OPERATIONS_RULES.md)** — push / deploy / kubectl / secrets standing rules.
+This index lists all AI governance, AIA operating, and safety documentation for IterLaw. Use this as your entry point to understand how the AI system is governed and how AIAs coordinate.
 
 ---
 
-## Governance documents in this folder
+## Core Governance Documents
 
-| File | Owner | Purpose |
-| --- | --- | --- |
-| [`AIA_OPERATING_MODEL.md`](AIA_OPERATING_MODEL.md) | Docs AIA | How AIAs operate: named roles, authority, veto rights, hand-off, coordination rules. |
-| [`DOCUMENTATION_TRUTH_PROTOCOL.md`](DOCUMENTATION_TRUTH_PROTOCOL.md) | Docs AIA | What PASS / PARTIAL / FAIL / BLOCKED mean. Evidence required for each. What does not count as verification. Sprint 10 / production rules. |
-| [`NAMING_CONSISTENCY_POLICY.md`](NAMING_CONSISTENCY_POLICY.md) | Docs AIA | IterLaw / OrdinoxAI / no-RightsNow + canonical namespaces + forbidden names + audit commands. |
-| [`SUPERIOR_AI_ARCHITECT_AIA_SPECIFICATION.md`](SUPERIOR_AI_ARCHITECT_AIA_SPECIFICATION.md) | Superior AI Architect AIA | The full AI architecture contract: legal request pipeline (16 steps), RAG, model routing, transport policy, prompt governance, evaluation, audit, human approval, separation of concerns. |
-| `AI_GOVERNANCE_INDEX.md` *(this file)* | Docs AIA | Index + read order + quick command checklist. |
+### 1. AIA Operating Model
 
-The `11-ai-governance/` directory is the canonical home for these documents.
+**File:** `docs/iterlaw/project/11-ai-governance/AIA_OPERATING_MODEL.md`
 
----
+**What it covers:**
+- Definition of each specialist AIA (Docs, QA, DB/RAG, Security, Infra, Superior AI Architect)
+- Authority boundaries and restrictions for each AIA
+- Coordination rules between AIAs
+- Evidence requirements
+- Handoff format
+- Veto rights
+- Sprint completion criteria
 
-## Related governance surfaces outside this folder
-
-- [`../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md) — the offline-first legal DB model decision record.
-- [`../01-architecture/OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md`](../01-architecture/OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md) — the architecture contract.
-- [`../03-rag/MULTI_TIER_RETRIEVAL_ARCHITECTURE.md`](../03-rag/MULTI_TIER_RETRIEVAL_ARCHITECTURE.md) — the Tier 0–5 retrieval flow.
-- [`../01-architecture/SUPREME_CONTROLLER_ARCHITECTURE.md`](../01-architecture/SUPREME_CONTROLLER_ARCHITECTURE.md) — agent registry + human approval triggers.
-- [`../01-architecture/WASM_INTELLIGENCE_ARCHITECTURE.md`](../01-architecture/WASM_INTELLIGENCE_ARCHITECTURE.md) — WASM as control plane.
-- [`../07-sprints/SPRINT_INDEX.md`](../07-sprints/SPRINT_INDEX.md) — sprint table + counts.
-- [`../07-sprints/SPRINT_11_LOCAL_LLM_GATEWAY_AND_TRANSPORT_POLICY.md`](../07-sprints/SPRINT_11_LOCAL_LLM_GATEWAY_AND_TRANSPORT_POLICY.md) — Sprint 11 plan.
-- [`../09-operations/SPRINT_10_STAGING_DB_OPERATOR_CHECKLIST.md`](../09-operations/SPRINT_10_STAGING_DB_OPERATOR_CHECKLIST.md) — Sprint 10 closeout procedure.
+**When to read:** First introduction to how AIAs work together.
 
 ---
 
-## Current status
+### 2. Documentation Truth Protocol
 
-- **Sprint 10:** real staging DB verification **PENDING** (operator action). Repo + local Docker DB verification: PASS.
-- **Sprint 11:** **PLANNED / BLOCKED** by Sprint 10 closeout. Mock-safe Phase 1 + Phase 2A already landed (commits `b896764`, `b14fd2d`); live HTTP transport + pipeline wiring: **NOT STARTED**.
-- **Production:** **BLOCKED**.
-- **Offline-first legal DB model:** **ACCEPTED** (ADR `ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`).
-- **External LLM in the answer path:** **FORBIDDEN** at runtime by Sprint 11 transport policy.
-- **Canonical Kubernetes namespaces:** `iterlaw-ai`, `iterlaw-rag`, `iterlaw-api`, `iterlaw-monitoring`, `iterlaw-security`.
+**File:** `docs/iterlaw/project/11-ai-governance/DOCUMENTATION_TRUTH_PROTOCOL.md`
 
----
+**What it covers:**
+- Rules for claiming implementation, staging, production readiness
+- Evidence requirements for every status claim
+- Test pass, deployment, and seeding rules
+- Bad examples vs. good examples
+- Claim audit checklist
+- How false claims are prevented
 
-## Quick command checklist for governance scans
-
-Run these from the repo root before any governance commit:
-
-```text
-# Forbidden product-name regression
-grep -R -n "RightsNow" docs/iterlaw/project reports || true
-grep -R -n "rightsnow" docs/iterlaw/project reports || true
-
-# Forbidden namespace regression
-grep -R -n "iterlaw-prod" docs/iterlaw/project reports || true
-
-# Unsafe completion / deployment claims
-grep -R -n "Sprint 10 complete" docs/iterlaw/project reports || true
-grep -R -n -i "production verified" docs/iterlaw/project reports || true
-grep -R -n -i "production approved" docs/iterlaw/project reports || true
-grep -R -n -i "ready for production" docs/iterlaw/project reports || true
-grep -R -n -i "staging.*PASS" docs/iterlaw/project reports || true
-grep -R -n -i "deployed" docs/iterlaw/project reports || true
-
-# Diff + repo state
-git status -sb
-git diff --stat
-git log --oneline --decorate -5
-
-# Repo-level enforcement (must be run when changing names or active code)
-bash scripts/qa/verify-iterlaw-v3-safety.sh
-bash scripts/infra/verify-iterlaw-repo.sh
-bash scripts/infra/verify-iterlaw-canonical-namespaces.sh
-```
-
-Every hit in the first three groups must be classified as: **allowed forbidden-policy text** / **allowed historical reference** / **allowed conditional gate** / **unsafe active usage** / **unsafe completion claim**. Hits in the last two classes must be fixed before commit.
+**When to read:** Before marking any sprint as complete or any feature as ready.
 
 ---
 
-## How AIAs are added or retired
+### 3. Naming Consistency Policy
 
-| Action | Procedure |
-| --- | --- |
-| Add a new AIA | Operator decision. New spec doc in this folder, entry in this index, new row in `AIA_OPERATING_MODEL.md`. An ADR in `../10-decisions/` if authority boundaries change. |
-| Retire an AIA | Operator decision. Mark the row in this index + `AIA_OPERATING_MODEL.md` as `retired` with a date. Do not delete the spec file — keep it as historical reference. |
-| Rename an AIA | ADR required. The Docs AIA updates this index and `AIA_OPERATING_MODEL.md`. |
+**File:** `docs/iterlaw/project/11-ai-governance/NAMING_CONSISTENCY_POLICY.md`
+
+**What it covers:**
+- Active product names: IterLaw, OrdinoxAI
+- Deprecated names: RightsNow (never use in active docs)
+- Canonical Kubernetes namespaces: iterlaw-{ai,rag,api,monitoring,security}
+- File naming conventions
+- Environment variable prefixes
+- How to handle naming changes via ADR
+- Consistency audit checklist
+
+**When to read:** Before writing any documentation, creating config files, or naming new code.
 
 ---
 
-## Truth statement
+### 4. Superior AI Architect AIA Specification
 
-> No source code changed by this index.
-> No migrations changed.
-> No tests changed.
-> No Kubernetes manifests changed.
-> No push performed.
-> No deployment performed.
-> No kubectl mutating command performed.
-> No production DB touched.
-> No external LLM call performed.
-> No secret values printed.
-> Sprint 10 real staging DB verification: **PENDING**.
-> Production: **BLOCKED**.
+**File:** `docs/iterlaw/project/11-ai-governance/SUPERIOR_AI_ARCHITECT_AIA.md`
+
+**What it covers:**
+- AI architecture design authority
+- RAG, GraphRAG, Self-RAG strategy
+- Local LLM routing policy (forbidden: external LLM calls in answer path)
+- WASM deterministic gates
+- Prompt governance rules
+- Hallucination control
+- Model selection and routing
+- 15-item architecture review checklist
+- AI system design template
+
+**When to read:** Before designing, reviewing, or changing any AI component.
+
+---
+
+## Sprint and Project Status
+
+### 5. Sprint Index
+
+**File:** `docs/iterlaw/project/07-sprints/SPRINT_INDEX.md`
+
+**What it covers:**
+- Status of all sprints (1–9 complete, 10 pending, 11 planned)
+- Key deliverables per sprint
+- Evidence of completion
+- Blockers and risks
+- Remaining work
+
+**When to read:** To understand overall project progress and current blockers.
+
+---
+
+### 6. Project Status
+
+**File:** `docs/iterlaw/project/ITERLAW_PROJECT_STATUS.md`
+
+**What it covers:**
+- Overall project health
+- Governance docs added
+- Sprints completed and pending
+- Current blockers
+- Remaining sprints
+- Production readiness status
+
+**When to read:** For executive summary of where IterLaw stands.
+
+---
+
+## How To Use This Index
+
+### I'm a new AIA. Where do I start?
+
+1. Read **AIA Operating Model** to understand your role and how you fit
+2. Read **Documentation Truth Protocol** to understand what "done" means
+3. Read **Naming Consistency Policy** so you don't introduce naming debt
+4. Read the **Sprint Index** to see current status
+5. If your role involves AI: read **Superior AI Architect AIA Specification**
+
+### I need to mark something complete. What's required?
+
+1. Check **Documentation Truth Protocol** for your type of claim
+2. Find the evidence checklist (tests, deployment, monitoring)
+3. Gather all evidence and point to file paths/command output
+4. Update status in appropriate sprint doc
+5. Reference the truth protocol in your handoff
+
+### I'm designing a new AI feature. What's required?
+
+1. Read **Superior AI Architect AIA Specification**
+2. Use the **AI System Design Output** template
+3. Get approval from Superior AI Architect AIA
+4. Follow the **AI Architecture Review Checklist**
+5. Document in ADR if it changes policy
+
+### I found a naming violation. What do I do?
+
+1. Document it in **ITERLAW_PROJECT_STATUS.md** under "Naming Debt"
+2. Read **Naming Consistency Policy** to understand the fix
+3. Plan fix for this sprint or next
+4. Run consistency audit before sprint close
+
+### I need to deploy something. What gates must pass?
+
+1. Read **Documentation Truth Protocol** section 3: "Production Readiness"
+2. Gather all 10 evidence items
+3. Get written approval from all AIAs (section 5, AIA Operating Model)
+4. Create operator runbook
+5. Only then hand off to operator
+
+---
+
+## Quick Reference: Status Vocabulary
+
+| Status | Meaning | Next Step |
+|---|---|---|
+| PLANNED | Documented but not started | Start work; move to IN_PROGRESS |
+| IN PROGRESS | Actively being worked on | Continue; update docs daily |
+| PENDING OPERATOR | Needs human action to proceed | Identify action; communicate deadline |
+| PASS | Complete and verified | Mark done; move to next work |
+| PARTIAL | Some aspects done, others not | List what's done; blockers; timeline |
+| BLOCKED | Cannot proceed; external blocker | Root cause; owner; resolution deadline |
+
+---
+
+## Quick Reference: Evidence Checklist
+
+| Claim | Evidence Required |
+|---|---|
+| "Code complete" | git log, git diff, test output |
+| "Tests pass" | test command output, JSON report, test names |
+| "Deployed to staging" | kubectl output, pod logs, curl health check |
+| "Database seeded" | SELECT count output, migration log, index check |
+| "Production ready" | All 10 gates pass (see Documentation Truth Protocol) |
+
+---
+
+## Key Decision: External LLMs Forbidden in Answer Path
+
+**Policy:** Do not call external LLMs (Anthropic API, OpenAI, Gemini, etc.) in the critical path of legal answer generation.
+
+**Allowed:**
+- ✅ Local Ollama models
+- ✅ RAG retrieval from trusted sources
+- ✅ WASM deterministic gates
+- ✅ Synthetic scenario generation for testing
+
+**Forbidden:**
+- ❌ External API calls in question → answer pipeline
+- ❌ Real-time Anthropic/OpenAI calls for user questions
+- ❌ Bypassing RAG to use model memory for legal facts
+
+**Rationale:**
+- External calls add latency
+- External providers may be down
+- External models may hallucinate
+- Local models ensure privacy
+- WASM gates ensure deterministic checks
+
+Read: **SUPERIOR_AI_ARCHITECT_AIA.md** section "Local LLM Strategy"
+
+---
+
+## Key Decision: Offline-First Legal Database
+
+**Policy:** All legal sources (GOV.UK, legislation.gov.uk, cases, ACAS guidance) must be ingested into local PostgreSQL + pgvector before user questions are answered.
+
+**Allowed:**
+- ✅ Pre-ingested legal source corpus
+- ✅ Offline semantic search via pgvector
+- ✅ Citation from local DB
+
+**Forbidden:**
+- ❌ Live API calls to gov.uk for every question
+- ❌ Treating user documents as legal authority
+- ❌ Answering from external sources not in local DB
+
+**Rationale:**
+- Speed: local DB is faster than API
+- Reliability: no dependency on gov.uk uptime
+- Auditability: all answers traced to ingested sources
+- Consistency: same sources for all users
+
+Read: **DB/RAG AIA section** in AIA Operating Model
+
+---
+
+## Contacts and Escalation
+
+If you have questions about:
+
+- **Sprint status or blockers:** Docs AIA
+- **Test requirements or evidence:** QA AIA
+- **Schema, migrations, or RAG:** DB/RAG AIA
+- **Secrets, RBAC, or compliance:** Security AIA
+- **Deployment or k8s:** Infra AIA
+- **AI architecture or LLM routing:** Superior AI Architect AIA
+
+---
+
+## Document Maintenance
+
+This index is maintained by the **Docs AIA** and updated whenever:
+- New governance documents are added
+- Sprint status changes
+- Major blocker is resolved
+- New ADR is adopted
+
+Last updated: **May 2026**
+Next review: **Sprint 12 completion**
+
+---
+
+*IterLaw AI Governance Index — May 2026 — Docs AIA*

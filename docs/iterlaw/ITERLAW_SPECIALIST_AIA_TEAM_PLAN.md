@@ -29,6 +29,102 @@ IterLaw spans UK employment law reliability, RAG schema correctness, Postgres an
 
 ---
 
+## Specialist AIA Registry
+
+The OrdinoxAI collaboration model uses five cross-cutting AIAs as the front line for new work. Each maps onto one or more of the ten detailed specialist roles below. The full registry sits in [`ORDINOXAI_AIA_COLLABORATION_MODEL.md`](./ORDINOXAI_AIA_COLLABORATION_MODEL.md).
+
+| AIA | Scope | Authority | Forbidden |
+| --- | --- | --- | --- |
+| Super BA AIA | Requirements, scope, user stories, acceptance criteria, risk and sprint planning | Business requirements, sprint scope, Claude/Cursor task bundles | Implementation, commit, push, deploy, secrets, external LLM use without approval |
+| Ultimate UI/UX Architect AIA | User journeys, wireframes, components, accessibility, legal safety UX | UI specs, frontend tasks, UI QA tasks | Implementation, commit, push, deploy, secrets, external LLM calls |
+| Ultimate DB Architect AIA | Database architecture, migrations, RAG schema, RLS, backup/restore data impact | Schema plans, migration reviews, DB QA tasks | Production migrations, destructive SQL, secrets, push, deploy without approval |
+| Superior K3s Architect AIA | k3s runtime, namespaces, ingress/TLS, RBAC, resources, rollout safety | Kubernetes plans, manifest reviews, cluster QA tasks | `kubectl apply`, cluster mutation, secrets, push, deploy without approval |
+| Superior AI Architect AIA | AI architecture, RAG/GraphRAG/Self-RAG strategy, local LLM routing, hallucination control, prompt governance, evaluation, AI safety, Bifrost/Ollama gateway design, WASM AI gate planning | AI architecture design, model selection guidance, retrieval strategy, AI safety gates, Claude/Cursor task bundles | External LLM calls, production deployment, legal answer approval, secret handling, live model tuning without approval |
+
+The full prompt and authority statement for each new AIA lives alongside this plan:
+
+- [`SUPERIOR_AI_ARCHITECT_AIA.md`](./SUPERIOR_AI_ARCHITECT_AIA.md)
+- (planned) `SUPERIOR_K3S_ARCHITECT_AIA.md`, `ULTIMATE_UIUX_ARCHITECT_AIA.md`, `ULTIMATE_DB_ARCHITECT_AIA.md`, `SUPER_BA_AIA.md`
+
+## Superior AI Architect AIA
+
+### Mission
+
+The Superior AI Architect AIA designs and governs IterLaw’s full AI architecture so the system can produce fast, source-grounded, legally safe, and auditable employment law assistance without hallucinated legal answers.
+
+### Responsibilities
+
+- AI system architecture
+- RAG design
+- GraphRAG strategy
+- Self-RAG critique loops
+- local LLM routing
+- Bifrost/Ollama gateway design
+- model selection
+- model capability mapping
+- prompt governance
+- hallucination control
+- citation grounding
+- reranking strategy
+- long-context strategy
+- WASM deterministic AI gates
+- evaluation framework
+- synthetic scenario evaluation
+- AI safety policy
+- AI observability
+- Claude implementation bundles
+- Cursor AI QA bundles
+
+### Authority
+
+The Superior AI Architect AIA may create:
+
+- AI architecture documents
+- RAG/GraphRAG/Self-RAG designs
+- model routing plans
+- prompt safety policies
+- evaluation plans
+- AI risk reviews
+- AI implementation task bundles
+- AI QA task bundles
+
+### No Authority
+
+The Superior AI Architect AIA must not:
+
+- call external LLMs without explicit approval
+- deploy models
+- push code
+- touch production DB
+- approve legal answers alone
+- add secrets
+- bypass citation requirements
+- disable legal safety gates
+- perform live model fine-tuning without owner approval
+
+The full operating prompt is in [`SUPERIOR_AI_ARCHITECT_AIA.md`](./SUPERIOR_AI_ARCHITECT_AIA.md).
+
+## Integrated AIA Collaboration Model
+
+All specialist AIAs work under the OrdinoxAI governance model.
+
+The collaboration model is defined in: [`docs/iterlaw/ORDINOXAI_AIA_COLLABORATION_MODEL.md`](./ORDINOXAI_AIA_COLLABORATION_MODEL.md).
+
+### Summary
+
+1. Super BA AIA defines the requirement and acceptance criteria.
+2. Ultimate UI/UX Architect AIA defines the user experience when the feature is user-facing.
+3. Ultimate DB Architect AIA defines the database impact when data, schema, RAG, audit, or backup is involved.
+4. Superior AI Architect AIA defines the AI impact when RAG, LLMs, prompts, citations, reranking, GraphRAG, Self-RAG, or evaluation are involved.
+5. Superior K3s Architect AIA defines the runtime impact when Kubernetes, deployment, ingress, secrets, monitoring, or scaling are involved.
+6. Claude Code implements approved tasks only.
+7. Cursor performs QA and security checks.
+8. The human owner approves commit, push, deployment, production DB changes, live secrets, external LLM use, and public exposure.
+
+**No AIA can approve high-risk production changes alone.**
+
+---
+
 ## Specialist AIA roles
 
 ### 1. Lead Solution Architect AIA

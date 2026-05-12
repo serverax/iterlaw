@@ -65,6 +65,20 @@ Last updated: 2026-05-12.
 8. Active product name is **IterLaw**; `RightsNow` appears only in
    legacy-marked material.
 
+## AI Architecture Governance
+
+AI architecture is governed by the Superior AI Architect AIA and reviewed through the OrdinoxAI AIA Collaboration Model (see [`SUPERIOR_AI_ARCHITECT_AIA.md`](./SUPERIOR_AI_ARCHITECT_AIA.md) + [`ORDINOXAI_AIA_COLLABORATION_MODEL.md`](./ORDINOXAI_AIA_COLLABORATION_MODEL.md)).
+
+Any change involving RAG, GraphRAG, Self-RAG, local LLM routing, prompts, reranking, citation verification, synthetic evaluation, or WASM legal gates must be reviewed for:
+
+- source grounding
+- citation safety
+- hallucination risk
+- external LLM risk
+- prompt governance
+- evaluation coverage
+- privacy / logging impact
+
 ## Performance claims policy
 
 No performance claim (latency, throughput, accuracy improvement,

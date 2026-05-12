@@ -6,14 +6,16 @@ Authoritative list for the IterLaw project. Any deviation in active code, config
 
 | Name | Meaning |
 | --- | --- |
-| **IterLaw** | UK employment law AI assistant / product. Used in runtime UI, config, package names, READMEs. |
-| **OrdinoxAI** | The wider AIA management platform / company brain that hosts IterLaw and related products. |
+| **IterLaw** | The legal AI platform / product. First beta: UK Employment Law. Used in runtime UI, config, package names, READMEs. |
+
+Use **IterLaw** as the only active product / platform name. Any earlier branding (see "Forbidden / legacy" below) must not be reintroduced into active material.
 
 ## Forbidden / legacy
 
 | Name | Status |
 | --- | --- |
 | **RightsNow** | **Forbidden** in active material. Legacy product name. Allowed only inside clearly marked legacy / disabled / archive material (`.github/workflows-disabled/`, `k8s/iterlaw-disabled-*`, `docs/CRUSER_*`, files that explicitly carry a "Legacy name: RightsNow" marker). Never re-introduce into active code. |
+| Earlier platform-brand names | **Forbidden** in active material. Use **IterLaw** in active code / config / docs. Earlier names may remain only in legacy / disabled / archive material and in Kubernetes manifests whose namespace rename is tracked separately (the docs reflect manifest reality without endorsing the legacy naming). |
 
 ## Active Kubernetes namespaces
 
@@ -44,7 +46,7 @@ Legacy `RightsNow` text is acceptable **only** inside:
 - Policy / verifier files that list `rightsnow` as a forbidden token.
 - Sprint changelog entries (e.g. "Sprint 9: rename RightsNow → IterLaw").
 
-Active runtime code, active configs, active manifests, active READMEs, and the new project docs must use IterLaw / OrdinoxAI only.
+Active runtime code, active configs, active manifests, active READMEs, and the new project docs must use **IterLaw** only.
 
 ## Verification
 

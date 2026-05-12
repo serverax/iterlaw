@@ -20,7 +20,7 @@ Do **not** load every markdown file at the start of a task. The point of this di
 
 These are locked decisions; do not re-ask the user about them.
 
-- **Names:** product = IterLaw; platform = OrdinoxAI; forbidden active = RightsNow. See [`CANONICAL_NAMES.md`](CANONICAL_NAMES.md).
+- **Names:** product / platform = IterLaw; forbidden active = RightsNow and any earlier platform-brand names. See [`CANONICAL_NAMES.md`](CANONICAL_NAMES.md).
 - **Namespaces:** the five canonical namespaces. No `iterlaw-prod`, no bare `iterlaw`.
 - **DB:** local / self-hosted PostgreSQL + pgvector. No public-cloud DB SDK in the browser path. See [`../02-database/DATABASE_SUMMARY.md`](../02-database/DATABASE_SUMMARY.md).
 - **Sprint 10 DB tables:** `legal_cases` (corpus, migration `102`); `legal_case_records`, `legal_case_facts`, `legal_case_documents`, `legal_case_drafts`, `legal_case_timeline`, `legal_case_sources` (user-workspace, migration `105`); RLS in migration `106`. See [`../07-sprints/SPRINT_10_DB_DECISIONS.md`](../07-sprints/SPRINT_10_DB_DECISIONS.md).

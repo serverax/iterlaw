@@ -39,7 +39,9 @@ The synthesis-worker `ConfigMap` (`k8s/iterlaw/synthesis-worker/configmap.yaml`)
 - `uk-employment-drafting:latest`
 - `uk-employment-document:latest`
 
-These are **model identifiers** (Ollama-style `name:tag`), not container `image:` references. The synthesis worker reaches the Ollama service at `ollama.ordinox-ai.svc.cluster.local:11434`.
+These are **model identifiers** (Ollama-style `name:tag`), not container `image:` references. The synthesis worker reaches an internal cluster-DNS Ollama service whose URL is set in `k8s/iterlaw/synthesis-worker/configmap.yaml` (a legacy namespace name appears in the current manifest pending the namespace migration tracked separately; the IterLaw canonical namespaces are `iterlaw-ai`, `iterlaw-rag`, `iterlaw-api`, `iterlaw-monitoring`, `iterlaw-security`).
+
+The Sprint 11 `localTransportPolicy` enforces, at runtime, that the configured transport target is either `localhost` / `127.0.0.1`, a Kubernetes cluster-DNS host (`*.svc` / `*.svc.cluster.local`), or an explicitly allow-listed internal host. Public-provider hosts (`api.openai.com`, `anthropic.com`, `generativelanguage.googleapis.com`, `api.cohere.ai`, `api.mistral.ai`) are permanently denied.
 
 No other model is approved at the time of writing. Adding a model is an AI-Architect AIA decision.
 
@@ -83,3 +85,22 @@ The WASM rule-runner contract lives at `infra/iterlaw/wasm-contract.md`. The run
 - HTTP `fetch` / `axios` / `node-fetch` in the orchestrator source.
 - LLM output emitted without citation gate.
 - Performance claim ("sub-second", "under 10ms") without a measured benchmark in `docs/benchmarks/`.
+
+## Slow path / background worker model (target)
+
+The local LLM should become the **slow path / background worker** wherever a deterministic alternative exists.
+
+- **Cache / section / knowledge graph answer repeated or deterministic questions.** The local LLM does not run for these.
+- **Local LLM still runs** for novel-question synthesis, background pre-building, cache enrichment, document drafting, and difficult / edge-case explanation.
+- **Streaming UX is planned** (see [`SPEED_AND_STREAMING_ARCHITECTURE.md`](SPEED_AND_STREAMING_ARCHITECTURE.md)) — SSE endpoint, structured three-part reveal (WHAT THE LAW SAYS / WHAT THIS MEANS / WHAT TO DO NOW), adviser openers, and graceful mid-stream failure handling.
+- **Two-stage local model cascade is planned** — small fast model first, strong model on low-confidence fallback. The router (`modelRouter`) decides; the citation gate is identical for both stages.
+- **External AI is NOT the default path.** No provider SDK exists in `apps/legal-orchestrator/package.json`. The Sprint 11 Phase 2A transport policy denies provider hosts at runtime.
+
+## Sprint 11 status (today)
+
+- Sprint 11 Phase 1 (foundation): **PASS**. Router + citation-bound prompt builder + output guard + disabled-by-default drafting helper.
+- Sprint 11 Phase 2A (audit + transport guardrails): **PASS**. Audit types + redactor + Noop / InMemory sinks + transport policy.
+- Live HTTP transport: **NOT STARTED**.
+- Pipeline wiring (`handleLegalRequest` calls `runLocalDraftingStep`): **NOT STARTED**.
+- Gateway: **DISABLED / MOCK-SAFE**.
+- Production: **BLOCKED** until Sprint 10 real staging DB verification passes.

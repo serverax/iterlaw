@@ -9,7 +9,7 @@ K3s-based deployment with five canonical namespaces. Operator-managed. No agent 
 | Cluster | K3s (Hetzner-hosted in current operator setup; AKS context observed in earlier reviews — operator chooses) |
 | Ingress | Traefik (per `k8s/iterlaw/web/ingress.yaml` annotations) |
 | TLS | cert-manager **NOT YET WIRED** on the active ingress. Acceptable for `iterlaw.local`; FAIL for any non-`.local` host. Tracked as a Sprint 19 prerequisite. |
-| Local LLM | Ollama service in `ordinox-ai` namespace at `ollama.ordinox-ai.svc.cluster.local:11434` (reached cross-namespace by synthesis-worker). |
+| Local LLM | Ollama service reached cross-namespace by the synthesis-worker over an internal cluster-DNS host (configured in `k8s/iterlaw/synthesis-worker/configmap.yaml`; the manifest currently uses a legacy namespace name pending a separately tracked rename to the IterLaw canonical namespaces). |
 | Data plane | `iterlaw-data` namespace — Postgres + pgvector StatefulSet, backups CronJobs, NetworkPolicies. |
 
 ## Canonical namespaces

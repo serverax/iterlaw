@@ -68,3 +68,74 @@ RLS is enabled on the nine user-data tables by migration 106; corpus tables rema
 ```
 
 Live-DB application is operator action. Full procedure: `docs/iterlaw/SPRINT_10_LIVE_DB_CLOSEOUT_OPERATOR_CHECKLIST.md`.
+
+## Future / target tables (NOT yet implemented)
+
+The platform roadmap (Sprints 18–57) adds the table groups below. **None of these exist in the database today.** They are referenced by the architecture docs and the future-sprint roadmap, but not in any committed migration.
+
+### Platform tables (subscription gating)
+
+| Table | Purpose |
+| --- | --- |
+| `platform_countries` | Registered country codes + default language + status. |
+| `platform_modules` | Registered `(country_id, domain_code)` modules + status (`disabled` / `beta` / `general_availability` / `deprecated`). |
+| `user_subscriptions` | Per-user subscription rows: `(user_id, country_id, module_id, plan_tier, status, starts_at, ends_at)`. |
+| `subscription_events` | Billing event audit (upgrade / downgrade / cancel / past_due / restored). |
+
+### User workspace extensions
+
+| Table | Purpose |
+| --- | --- |
+| `case_deadlines` | Statutory deadlines per case (ACAS clock, tribunal limitation, statute of limitations). |
+| `question_history` | Per-user question records (timestamp, module, status, refusal reason, cited chunk ids). Module-scoped. |
+| `user_loyalty` | Per-user loyalty / engagement record. |
+| `loyalty_transactions` | Per-event loyalty ledger. |
+
+### Law module engine tables
+
+See [`../01-architecture/LAW_MODULE_ENGINE_ARCHITECTURE.md`](../01-architecture/LAW_MODULE_ENGINE_ARCHITECTURE.md).
+
+| Table | Purpose |
+| --- | --- |
+| `law_category_modules` | Topic groupings inside one module (e.g. "Dismissal", "Discrimination"). |
+| `law_section_modules` | Addressable law-section rows (act + section ref + plain-English + tags + jurisdiction + effective dates + `verification_status`). |
+| `module_qa_cache` | Pre-built Q&A entries (question + embedding + cited chunk ids + confidence + `verification_status` + `serve_count`). |
+| `answer_generation_queue` | Background queue feeding `module_qa_cache`. |
+
+### Approval + governance
+
+| Table | Purpose |
+| --- | --- |
+| `human_approval_queue` | Items requiring human review: low-confidence answers, new AI-generated sections, law amendments, solicitor referrals, urgent deadlines, security events, refunds, GDPR / DSAR requests. |
+
+### Knowledge graph / fact registry (deterministic facts)
+
+| Table | Purpose |
+| --- | --- |
+| `legal_fact_registry` | Deterministic legal facts keyed by `(country, module, fact_code)` (qualifying period, statutory caps, ACAS clock, etc.). Used by Tier 2 / knowledge agent to serve deterministic facts without an LLM call. |
+| `legal_fact_provenance` | Audit-trail mapping each fact value to the source `legal_documents` / `legal_chunks` row and the human reviewer who approved it. |
+
+### Document layer (extensions over current `legal_case_documents`)
+
+| Table | Purpose |
+| --- | --- |
+| `case_document_versions` | Per-version document body + paragraph citation map. |
+| `case_document_paragraphs` | Paragraph-level citation index (`paragraph_id`, `legal_citation`, `confidence`, `requires_review`). |
+
+### RLS expectations on the future tables
+
+- All user-private tables (`user_subscriptions`, `case_deadlines`, `question_history`, `user_loyalty`, `loyalty_transactions`, `case_document_versions`, `case_document_paragraphs`) carry `user_id` and / or `workspace_id` columns.
+- Each ships with RLS policies reusing the Sprint 10 helpers (`current_app_user_id()`, `current_user_in_workspace(uuid)`, `current_user_can_write_workspace(uuid)`).
+- `human_approval_queue` is admin-scope read/write — protected via `current_app_user_is_admin()`.
+- Corpus / module-engine tables (`platform_countries`, `platform_modules`, `law_category_modules`, `law_section_modules`, `module_qa_cache`, `answer_generation_queue`, `legal_fact_registry`, `legal_fact_provenance`) are corpus-scope and remain **RLS-off** (read-only to the app role).
+
+### Country / module scoped RAG
+
+Retrieval is **country + module scoped** (see [`../03-rag/RAG_SUMMARY.md`](../03-rag/RAG_SUMMARY.md)). Every retrieval call carries `(country_id, module_id)` and the SQL filters on the corresponding domain / jurisdiction columns. Cross-module retrieval is not allowed in the answer path without an explicit federated flag (none exists today).
+
+## Status
+
+- Sprint 10 user-workspace + RLS migrations: **PASS** in repo + local Docker. **Real staging DB verification: PENDING.**
+- Sprint 11 added no migrations.
+- All "future / target" tables above: **NOT IMPLEMENTED.** They are documented to anchor the architecture, not to claim delivery.
+- Production: **BLOCKED.**

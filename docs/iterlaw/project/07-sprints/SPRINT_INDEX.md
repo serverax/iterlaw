@@ -16,8 +16,14 @@ Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/IT
 | 15 | Admin / legal-review UI | Planned | Human-in-the-loop review pipeline. |
 | 16 | Live evolution + safe optimisation | Planned | `docs/iterlaw/SPRINT_16_LIVE_EVOLUTION_AND_SAFE_OPTIMISATION_PLAN.md`. **HITL approval required for every prompt / rule change.** |
 | 17 | UK GDPR / DPA 2018 / Data (Use and Access) Act 2025 retention + consent | Planned | Retention enforcement job; consent ledger. |
-| 18 | Multimodal evidence grounding beta | Planned (future backlog) | `docs/iterlaw/SPRINT_18_MULTIMODAL_EVIDENCE_GROUNDING_BETA_PLAN.md`. DPIA-gated; local-only; pilot capped at 5 users. |
+| 18 | Multimodal evidence grounding beta *(legacy entry; superseded by the post-core roadmap below)* | Planned (future backlog) | `docs/iterlaw/SPRINT_18_MULTIMODAL_EVIDENCE_GROUNDING_BETA_PLAN.md`. DPIA-gated; local-only; pilot capped at 5 users. |
 | 19 | Production hardening + public launch | Planned | Load test, SLO, on-call rota, ingress TLS plan complete. |
+
+## Post-core roadmap (Sprints 18–57 — target architecture)
+
+The full multi-country / multi-domain platform roadmap is in [`ROADMAP_REMAINING_SPRINTS.md`](ROADMAP_REMAINING_SPRINTS.md). It covers the Law Module Engine (18–25), speed-first retrieval (26–34), the WASM intelligence stack (35–45), workspace + RLS + Supreme Controller + approval queue (46–51), and the document intelligence stack (52–57).
+
+These are roadmap entries, not committed delivery. They land **after** first IterLaw beta (UK Employment) is shipped. The legacy Sprint 18 / 19 entries above remain valid until they are folded into the new numbering during a future planning sprint.
 
 ## Sprint 10 close-out — what's pending
 

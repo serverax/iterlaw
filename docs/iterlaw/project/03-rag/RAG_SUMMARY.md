@@ -64,3 +64,59 @@ ILIKE fallback runs when FTS returns zero. Both pass the same column set.
 | `citation_failed` | Retrieved chunks lack required citation fields. Should not happen in production but is the safe fallback. |
 | `needs_more_facts` | The user has not supplied the facts retrieval needs (e.g. dismissal_date). |
 | `high_risk_deadline` | A statutory deadline is imminent / past — escalate to human advice. |
+
+## Module-specific RAG (target)
+
+IterLaw is one platform serving many `(country, law-domain)` modules. RAG is **module-scoped**:
+
+- Every retrieval call carries `(country_id, module_id)`.
+- The corpus is partitioned per module — UK Employment chunks live alongside (but never mix with) UK Housing, Germany Immigration, Saudi Labour, etc.
+- The retrieval SQL filters on the module's domain code and jurisdiction column.
+- Cross-module retrieval is **not allowed** in the answer path. A future federated query flag would have to be requested explicitly; none exists today.
+- Module isolation extends to sources, prompts, calculators, citation policy, and specialist AIA workflows.
+
+## Multi-tier retrieval (target)
+
+The full retrieval flow is described in [`MULTI_TIER_RETRIEVAL_ARCHITECTURE.md`](MULTI_TIER_RETRIEVAL_ARCHITECTURE.md). Brief summary:
+
+- **Tier 0** — Redis exact hash cache (instant).
+- **Tier 1** — HNSW semantic Q&A cache on `module_qa_cache` (target — Sprint 19).
+- **Tier 2** — Tag / section lookup on `law_section_modules` (target — Sprint 21).
+- **Tier 3** — Semantic law section search via pgvector (target — Sprint 24).
+- **Tier 4** — Local LLM bounded synthesis (existing Sprint 11 interface; disabled by default).
+- **Background** — Cache enrichment + retrieval-augmented verification.
+
+The LLM is the **slow path**. Most repeated and deterministic questions should hit Tier 0 / 1 / 2 / 3, never Tier 4.
+
+## Section module lookup (target)
+
+`law_section_modules` rows are addressable law-section references (e.g. `ERA 1996 s.98`). Each row carries the verbatim section text plus a plain-English rewrite, with `effective_from` / `effective_to` and a `verification_status` (`unverified` / `auto_generated` / `human_reviewed` / `solicitor_approved`). Sections with `verification_status = 'unverified'` are **not eligible** for direct serve. See [`../01-architecture/LAW_MODULE_ENGINE_ARCHITECTURE.md`](../01-architecture/LAW_MODULE_ENGINE_ARCHITECTURE.md).
+
+## Semantic cache + HNSW target
+
+`module_qa_cache` is the durable Q&A cache. The pgvector HNSW index on `question_embedding` is the target performance lever for sub-50 ms p95 cache reads (Sprint 26). Direct-serve threshold ~0.92 similarity; near-miss window 0.80–0.91 routes a generation job into `answer_generation_queue`.
+
+## Background pre-builder (target)
+
+A scheduled worker pre-builds `module_qa_cache` entries by:
+
+- Enqueuing canonical questions per category nightly.
+- Draining the near-miss queue.
+- Re-validating cache rows older than the staleness threshold (RAV).
+
+This is the mechanism that lets most user questions land on a pre-built answer, not on a live LLM call.
+
+## No cross-module retrieval unless explicitly allowed
+
+The answer path must not query another module's corpus. The current retrieval port enforces module / jurisdiction filtering already; the multi-tier retrieval target preserves it across every tier. A federated query would require an explicit `allow_cross_module` flag set per request, which today does not exist.
+
+## LLM slow path only
+
+The local LLM is reserved for:
+
+- Novel questions not yet covered by cache or knowledge graph.
+- Bounded synthesis under the citation gate.
+- Background pre-building.
+- Difficult / edge-case explanation.
+
+External provider LLMs (OpenAI / Anthropic / Gemini / Cohere / Mistral) are **never** in the live answer path. Sprint 11 transport policy denies their hostnames at runtime; the Phase 2A test set asserts no provider SDK in `apps/legal-orchestrator/package.json`.

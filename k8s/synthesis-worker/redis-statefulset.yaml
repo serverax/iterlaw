@@ -1,0 +1,112 @@
+# StatefulSet for the synthesis-queue Redis instance described in
+# ADR 004 §5. Single replica is intentional: the queue is sized to
+# soak retries from the synthesis-worker consumer group and not to be
+# a durable system of record (durable state lives in
+# uk_emp_rag.q_a_cache, owned by Postgres). The AOF gives us crash
+# recovery without needing replication.
+#
+# The Secret named here (synthesis-redis-credentials) is NOT included
+# in this directory. It is provided by SealedSecret in the operator
+# repo per ADR 004 §6. The single key consumed is `password`.
+#
+# Namespace note: ADR 004 §6 referenced "iterlaw-prod" — the shipped
+# legal-orchestrator manifests use "iterlaw-ai", so this manifest uses
+# the same namespace to be co-located with the consumer pods. The ADR
+# wording should be reconciled in a follow-up doc revision.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: synthesis-redis
+  namespace: iterlaw-ai
+  labels:
+    app: synthesis-redis
+    component: synthesis-queue
+    managed-by: adr-004
+spec:
+  serviceName: synthesis-redis
+  replicas: 1
+  selector:
+    matchLabels:
+      app: synthesis-redis
+  template:
+    metadata:
+      labels:
+        app: synthesis-redis
+        component: synthesis-queue
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: redis
+          image: redis:7.4-alpine
+          imagePullPolicy: IfNotPresent
+          command:
+            - redis-server
+            - /etc/redis/redis.conf
+            - --requirepass
+            - $(REDIS_PASSWORD)
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: synthesis-redis-credentials
+                  key: password
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: config
+              mountPath: /etc/redis
+              readOnly: true
+          readinessProbe:
+            tcpSocket:
+              port: redis
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: redis
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "768Mi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+      volumes:
+        - name: config
+          configMap:
+            name: synthesis-redis-config
+            items:
+              - key: redis.conf
+                path: redis.conf
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          app: synthesis-redis
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi

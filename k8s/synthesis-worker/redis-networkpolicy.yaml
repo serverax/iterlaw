@@ -1,0 +1,52 @@
+# NetworkPolicy fencing the synthesis Redis pod.
+#
+# Ingress: ONLY from pods in the same namespace labeled
+#   app=legal-orchestrator OR app=synthesis-worker, on tcp/6379.
+#   Nothing else can reach the queue — not the web app, not other
+#   workloads, not in-cluster CronJobs.
+#
+# Egress: only DNS (UDP/TCP 53) to kube-dns. The Redis pod has no
+#   business contacting anything else in the cluster, and nothing
+#   outside. This makes any exfiltration via Redis trivially
+#   detectable: an outbound connection from this pod is by definition
+#   an alert.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: synthesis-redis
+  namespace: iterlaw-ai
+  labels:
+    app: synthesis-redis
+    component: synthesis-queue
+    managed-by: adr-004
+spec:
+  podSelector:
+    matchLabels:
+      app: synthesis-redis
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: legal-orchestrator
+        - podSelector:
+            matchLabels:
+              app: synthesis-worker
+      ports:
+        - protocol: TCP
+          port: 6379
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53

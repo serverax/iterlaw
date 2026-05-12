@@ -1,0 +1,5 @@
+resources:
+  - redis-configmap.yaml
+  - redis-service.yaml
+  - redis-statefulset.yaml
+  - redis-networkpolicy.yaml

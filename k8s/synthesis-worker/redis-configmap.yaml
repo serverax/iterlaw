@@ -1,0 +1,45 @@
+# ConfigMap holding the Redis server configuration for the synthesis queue.
+# Source-of-truth comments live alongside each directive. The container's
+# command line passes --requirepass at startup so the password never lands
+# in this ConfigMap (the password is provided by the synthesis-redis-
+# credentials Secret, sealed in the operator repo).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: synthesis-redis-config
+  namespace: iterlaw-ai
+  labels:
+    app: synthesis-redis
+    component: synthesis-queue
+    managed-by: adr-004
+data:
+  redis.conf: |
+    # Persist via AOF only; RDB snapshots disabled. AOF every second is
+    # the right durability/throughput point for a queue whose content is
+    # capped by XADD MAXLEN per ADR 004 §5.
+    appendonly yes
+    appendfsync everysec
+    save ""
+
+    # The queue is bounded at the producer (XADD MAXLEN ~ 100000). We
+    # never want Redis to drop entries silently under memory pressure;
+    # noeviction surfaces the back-pressure to the orchestrator instead.
+    maxmemory 512mb
+    maxmemory-policy noeviction
+
+    # Network hardening: bind to all interfaces (the NetworkPolicy
+    # constrains who can reach this pod), keep protected-mode on so an
+    # empty password is refused, and disable potentially dangerous
+    # admin commands.
+    bind 0.0.0.0
+    protected-mode yes
+    rename-command CONFIG ""
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    rename-command DEBUG ""
+
+    # Latency / connection ceilings sized for ~2 orchestrator pods and
+    # ~3 worker pods. Adjust together with replica counts elsewhere.
+    timeout 0
+    tcp-keepalive 60
+    maxclients 200

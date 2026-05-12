@@ -1,0 +1,21 @@
+# Cluster-internal Service for the synthesis-queue Redis StatefulSet.
+# Selected by the StatefulSet pod label app=synthesis-redis. No
+# externalIPs, no LoadBalancer, no NodePort — this is in-cluster only.
+apiVersion: v1
+kind: Service
+metadata:
+  name: synthesis-redis
+  namespace: iterlaw-ai
+  labels:
+    app: synthesis-redis
+    component: synthesis-queue
+    managed-by: adr-004
+spec:
+  type: ClusterIP
+  selector:
+    app: synthesis-redis
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+      protocol: TCP

@@ -1,12 +1,33 @@
-# IterLaw — Remaining Sprint Roadmap (Sprints 18–57)
+# IterLaw — Remaining Sprint Roadmap
 
 Forward-looking architecture roadmap. These are **planned future sprints**, not committed delivery. They land **after** the first IterLaw beta (UK Employment) is shipped.
 
-Current state (do not move without evidence):
+## Remaining sprint count
+
+**Roadmap target:** Sprint 45.
+
+**Completed:**
+
+- Sprints 1–9.
+
+**Current:**
+
+- Sprint 10 is pending staging DB verification.
+
+**Remaining:**
+
+- **36 sprints remaining including Sprint 10.**
+- **35 sprints remaining after Sprint 10 passes.**
+
+**Do not mark Sprint 10 as complete.**
+
+Sprint 46+ entries listed lower in this document (Workspace + RLS + Supreme Controller + Approval + Document intelligence) are now **post-Sprint-45 backlog** and are not counted in the 36 / 35 above.
+
+## Current state (do not move without evidence)
 
 - Sprint 10 repo + local Docker DB: **PASS**.
 - Sprint 10 real staging DB verification: **PENDING**.
-- Sprint 11 Phase 1 (foundation) + Phase 2A (audit / transport guardrails): **PASS**.
+- Sprint 11 Phase 1 (foundation) + Phase 2A (audit / transport guardrails): **PASS** (mock-safe).
 - Sprint 11 live HTTP transport: **NOT STARTED**.
 - Sprint 11 pipeline wiring: **NOT STARTED**.
 - Production: **BLOCKED**.
@@ -56,7 +77,11 @@ Authoritative architecture docs are referenced beside each sprint.
 | 44 | WASM Observability + Cost Intelligence | `WASM_INTELLIGENCE_ARCHITECTURE.md` |
 | 45 | WASM Production Hardening | `WASM_INTELLIGENCE_ARCHITECTURE.md` |
 
-## Workspace, RLS, Supreme Controller, approval (46–51)
+## Post-Sprint-45 backlog (not in remaining-sprint count)
+
+The two blocks below describe earlier-documented Sprint 46–57 entries. They are **not** part of the current Sprint-45 roadmap target and are **not** included in the 36 / 35 remaining-sprint counts above. They remain as backlog references; folding any of them back into the active roadmap is an explicit planning decision.
+
+## Workspace, RLS, Supreme Controller, approval (46–51 — post-45 backlog)
 
 | Sprint | Title | Anchor doc |
 | --- | --- | --- |
@@ -67,7 +92,7 @@ Authoritative architecture docs are referenced beside each sprint.
 | 50 | Human Approval Queue | `SUPREME_CONTROLLER_ARCHITECTURE.md` (§human approval gate) |
 | 51 | Quality and Self-Monitoring Agents | `SUPREME_CONTROLLER_ARCHITECTURE.md` (§agent registry — quality_agent / security_agent) |
 
-## Document intelligence stack (52–57)
+## Document intelligence stack (52–57 — post-45 backlog)
 
 | Sprint | Title | Anchor doc |
 | --- | --- | --- |

@@ -1,258 +1,38 @@
-﻿# IterLaw Project Status and Go-Live Sprint Handoff
+# IterLaw Project Status
 
-Last updated: 12 May 2026
+**Canonical status file moved.** This file is a pointer.
 
-## Current status
+The canonical, up-to-date IterLaw project status lives at:
 
-IterLaw is the active UK employment law AI assistant project.
+[`docs/iterlaw/project/ITERLAW_PROJECT_STATUS.md`](docs/iterlaw/project/ITERLAW_PROJECT_STATUS.md)
 
-OrdinoxAI is the wider AI management platform/company brain.
+Read that file for:
 
-Do not use RightsNow as the active project name. RightsNow is legacy only.
+- Current delivery status (which sprint is in progress).
+- Sprint count (total roadmap target, completed, remaining).
+- Current blockers.
+- Next sprint recommendation.
+- Naming + guardrails.
 
-## Completed sprints
+Related quick links:
 
-### Sprint 1-8: Core engine foundation
-Status: DONE
+- Documentation index: [`docs/iterlaw/project/README.md`](docs/iterlaw/project/README.md)
+- AI agent start-here: [`docs/iterlaw/project/00-index/AI_TOOL_START_HERE.md`](docs/iterlaw/project/00-index/AI_TOOL_START_HERE.md)
+- Sprint index: [`docs/iterlaw/project/07-sprints/SPRINT_INDEX.md`](docs/iterlaw/project/07-sprints/SPRINT_INDEX.md)
+- Remaining sprint roadmap: [`docs/iterlaw/project/07-sprints/ROADMAP_REMAINING_SPRINTS.md`](docs/iterlaw/project/07-sprints/ROADMAP_REMAINING_SPRINTS.md)
+- Operations rules: [`docs/iterlaw/project/09-operations/OPERATIONS_RULES.md`](docs/iterlaw/project/09-operations/OPERATIONS_RULES.md)
+- Sprint 10 operator checklist: [`docs/iterlaw/project/09-operations/SPRINT_10_STAGING_DB_OPERATOR_CHECKLIST.md`](docs/iterlaw/project/09-operations/SPRINT_10_STAGING_DB_OPERATOR_CHECKLIST.md)
+- Offline-first ADR: [`docs/iterlaw/project/10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](docs/iterlaw/project/10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md)
 
-Completed:
-- Legal orchestrator foundation.
-- Health and readiness endpoints.
-- Legal safety gates.
-- Citation-required answer flow.
-- Mock-safe RAG service.
-- No direct external LLM calls from the orchestrator.
-- WASM rule-runner baseline.
-- Namespace and K3s infra baseline.
-- Postgres and RAG schema foundation.
-- Internal synthesis worker separation.
-- Fast legal answer planner.
+## Naming
 
-### Sprint 9: Rename and schema alignment
-Status: DONE / QA PASSED
+Active product name: **IterLaw**. Do **not** use `RightsNow` in active material.
 
-Completed:
-- RightsNow renamed to IterLaw across active runtime/config files.
-- Package scopes moved from @rightsnow/* to @iterlaw/*.
-- package-lock files regenerated.
-- Added migration 102_add_legal_cases_table.sql.
-- Added legal_cases to the canonical RAG schema decision.
-- Updated RAG DB verifier for migration 102.
-- Added LF policy through .gitattributes.
-- Shell script syntax checks passed.
-- Secret scan found no real secrets.
-- Tests passed: 481 tests / 44 files.
-- Legal-orchestrator typecheck and build passed.
+## Status snapshot
 
-## Blockers solved
+- Sprint 10 real staging DB verification: **PENDING**.
+- Production: **BLOCKED**.
+- External LLM in live answer path: **FORBIDDEN**.
+- Offline-first legal DB model: **ACCEPTED**.
 
-Solved:
-- Git rebase conflict against origin/master.
-- Local and origin/master aligned.
-- pgvector prerequisite made explicit.
-- RAG temporal retrieval tests fixed.
-- Ingestion compatibility tests fixed.
-- Namespace drift reduced.
-- Direct model usage removed from legal-orchestrator.
-- .claude/ and iterlaw.code-workspace added to ignore policy.
-- No real secrets found in tracked files.
-
-## Remaining blockers / risks
-
-Known remaining items:
-- Backup verifier has one known warning: Storage Box CIDR is not pinned yet.
-- Backup uploader image digest/tag still needs build and pinning.
-- Live DB migration has not been executed against production.
-- Live RAG retrieval is not yet fully wired to production Postgres.
-- No live scraping should run until source controls, audit, and rate limits are confirmed.
-- SaaS, payment, member account, admin panel, and production auth hardening are not finished.
-- AIA layer is not fully implemented.
-
-## Remaining sprints to go live
-
-Estimated remaining: 6 sprints.
-
-### Sprint 10: Live RAG DB wiring
-Status: PARTIAL — code-side DONE, operator-side PENDING.
-
-Code-side completed (audit + lock-in this update):
-- `apps/legal-orchestrator/src/rag/postgresRetrieval.ts` queries the canonical 001-chain schema (`public.legal_chunks` JOIN `public.legal_domains`). No `uk_emp_rag.*` reference in the active retrieval SQL.
-- Filters applied: `legal_pack` (domain_code), jurisdiction, source_types, `is_active = true`, temporal `effective_date <= applicable_on` AND `applicable_to IS NULL OR applicable_to >= applicable_on`.
-- Citation evidence returned: chunk_id, document_id, title, url, citation_label, section_reference, paragraph_reference, authority_level, source_type, effective_date, applicable_to.
-- `applicable_on` derived from `dismissal_date` first; `incident_date` is the documented fallback.
-- Mock-safe paths: `db_url_missing`, `pg_driver_unavailable`, `query_failed`. Errors sanitised — connection string never appears in thrown messages.
-- Zero-citation blocking preserved: empty chunks → `insufficient_sources`; chunks without citations → `citation_failed`. No external LLM call.
-- Sprint 10 wiring contract locked in by `apps/legal-orchestrator/src/tests/sprint10LiveRagWiring.test.ts` (13 tests). Total: 494 tests / 45 files PASS.
-
-Operator-side pending (Sprint 10 → DONE):
-- Apply the canonical migration chain to a live dev/staging DB: 000, 001–010, 101, 102.
-- Verify `pgvector` extension is present (000_pgvector_prerequisite).
-- Seed at least one UK employment source row in `public.legal_sources` (or via 103 if added in a follow-up).
-- Run a smoke test against the live dev DB only — never production.
-- Keep zero-citation blocking active.
-
-No deploy, no production `psql`, no `kubectl apply`, no real secrets created.
-
-## Sprint 11 — Local LLM Gateway and Bounded Synthesis
-
-Status: In Progress
-
-### Goal
-
-Add a safe local LLM gateway interface and bounded synthesis guard.
-
-### Current Policy
-
-The LLM gateway defaults to disabled.
-
-IterLaw must not generate legal answers from model memory.
-
-All user-facing legal answers remain controlled by retrieval, citations, policy gates, and effective-date checks.
-
-### Runtime Decision
-
-Ollama-compatible local gateway is the first interface target.
-
-llama.cpp may be benchmarked later.
-
-WasmEdge/WASI-NN remains experimental and benchmark-only.
-
-### Performance Policy
-
-No sub-second synthesis claims are accepted until measured.
-
-### Sprint 10 Dependency
-
-Sprint 10 remains PARTIAL until live dev/staging DB verification and smoke tests are executed.
-
-### Files added in Sprint 11
-
-- `docs/iterlaw/SPRINT_11_LOCAL_LLM_GATEWAY_PLAN.md`
-- `docs/benchmarks/SPRINT_11_LOCAL_LLM_BENCHMARK_PLAN.md`
-- `scripts/benchmarks/sprint11-local-llm-benchmark.sh`
-- `apps/legal-orchestrator/src/legal/llm/llmGateway.types.ts`
-- `apps/legal-orchestrator/src/legal/llm/localLlmGateway.ts`
-- `apps/legal-orchestrator/src/legal/llm/boundedSynthesis.ts`
-- `apps/legal-orchestrator/src/legal/llm/index.ts`
-- `apps/legal-orchestrator/src/tests/sprint11LlmGateway.test.ts`
-- `apps/legal-orchestrator/src/tests/boundedSynthesis.test.ts`
-- `scripts/qa/verify-iterlaw-v3-safety.sh`
-
-### /ready additions (no leak)
-
-`/ready` now reports `llm.local_gateway_configured`, `llm.local_gateway_mode`, and `llm.local_gateway_available`. Base URLs, API keys, model paths, and `DATABASE_URL` are never returned. Tests assert no leakage.
-
-## Sprint 16 — Live Evolution and Safe Optimisation (Planned)
-
-Status: **Planned / Future.** Not started. Plan: [`docs/iterlaw/SPRINT_16_LIVE_EVOLUTION_AND_SAFE_OPTIMISATION_PLAN.md`](docs/iterlaw/SPRINT_16_LIVE_EVOLUTION_AND_SAFE_OPTIMISATION_PLAN.md).
-
-Every numeric / capability claim from the motivating proposal (02:00 trigger, 240ms inference, 68°C CPU, Wasm-AOT active, GraphRAG 4-hop, 42/128 GB buffer, autonomous DSPy adjustment, autonomous tribunal filing) is captured in the plan as a **target**, not the current state. No metric is populated; the metric contract reports `NOT_MEASURED` when a value is unavailable.
-
-Hard guardrails recorded in the plan:
-- No autonomous code commit, deployment, or prompt overwrite.
-- No external LLM call from the orchestrator request path.
-- No tribunal filing automation under any circumstance.
-- HITL approval is mandatory before any candidate prompt or rule activates.
-- Cross-case synthesis is anonymised at source (k ≥ 5 per emitted pattern).
-
-## Sprint 18 — Multimodal Evidence Grounding Beta (Planned, future backlog)
-
-Status: **Planned / Future backlog.** Not started, not deployed, not piloted. Plan: [`docs/iterlaw/SPRINT_18_MULTIMODAL_EVIDENCE_GROUNDING_BETA_PLAN.md`](docs/iterlaw/SPRINT_18_MULTIMODAL_EVIDENCE_GROUNDING_BETA_PLAN.md).
-
-Naming correction: the capability is referred to as **multimodal evidence grounding**, not "video analysis", so that the legal posture (evidence-assistance tool, not factual determination) is unambiguous.
-
-Hard guardrails recorded in the plan:
-- Local-only transcription. No cloud API, no external LLM in the media pipeline.
-- DPIA gate is mandatory before any pilot upload is enabled.
-- Article 22C and ICO workplace-monitoring obligations explicit.
-- Mandatory UX warning wording on every AI-flagged finding.
-- Forbidden outputs: "Manager lied", "Manager was hostile", "This proves discrimination" (or equivalents).
-- Pilot capped at **5 advanced users** with individual consent.
-- No tribunal filing automation, no employer-facing disclosure without user approval.
-
-## Sprint roadmap
-
-The authoritative index for all sprints is [`docs/iterlaw/ITERLAW_SPRINT_ROADMAP.md`](docs/iterlaw/ITERLAW_SPRINT_ROADMAP.md).
-
-## Legal Source Correction
-
-The Employment Rights Act 2025 exists and received Royal Assent on 18 December 2025.
-
-The Employment Rights Act 1996 remains a core canonical statute.
-
-Employment Rights Act 2025 rules must only be used with verified commencement and effective-date metadata from trusted sources.
-
-Do not hardcode 2025 Act provisions without source-backed effective-date controls.
-
-### Sprint 11: Official source ingestion
-Goal:
-- Add controlled ingestion for GOV.UK, legislation.gov.uk, ACAS, tribunal/case-law sources.
-- Store provenance, citations, effective dates, and audit records.
-- No live scraping without rate limits and allow-list checks.
-
-### Sprint 12: Answer quality and legal safety
-Goal:
-- Improve source ranking.
-- Improve citation selection.
-- Add answer audit trail.
-- Block weak or uncited legal answers.
-- Add “needs more facts” handling for complex employment issues.
-
-### Sprint 13: User app and case workspace
-Goal:
-- ChatGPT-style user interface.
-- My cases section.
-- Case history.
-- Document upload flow.
-- Safe legal answer rendering with citations.
-
-### Sprint 14: SaaS, auth, admin, billing
-Goal:
-- Member registration.
-- Login.
-- Subscription/payment.
-- Admin dashboard.
-- Usage limits.
-- Email notifications.
-
-### Sprint 15: Production hardening and go-live
-Goal:
-- CI/CD.
-- Backups.
-- Restore drill.
-- Security scan.
-- Monitoring.
-- Rate limiting.
-- Final deployment to K3s.
-- Go-live checklist.
-
-## Go-live definition
-
-IterLaw is not go-live ready until:
-
-- All tests pass.
-- Secret scan passes.
-- Infra verifiers pass.
-- RAG DB is live and backed up.
-- Retrieval returns cited official sources.
-- Legal answers are blocked when no source exists.
-- User app works end-to-end.
-- Auth and payments are secure.
-- Backup and restore are tested.
-- Monitoring is enabled.
-- Deployment is repeatable from GitHub.
-
-## Rule for Claude, Cursor, and AIA
-
-Before starting work, always read this file:
-
-ITERLAW_PROJECT_STATUS.md
-
-Then report:
-- What sprint you are working on.
-- What files you will touch.
-- What checks you will run.
-- Whether the task is safe to commit.
-- Whether the task is safe to push.
-
-Do not push, deploy, create secrets, or run production DB commands unless explicitly instructed.
+Full detail in the canonical file linked above.

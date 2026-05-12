@@ -1,6 +1,30 @@
 # Sprint Index
 
-Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/ITERLAW_SPRINT_ROADMAP.md`.
+Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/ITERLAW_SPRINT_ROADMAP.md`. Project status: [`../ITERLAW_PROJECT_STATUS.md`](../ITERLAW_PROJECT_STATUS.md).
+
+## Sprint count
+
+- **Total roadmap target:** Sprint 45.
+- **Completed:** 9.
+- **Current pending:** Sprint 10.
+- **Remaining including Sprint 10:** **36**.
+- **Remaining after Sprint 10 passes:** **35**.
+
+Sprint 46+ (Workspace + RLS + Supreme Controller + Approval + Document intelligence) is currently **post-Sprint-45 backlog** and is not counted in the 36 / 35 above.
+
+## Sprint 11 — Local LLM Gateway and Transport Policy
+
+**Status:** PLANNED / blocked by Sprint 10 staging DB closeout.
+
+**Purpose:**
+
+- Build the local LLM gateway safely.
+- Keep the offline-first model mandatory.
+- Keep external LLMs forbidden.
+- Keep the LLM as fallback / background builder only.
+
+Plan: [`./SPRINT_11_LOCAL_LLM_GATEWAY_AND_TRANSPORT_POLICY.md`](./SPRINT_11_LOCAL_LLM_GATEWAY_AND_TRANSPORT_POLICY.md).
+
 
 ## Current state
 

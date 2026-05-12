@@ -74,19 +74,40 @@ spec:
                     secretKeyRef:
                       name: iterlaw-postgres-credentials
                       key: POSTGRES_PASSWORD
+              # Alerting hooks (placeholders only — no real values committed).
+              # The upload + verify CronJobs read the matching SealedSecret;
+              # until that is sealed in-cluster the alerts are no-ops.
+              # See docs/infra/BACKUP_AND_RESTORE_RUNBOOK.md §7.
               command:
                 - /bin/sh
                 - -c
                 - |
-                  set -eu
+                  set -euo pipefail
                   ts="$(date -u +%Y%m%dT%H%M%SZ)"
-                  out="/backups/iterlaw-${ts}.sql.gz"
+                  out="/backups/iterlaw-${ts}.dump"
                   echo "writing ${out}"
-                  pg_dump --format=plain --no-owner --no-privileges \
-                    --schema=uk_emp_rag \
-                    "${PGDATABASE}" | gzip -9 > "${out}"
+
+                  # Build the schema list defensively. `uk_emp_rag` is only
+                  # present after migration 003; on a fresh database we
+                  # must not fail just because that schema does not yet
+                  # exist. `public` is always included.
+                  schemas="--schema=public"
+                  has_uk_emp_rag="$(psql -tA -c "SELECT 1 FROM pg_namespace WHERE nspname = 'uk_emp_rag'" 2>/dev/null || true)"
+                  if [ "${has_uk_emp_rag}" = "1" ]; then
+                    schemas="${schemas} --schema=uk_emp_rag"
+                  else
+                    echo "note: uk_emp_rag schema absent — dumping public only"
+                  fi
+
+                  # `--format=custom` is the only format that `pg_restore`
+                  # supports for selective restore. It is already compressed
+                  # (libpq's pglz) — no gzip pipe needed.
+                  pg_dump --format=custom --no-owner --no-privileges \
+                    ${schemas} \
+                    --file="${out}"
+                  sha256sum "${out}" > "${out}.sha256"
                   echo "backup complete:"
-                  ls -lh "${out}"
+                  ls -lh "${out}" "${out}.sha256"
               # Retention is intentionally manual. Old files in /backups
               # accumulate until an operator prunes them. See README.md.
               resources:

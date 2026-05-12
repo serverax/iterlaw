@@ -1,0 +1,65 @@
+# NetworkPolicy for `iterlaw-postgres-backup-upload`.
+#
+# Hostname-based egress is NOT natively supported by Kubernetes
+# `networking.k8s.io/v1` NetworkPolicies — only IP CIDRs are
+# expressible. The Hetzner Storage Box host (`uXXXXXX.your-storagebox.de`)
+# resolves to an IP in Hetzner's range that varies per box. The two
+# realistic options are:
+#
+#   (a) Allow egress to a specific Hetzner CIDR + port 23 (SFTP).
+#       This file ships that pattern as a TODO — the CIDR must be
+#       confirmed against the actual Storage Box IP at apply time.
+#       Operators can extract the IP with:
+#           getent hosts <storagebox-host>
+#       and pin the /32 in the `ipBlock.cidr` field below.
+#
+#   (b) Defer hostname-based egress to a CNI that supports it (Cilium
+#       has `toFQDNs` — see infra/iterlaw/wasm-contract.md note about
+#       the current K3s CNI not enforcing policies). The current AKS
+#       cluster CNI was not verified to support FQDN egress at the
+#       time of writing — treat that as UNKNOWN and assume IP CIDR
+#       is the only enforceable form.
+#
+# Default-deny everything else.
+#
+# Status: DRAFT — pin the real CIDR before the upload CronJob is
+# promoted. This file commits the policy shape so the verifier can
+# assert it exists.
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: iterlaw-postgres-backup-upload
+  namespace: iterlaw-data
+  annotations:
+    iterlaw.io/status: "draft-not-applied"
+    iterlaw.io/policy-todo: "pin Storage Box /32 CIDR before apply"
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: iterlaw-postgres-backup-upload
+  policyTypes: ["Ingress", "Egress"]
+  ingress: []
+  egress:
+    # DNS for resolving the Storage Box host on the first hop.
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+
+    # Hetzner Storage Box egress on SFTP port 23.
+    # PLACEHOLDER CIDR: 0.0.0.0/0 - pin the real /32 before apply.
+    # The verifier WILL FAIL if this CIDR is not narrowed to a single
+    # host /32 before promotion.
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 23

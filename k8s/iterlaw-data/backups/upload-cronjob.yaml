@@ -1,0 +1,154 @@
+# IterLaw — nightly Borg upload of the latest local Postgres dump to
+# the Hetzner Storage Box.
+#
+# Architecture:
+#   1. The existing CronJob `iterlaw-postgres-backup` (cronjob.yaml in
+#      this directory) writes `iterlaw-${TS}.dump` to the
+#      `iterlaw-postgres-backup` PVC at 02:15 UTC.
+#   2. This CronJob (`iterlaw-postgres-backup-upload`) runs at 03:15
+#      UTC, mounts the same PVC **read-only**, and ships the most
+#      recent dump to a Borg repository on a Hetzner Storage Box.
+#   3. Retention is delegated to `borg prune` — see
+#      docs/infra/BACKUP_AND_RESTORE_RUNBOOK.md §4.1.
+#
+# Hard rules:
+#   * Real credentials never appear in this file. The SealedSecret
+#     `iterlaw-backup-borg` carries Borg passphrase + SSH private key
+#     + Storage Box endpoint.
+#   * The job fails closed if any required env var is missing.
+#   * No external HTTP egress beyond DNS + SSH to the Storage Box host.
+#   * Backup PVC mount is read-only. The upload pod cannot delete or
+#     mutate the local backups.
+#
+# Status: NOT YET APPLIED to any cluster. The `image:` below is a
+# placeholder until the operator publishes (or sources) a small image
+# with `borg`, `openssh-client`, and `pg_restore`. Do not apply this
+# manifest until that image exists.
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: iterlaw-postgres-backup-upload
+  namespace: iterlaw-data
+  labels:
+    app.kubernetes.io/name: iterlaw-postgres-backup-upload
+    app.kubernetes.io/part-of: iterlaw
+  annotations:
+    iterlaw.io/status: "draft-not-applied"
+spec:
+  schedule: "15 3 * * *"
+  startingDeadlineSeconds: 600
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  suspend: false
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: iterlaw-postgres-backup-upload
+            app.kubernetes.io/part-of: iterlaw
+        spec:
+          restartPolicy: Never
+          serviceAccountName: iterlaw-postgres
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 70
+            runAsGroup: 70
+            fsGroup: 70
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: borg-upload
+              # PLACEHOLDER IMAGE. The image must carry `borg` and
+              # `openssh-client`. Build a small image in a later sprint
+              # and pin a digest here. Until then this manifest will
+              # ImagePullBackOff if applied — which is the correct
+              # safe-by-default behaviour.
+              image: iterlaw/borg-uploader:placeholder
+              imagePullPolicy: IfNotPresent
+              envFrom:
+                - secretRef:
+                    name: iterlaw-backup-borg
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -euo pipefail
+
+                  # Fail closed if any required env var is empty.
+                  : "${BORG_REPO:?BORG_REPO env not set — refusing to upload}"
+                  : "${BORG_PASSPHRASE:?BORG_PASSPHRASE env not set — refusing to upload}"
+                  : "${STORAGEBOX_HOST:?STORAGEBOX_HOST env not set — refusing to upload}"
+                  : "${SSH_PRIVATE_KEY:?SSH_PRIVATE_KEY env not set — refusing to upload}"
+
+                  # Write SSH material into a tmpfs scratch area. The
+                  # pod root FS is read-only; /tmp is the only writable
+                  # mount.
+                  install -m 700 -d /tmp/.ssh
+                  printf '%s\n' "${SSH_PRIVATE_KEY}" > /tmp/.ssh/id_storagebox
+                  chmod 600 /tmp/.ssh/id_storagebox
+                  if [ -n "${SSH_KNOWN_HOSTS:-}" ]; then
+                    printf '%s\n' "${SSH_KNOWN_HOSTS}" > /tmp/.ssh/known_hosts
+                    chmod 600 /tmp/.ssh/known_hosts
+                  fi
+                  export BORG_RSH="ssh -i /tmp/.ssh/id_storagebox -o UserKnownHostsFile=/tmp/.ssh/known_hosts -o StrictHostKeyChecking=yes"
+
+                  # Pick today's dump. Fail closed if no dump exists —
+                  # that means the 02:15 local backup CronJob also
+                  # failed and we MUST alert rather than promote a
+                  # stale file.
+                  latest="$(ls -1t /backups/iterlaw-*.dump 2>/dev/null | head -1 || true)"
+                  if [ -z "${latest}" ]; then
+                    echo "FAIL: no /backups/iterlaw-*.dump file found"
+                    exit 2
+                  fi
+                  echo "uploading: ${latest}"
+
+                  # Create a new Borg archive named for today.
+                  archive_name="iterlaw-$(date -u +%Y%m%dT%H%M%SZ)"
+                  borg create --stats --compression auto,zstd,9 \
+                    "${BORG_REPO}::${archive_name}" "${latest}" "${latest}.sha256"
+
+                  # Apply the retention policy. 7 daily, 4 weekly, 12 monthly.
+                  borg prune --list "${BORG_REPO}" \
+                    --keep-daily 7 \
+                    --keep-weekly 4 \
+                    --keep-monthly 12
+
+                  echo "upload + prune complete"
+
+                  # Optional alerting. No-op when the env var is empty.
+                  if [ -n "${BACKUP_ALERT_WEBHOOK_URL:-}" ]; then
+                    echo "(would POST success to ${BACKUP_ALERT_WEBHOOK_URL%%\?*}) — placeholder, no curl invocation in this sprint"
+                  fi
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - name: backups
+                  mountPath: /backups
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: iterlaw-postgres-backup
+                readOnly: true
+            - name: tmp
+              emptyDir:
+                sizeLimit: 64Mi

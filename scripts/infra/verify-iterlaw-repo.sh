@@ -161,6 +161,14 @@ K8S_DIRS=(
 for dir in "${K8S_DIRS[@]}"; do
   [[ -d "${dir}" ]] || continue
   while IFS= read -r f; do
+    # `.example.yaml` files are placeholder templates that get
+    # kubeseal-ed into real SealedSecrets before commit of any real
+    # value. They MUST carry REPLACE_ME_* placeholders only (the
+    # static-policy tests in src/tests/backupPolicy.test.ts and
+    # src/tests/namespaceAndSchemaPolicy.test.ts assert this).
+    case "$(basename "${f}")" in
+      *.example.yaml) continue ;;
+    esac
     if grep -q "^kind: Secret\$" "${f}"; then
       echo "FAIL plaintext Secret manifest: ${f}"
       FAIL=1

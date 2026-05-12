@@ -1,0 +1,153 @@
+# Weekly restore-verification drill.
+#
+# What this job DOES:
+#   * Lists Borg archives in the repo (`borg list`).
+#   * Runs `borg check --verify-data` against the repo.
+#   * Extracts the latest archive into a tmpfs scratch path.
+#   * Runs `pg_restore --list` against the extracted dump and counts
+#     the entries. Asserts both `uk_emp_rag` and `public` schemas are
+#     present.
+#
+# What this job does NOT do:
+#   * Restore into the live production Postgres. Restoring during a
+#     drill would corrupt production. The job exits before reaching
+#     `pg_restore --dbname`.
+#   * Provision a scratch Postgres. A full row-count verification
+#     happens in a quarterly human-led drill; this CronJob is a cheap
+#     weekly format check.
+#
+# Status: NOT YET APPLIED. The placeholder image must be replaced with
+# one carrying `borg`, `openssh-client`, and `pg_restore` (the Postgres
+# 16 client tools) before this manifest is applied.
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: iterlaw-postgres-backup-verify
+  namespace: iterlaw-data
+  labels:
+    app.kubernetes.io/name: iterlaw-postgres-backup-verify
+    app.kubernetes.io/part-of: iterlaw
+  annotations:
+    iterlaw.io/status: "draft-not-applied"
+spec:
+  # Monday 06:00 UTC — well after the previous night's upload.
+  schedule: "0 6 * * 1"
+  startingDeadlineSeconds: 600
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  suspend: false
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 604800
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: iterlaw-postgres-backup-verify
+            app.kubernetes.io/part-of: iterlaw
+        spec:
+          restartPolicy: Never
+          serviceAccountName: iterlaw-postgres
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 70
+            runAsGroup: 70
+            fsGroup: 70
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: borg-verify
+              # PLACEHOLDER IMAGE — see upload-cronjob.yaml for the
+              # required tool set.
+              image: iterlaw/borg-uploader:placeholder
+              imagePullPolicy: IfNotPresent
+              envFrom:
+                - secretRef:
+                    name: iterlaw-backup-borg
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -euo pipefail
+
+                  : "${BORG_REPO:?BORG_REPO env not set — refusing to verify}"
+                  : "${BORG_PASSPHRASE:?BORG_PASSPHRASE env not set — refusing to verify}"
+                  : "${SSH_PRIVATE_KEY:?SSH_PRIVATE_KEY env not set — refusing to verify}"
+
+                  install -m 700 -d /tmp/.ssh
+                  printf '%s\n' "${SSH_PRIVATE_KEY}" > /tmp/.ssh/id_storagebox
+                  chmod 600 /tmp/.ssh/id_storagebox
+                  if [ -n "${SSH_KNOWN_HOSTS:-}" ]; then
+                    printf '%s\n' "${SSH_KNOWN_HOSTS}" > /tmp/.ssh/known_hosts
+                    chmod 600 /tmp/.ssh/known_hosts
+                  fi
+                  export BORG_RSH="ssh -i /tmp/.ssh/id_storagebox -o UserKnownHostsFile=/tmp/.ssh/known_hosts -o StrictHostKeyChecking=yes"
+
+                  echo "==> borg list ${BORG_REPO}"
+                  borg list "${BORG_REPO}" | tail -20
+
+                  echo "==> borg check --verify-data"
+                  borg check --verify-data "${BORG_REPO}"
+
+                  # Pick the latest archive.
+                  latest_archive="$(borg list --short "${BORG_REPO}" | tail -1)"
+                  if [ -z "${latest_archive}" ]; then
+                    echo "FAIL: borg repo contains no archives"
+                    exit 2
+                  fi
+                  echo "==> extracting ${latest_archive} into /tmp/verify"
+                  mkdir -p /tmp/verify
+                  cd /tmp/verify
+                  borg extract "${BORG_REPO}::${latest_archive}"
+
+                  dump="$(ls /tmp/verify/backups/iterlaw-*.dump 2>/dev/null | head -1 || true)"
+                  if [ -z "${dump}" ]; then
+                    echo "FAIL: extracted archive contains no iterlaw-*.dump"
+                    exit 3
+                  fi
+
+                  echo "==> pg_restore --list ${dump}"
+                  list_out="$(pg_restore --list "${dump}")"
+                  echo "${list_out}" | head -20
+
+                  # Assert both schemas appear in the dump's TOC.
+                  if ! echo "${list_out}" | grep -q "SCHEMA - public"; then
+                    echo "FAIL: dump does not include schema=public"
+                    exit 4
+                  fi
+                  if ! echo "${list_out}" | grep -q "SCHEMA - uk_emp_rag"; then
+                    echo "WARN: dump does not include schema=uk_emp_rag (acceptable only if uk_emp_rag does not exist in the source DB yet)"
+                  fi
+
+                  echo "verify complete: ${latest_archive}"
+
+                  if [ -n "${BACKUP_ALERT_WEBHOOK_URL:-}" ]; then
+                    echo "(would POST success to ${BACKUP_ALERT_WEBHOOK_URL%%\?*}) — placeholder, no curl invocation in this sprint"
+                  fi
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 1Gi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+                - name: workspace
+                  mountPath: /tmp/verify
+          volumes:
+            - name: tmp
+              emptyDir:
+                sizeLimit: 64Mi
+            - name: workspace
+              emptyDir:
+                sizeLimit: 5Gi

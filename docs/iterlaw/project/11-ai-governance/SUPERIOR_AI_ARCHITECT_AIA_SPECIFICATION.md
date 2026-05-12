@@ -109,29 +109,134 @@ Never approve:
 
 ### 1. Legal Request Pipeline
 
-Expected safe flow:
-
-```text
-1.  User asks question.
-2.  Classify legal topic.
-3.  Extract facts.
-4.  Check missing facts.
-5.  Check deadline risk.
-6.  Retrieve trusted sources (offline-first tiers: cache → section registry → RAG → deterministic facts).
-7.  Verify retrieval relevance.
-8.  Verify citation support.
-9.  Draft answer only from supported sources (local LLM fallback only, bounded synthesis).
-10. Run legal safety gate (citation gate + policy gate + retrieval-augmented verification).
-11. Return answer or safe failure status.
-```
-
-Safe failure statuses (no answer text emitted):
-
-- `module_not_subscribed`, `insufficient_sources`, `needs_more_facts`, `citation_failed`, `policy_failed`, `high_risk_deadline`, `human_review_required`, `llm_unavailable`, `blocked_by_policy`.
+The Superior AI Architect AIA governs the order, contract, and refusal behaviour of every step below. Each step has a deterministic failure mode; a failure short-circuits the pipeline and returns a safe failure status — no answer text is emitted until the safety gate clears.
 
 The pipeline must remain offline-first per [`../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md) and the tiers contract in [`../03-rag/MULTI_TIER_RETRIEVAL_ARCHITECTURE.md`](../03-rag/MULTI_TIER_RETRIEVAL_ARCHITECTURE.md).
 
-> **Note:** the source draft for this specification was supplied through a partial paste that ended at item 11 of this pipeline. The sections that follow are a faithful continuation aligned with the project's existing offline-first / RAG / WASM architecture docs. If a later operator update supplies the rest of the original draft, this file should be overwritten to match — the architecture sections below should be treated as a working draft.
+```text
+ 1. User question intake
+ 2. Case / session context loading
+ 3. Jurisdiction + legal-module detection
+ 4. Entitlement / subscription check
+ 5. PII / sensitive-data handling
+ 6. Risk + urgency classification
+ 7. Limitation / deadline detection
+ 8. Local / offline-first DB retrieval (Tiers 0–4)
+ 9. Source-hierarchy enforcement
+10. Citation verification
+11. Deterministic legal-rule checks (WASM)
+12. Local LLM drafting (Tier 5 fallback only, after retrieval)
+13. Answer safety gate
+14. Audit-trail creation
+15. Legal-review queue when confidence / source coverage is insufficient
+16. User-facing response format
+```
+
+#### Step contracts
+
+1. **User question intake.** The orchestrator accepts the raw user question, a stable `request_id`, a `trace_id`, the authenticated `user_id`, and the requested `(country_id, module_id)` pair. The question is normalised (whitespace, length cap) but **not** rewritten by an LLM at this stage. Failure → `bad_request` (no answer).
+
+2. **Case / session context loading.** Read the user's workspace + case row (RLS-enforced: session GUCs `app.user_id`, `app.user_role`, `app.workspace_id` set first; fail-closed if NULL). Load prior facts, deadlines, and the case timeline strictly within the user's workspace. Cross-workspace reads are rejected by Postgres before the orchestrator sees them. Failure → `not_authorised` (no answer).
+
+3. **Jurisdiction + legal-module detection.** Validate `(country_id, module_id)` against `platform_modules`. The chosen module locks the corpus, rule pack, prompts, calculators, citation policy, and language pack used by every later step. A mismatch (e.g. unknown module, country / module combination not registered) → `module_unknown` (no answer).
+
+4. **Entitlement / subscription check.** Confirm an active `user_subscriptions` row covers `(user_id, country_id, module_id)` for the request timestamp. The check runs **server-side**, not just in the UI. Failure → `module_not_subscribed` (no answer).
+
+5. **PII / sensitive-data handling.** Run the WASM `pii_guard` over the user input. Strip / redact emails, phone numbers, NI numbers, raw payment data, and any other configured PII from downstream prompts, retrieval logs, and audit rows. Raw PII never enters retrieval queries or LLM prompts. Failure → `pii_blocked` with an explanatory UX message; the user can resubmit a redacted question.
+
+6. **Risk + urgency classification.** Classify the legal topic, complexity tier, and answer-confidence requirements. This step picks the retrieval tier path (which tiers to attempt, in which order) and the model-route hint passed later to `modelRouter`. The classifier runs as a WASM module; LLM classification is allowed only when the WASM heuristic is inconclusive and the question carries non-PII content. Failure → `classification_failed` (no answer; falls through to refusal).
+
+7. **Limitation / deadline detection.** Run the WASM `deadline_calculator` against the user's facts (`dismissal_date`, `incident_date`, `acas_ec_start`, etc.). If a statutory deadline is imminent or past → short-circuit to `high_risk_deadline` with a non-legal-advice warning + clear next-step instruction (e.g. "contact ACAS today"). The pipeline does **not** generate a substantive legal answer in this state.
+
+8. **Local / offline-first DB retrieval (Tiers 0–4).** Run the offline-first multi-tier flow on the module-scoped corpus only:
+
+   - **Tier 0** — Redis exact hash cache on `(country_id, module_id, question_fingerprint)`.
+   - **Tier 1** — semantic Q&A cache (`module_qa_cache`, HNSW).
+   - **Tier 2** — `law_section_modules` tag / section-reference lookup.
+   - **Tier 3** — semantic section / RAG search across `legal_chunks` + `legal_documents`.
+   - **Tier 4** — deterministic legal knowledge graph / formula lookup (`legal_fact_registry`).
+
+   The retrieval port enforces `(country_id, module_id)` + jurisdiction + `effective_date <= applicable_on AND (applicable_to IS NULL OR applicable_to >= applicable_on)`. Cross-country / cross-module reads are forbidden in the answer path. Empty retrieval after every tier → `insufficient_sources`.
+
+9. **Source-hierarchy enforcement.** The retrieved evidence pack is ranked by the module's `source_quality_scores` + `authority_level`: primary legislation > regulations > statutory codes > tribunal / court decisions > government guidance > secondary commentary. User-uploaded documents inform fact extraction but **never** appear as legal authority in a generated answer. Sections at `verification_status = 'unverified'` are not eligible for direct serve. Failure (no source meets the floor) → `insufficient_sources`.
+
+10. **Citation verification.** Every retained chunk must carry `chunk_id`, `document_id`, `title`, `url`, `citation_label`. Missing fields or unresolvable ids → `citation_failed`. Cache hits (Tier 0 / Tier 1) re-run this check against the **current** corpus before serve; citation drift invalidates the cache row and falls through to the next tier.
+
+11. **Deterministic legal-rule checks (WASM).** Run the module's WASM rule pack: qualifying-period rules, ACAS clock, statutory caps, fire-and-rehire conditions, zero-hours reference period, etc. These rules are deterministic and citation-backed by `legal_fact_provenance`. Where a question is fully answered by deterministic rules, the pipeline **skips the LLM** and goes directly to step 13. Failure (rule contradiction or unknown rule path) → `policy_failed`.
+
+12. **Local LLM drafting (Tier 5 fallback only).** Reached **only** when Tiers 0–4 plus deterministic rules cannot answer safely. The drafter runs `runLocalDraftingStep` with:
+
+    - The `modelRouter` decision (output restricted to `LocalModelTag`).
+    - The `citationBoundPrompt.ts` system + user prompt (sources clipped to 1200 chars; `allowedCitationIds` whitelist).
+    - The injected `OllamaTransport` (no top-level `fetch` / `axios` / `node-fetch`; transport policy denies provider hostnames at runtime).
+
+    The drafter must **only** cite ids in the supplied retrieval set. The output guard rejects empty, zero-citation, or hallucinated outputs → `citation_failed`. Empty retrieval here → `insufficient_sources`. Gateway disabled / transport missing → `llm_unavailable`.
+
+13. **Answer safety gate.** The safety gate is a deterministic WASM stage. It runs in this order:
+
+    - **Citation gate** — every cited id must resolve to a current corpus row with complete citation metadata.
+    - **Policy gate** — jurisdiction lock, off-topic detection, banned-claim detection, "AI solicitor" wording check, statutory-cap bounds.
+    - **Retrieval-augmented verification (RAV)** — re-retrieve the cited chunks for the question's key terms; confirm each claim is still supported. A RAV failure invalidates the draft.
+
+    Any gate failure → the corresponding refusal status. The streamer is **not** allowed to emit answer bytes until every gate passes.
+
+14. **Audit-trail creation.** Emit a redacted `LocalLlmAuditEvent` per the Sprint 11 contract (`apps/legal-orchestrator/src/legal/llm/llmAuditRedactor.ts` + `assertSafeLlmAuditEvent`). Fields: `eventId`, `requestId`, `traceId`, `taskType`, `selectedModel`, `routeReason`, `retrievedChunkCount`, `citationCount`, `citedChunkIds`, `refusalReason`, `safetyFlags`, `latencyMs`, `status`, `createdAt`. **Never recorded:** raw prompt, draft text, raw user input, raw chunk text, DSN, API key, secret, PEM, JWT, provider key shape. The default sink is `NoopLlmAuditSink`; durable storage requires a separate ADR.
+
+15. **Legal-review queue when confidence / source coverage is insufficient.** The pipeline routes to `human_approval_queue` (see [`../01-architecture/SUPREME_CONTROLLER_ARCHITECTURE.md`](../01-architecture/SUPREME_CONTROLLER_ARCHITECTURE.md)) whenever any of:
+
+    - Confidence is below the per-module floor.
+    - Source coverage is partial (some claims uncited).
+    - The deterministic rule pack flagged a contradiction.
+    - The question maps to a section row at `verification_status = 'unverified'`.
+    - The deadline detector flagged urgent action.
+    - A solicitor referral was requested.
+    - Mass quality degradation has been detected by the quality agent.
+
+    The user-facing status is `human_review_required` until a reviewer acts. **No low-confidence legal answer is shown as final.**
+
+16. **User-facing response format.** When the safety gate clears, the orchestrator returns a structured envelope:
+
+    - `status` — `synthesised` (or `human_review_required` / a refusal).
+    - `answer` — plain-English answer, citation markers inline by `chunk_id` (e.g. `[chunk_era_95]`).
+    - `citations` — array of `{ chunkId, documentId, title, url, citationLabel }`, taken from the retrieved chunks (never from model output).
+    - `applicableOn` — the derived "law as at" date.
+    - `nextSteps` — the deterministic next-step list (e.g. ACAS contact, ET1 deadline, missing-fact prompt).
+    - `safetyNotes` — refusal reasons or warnings.
+
+    The response **never** carries a draft that failed any prior gate. The streaming UX (when enabled) emits structured fields in order: WHAT THE LAW SAYS → WHAT THIS MEANS → WHAT TO DO NOW. A mid-stream gate failure emits a `safety_block` event and replaces the partial answer with the refusal state.
+
+#### Safe failure statuses (no answer text emitted)
+
+| Status | Trigger |
+| --- | --- |
+| `bad_request` | Step 1 — malformed intake. |
+| `not_authorised` | Step 2 — RLS rejection / no workspace access. |
+| `module_unknown` | Step 3 — `(country_id, module_id)` not registered. |
+| `module_not_subscribed` | Step 4 — no active subscription row. |
+| `pii_blocked` | Step 5 — PII guard tripped. |
+| `classification_failed` | Step 6 — classifier inconclusive. |
+| `needs_more_facts` | Steps 6 / 11 — facts too thin to apply law. |
+| `high_risk_deadline` | Step 7 — statutory deadline imminent / past. |
+| `insufficient_sources` | Steps 8 / 9 / 12 — no usable evidence. |
+| `citation_failed` | Steps 10 / 12 / 13 — missing or hallucinated citation. |
+| `policy_failed` | Steps 11 / 13 — policy / rule violation. |
+| `llm_unavailable` | Step 12 — gateway disabled / transport missing / non-ok response. |
+| `blocked_by_policy` | Step 12 — router refused (e.g. drafting without citations). |
+| `human_review_required` | Step 15 — confidence / coverage / verification gate. |
+
+#### Pipeline overrides forbidden
+
+The Superior AI Architect AIA does **not** override any of the following — every pipeline change must be consistent with them:
+
+- **Sprint 10 gate.** Production pipeline work cannot land until Sprint 10 real staging DB verification is recorded as PASS. Mock-safe code / tests / docs are permitted while this gate is `PENDING`.
+- **Offline-first ADR.** [`../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md). The LLM is a fallback; the local DB / cache / section registry / deterministic facts / RAG always run first.
+- **Canonical namespace policy.** Only `iterlaw-ai`, `iterlaw-rag`, `iterlaw-api`, `iterlaw-monitoring`, `iterlaw-security`. No `iterlaw-prod`, no bare `iterlaw`.
+- **No-production-touch rule.** No `kubectl apply` / `kubectl delete` / `kubectl patch` / `kubectl edit` / `kubectl scale` against production. No `psql` against production. No production DB writes.
+- **No-push rule.** No `git push` unless the operator authorises it in the same instruction. Local-ahead branches are the safe default.
+- **No external LLM.** External provider hostnames (OpenAI, Anthropic, Gemini, Cohere, Mistral) are denied at runtime by `localTransportPolicy.ts`. Lifting that deny-list requires an ADR + operator approval.
+- **No deterministic-gate bypass.** The citation gate, policy gate, RAV, and WASM rule packs always run. The LLM cannot override them.
+
+Pipeline changes that touch any of the above are escalated to operator / legal review under the "Decision Authority" section below.
 
 ### 2. RAG Architecture
 

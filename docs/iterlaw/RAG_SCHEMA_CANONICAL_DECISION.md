@@ -33,13 +33,14 @@ schema that matches whichever ran first.
 | `009_statutory_rate_calculation_history.sql` | `uk_emp_rag.statutory_rate_calculation_history` |
 | `010_legal_documents_statutory_seed.sql` | Inserts into `uk_emp_rag.legal_documents` (statutory ladder) |
 | `100_iterlaw_core_rag_foundation.sql` (Master Order draft) | `legal_sources`, `legal_documents`, `legal_chunks`, `legal_cases`, `verified_answers_cache`, `rag_runs`, `source_update_log`, `answer_verification_log` |
-| `101_reconcile_legal_rag_schema.sql` (this sprint, additive) | Adds the four genuinely-new Master-Order tables that do not exist in the 001 chain, and adds a small set of additive columns to bring `001`'s `legal_chunks` / `legal_documents` closer to the Master-Order shape. |
+| `101_reconcile_legal_rag_schema.sql` (additive) | Adds the four genuinely-new Master-Order tables that do not exist in the 001 chain, and adds a small set of additive columns to bring `001`'s `legal_chunks` / `legal_documents` closer to the Master-Order shape. |
+| `102_add_legal_cases_table.sql` (Sprint 9 QA fix, additive) | Adds `public.legal_cases` to the approved chain. Suitable for UK case-law ingestion (Find Case Law / BAILII). The draft `100_*` file mentioned `legal_cases` only in commented form; this migration is the canonical owner. |
 
 ## Conflict summary
 
 - `legal_sources` is created by both `001_*.sql` and `100_*.sql` with different column lists. **001 wins** under the canonical decision below.
 - `legal_documents` and `legal_chunks` likewise — **001 wins**.
-- `legal_cases` is only in `100_*`. The 001 chain provides a similar concept via `legal_case_law` + `tribunal_decisions`. The 001 names remain canonical.
+- `legal_cases` was only in `100_*` (draft). It is now formally created by `102_add_legal_cases_table.sql` in the approved chain. The 001 chain's `legal_case_law` + `tribunal_decisions` tables remain in place and are not displaced. `legal_cases` is the table to use for new UK case-law ingestion (Find Case Law, BAILII).
 - `verified_answers_cache`, `rag_runs`, `source_update_log`, `answer_verification_log` are net-new in `100_*`. These four tables are GENUINELY missing from the 001 chain and are needed by the planner / orchestrator / verifier work.
 
 ## Canonical decision
@@ -54,6 +55,23 @@ It is retained in `apps/legal-orchestrator/db/migrations/` so the
 column inventory is preserved, but its body MUST NOT be applied to a
 database that has already run `001_*`. The header of the file has
 been updated to declare this status.
+
+## Canonical legal-RAG table set (after this sprint)
+
+After `001`–`010`, `101`, and `102` have been applied, the canonical
+public-schema RAG tables are:
+
+- `legal_sources`
+- `legal_documents`
+- `legal_chunks`
+- `legal_cases` (added by `102_*`)
+- `verified_answers_cache` (added by `101_*`)
+- `rag_runs` (added by `101_*`)
+- `source_update_log` (added by `101_*`)
+- `answer_verification_log` (added by `101_*`)
+
+`uk_emp_rag.*` tables (from `003`–`010`) remain alongside as the UK
+employment domain bucket.
 
 ## Reconciliation
 
@@ -102,6 +120,7 @@ should:
 009_statutory_rate_calculation_history.sql
 010_legal_documents_statutory_seed.sql
 101_reconcile_legal_rag_schema.sql        ← additive only
+102_add_legal_cases_table.sql             ← additive only
                                           (DO NOT apply 100_*.sql)
 ```
 

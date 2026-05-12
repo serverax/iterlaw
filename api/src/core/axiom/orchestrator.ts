@@ -1,8 +1,8 @@
 /**
  * AEE → ART → LVC → SEA — legal pipeline owned by Azure Functions.
  */
-import type { ArtRuntimeOptions } from '@rightsnow/shared';
-import { runAxiomPipeline, type AxiomPipelineResult } from '@rightsnow/legal-core';
+import type { ArtRuntimeOptions } from '@iterlaw/shared';
+import { runAxiomPipeline, type AxiomPipelineResult } from '@iterlaw/legal-core';
 import { runAee, type AeeInput } from './aee';
 import { runArt } from './art';
 

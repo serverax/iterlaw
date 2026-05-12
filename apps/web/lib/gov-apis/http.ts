@@ -9,7 +9,7 @@ export function createTimeoutClient(timeoutMs: number): AxiosInstance {
     validateStatus: (s) => s >= 200 && s < 400,
     headers: {
       Accept: 'application/json, text/plain;q=0.9,*/*;q=0.8',
-      'User-Agent': 'RightsNow/0.1 (+https://github.com/serverax/rightsnow)',
+      'User-Agent': 'IterLaw/0.1 (+https://github.com/serverax/iterlaw)',
     },
   });
 }

@@ -89,9 +89,12 @@ function reasoningAssumesFactsNotInExtracted(reasoningText, facts) {
     const marker = /\[REQUIRES_FACT:\s*([^\]]+)\]/gi;
     let m;
     while ((m = marker.exec(reasoningText)) !== null) {
-        const key = m[1].trim().toLowerCase();
+        const captured = m[1];
+        if (!captured)
+            continue;
+        const key = captured.trim().toLowerCase();
         if (key && !factKeys.has(key)) {
-            missing.push(`Fact "${m[1].trim()}" referenced in reasoning but not present in extracted_facts`);
+            missing.push(`Fact "${captured.trim()}" referenced in reasoning but not present in extracted_facts`);
         }
     }
     const needsTermination = /qualifying\s+period|unfair\s+dismissal|limitation|january\s+2027|2027-01-01/i.test(reasoningText);
@@ -127,6 +130,8 @@ function verifyLegalOutput(input) {
     else {
         for (let i = 0; i < input.legal_conclusions.length; i++) {
             const c = input.legal_conclusions[i];
+            if (c === undefined)
+                continue;
             const st = normalizeSourceType(c.source_type);
             const ref = c.reference;
             if (!isValidSourceType(st)) {

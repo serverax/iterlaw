@@ -10,7 +10,7 @@ export async function buildAnswerDocxBuffer(answer: UserAnswer): Promise<Buffer>
       {
         children: [
           new Paragraph({
-            text: 'RightsNow — Employment law summary',
+            text: 'IterLaw — Employment law summary',
             heading: HeadingLevel.TITLE,
           }),
           new Paragraph({

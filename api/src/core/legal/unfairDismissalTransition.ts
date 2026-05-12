@@ -3,4 +3,4 @@ export {
   EXCEPTIONS_REVIEW_NOTE,
   standardUnfairDismissalQualifyingMonths,
   type UnfairDismissalTransitionAssessment,
-} from '@rightsnow/legal-core';
+} from '@iterlaw/legal-core';

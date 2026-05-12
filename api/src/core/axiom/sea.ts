@@ -4,4 +4,4 @@ export {
   CONFIDENT_THRESHOLD,
   type SeaPhaseInput,
   type SeaPhaseResult,
-} from '@rightsnow/legal-core';
+} from '@iterlaw/legal-core';

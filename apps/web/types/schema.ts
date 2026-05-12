@@ -1,5 +1,5 @@
 /**
- * RightsNow — Supabase Postgres types (Phase 0 Step 3).
+ * IterLaw — Supabase Postgres types (Phase 0 Step 3).
  *
  * Regenerate from your hosted project when linked to Supabase CLI:
  *   npx supabase gen types typescript --project-id jjzckatjcxrwmcpuaavl > types/schema.ts

@@ -1,14 +1,14 @@
 import { app, type HttpRequest, type HttpResponseInit, type InvocationContext } from '@azure/functions';
 import { createHash, randomUUID } from 'crypto';
 import { ZodError } from 'zod';
-import { buildEnqueuePayloadFromPipeline } from '@rightsnow/legal-core';
+import { buildEnqueuePayloadFromPipeline } from '@iterlaw/legal-core';
 import {
   assertPayloadUnderMaxUpload,
   assertPremiumModelAllowed,
   loadCostControlFromEnv,
   PayloadTooLargeError,
   PremiumModelBlockedError,
-} from '@rightsnow/shared';
+} from '@iterlaw/shared';
 import { tryConsumeDailyAiCredit } from '../core/cost/aiUsage';
 import { runLegalPipeline } from '../core/axiom/orchestrator';
 import { enqueueForLegalReview } from '../core/review/reviewQueueService';

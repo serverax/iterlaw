@@ -1,5 +1,5 @@
 /**
- * Wire-level contracts for the RightsNow HTTP API (web + mobile clients).
+ * Wire-level contracts for the IterLaw HTTP API (web + mobile clients).
  * Legal evaluation and AI orchestration live only on the backend.
  */
 

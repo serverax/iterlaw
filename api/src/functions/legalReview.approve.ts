@@ -1,6 +1,6 @@
 import { app, type HttpRequest, type HttpResponseInit, type InvocationContext } from '@azure/functions';
 import { z } from 'zod';
-import { approveAnswerSchema } from '@rightsnow/shared';
+import { approveAnswerSchema } from '@iterlaw/shared';
 import { approveAnswer } from '../core/review/reviewQueueService';
 import { getServiceSupabase } from '../core/supabase/client';
 import { legalReviewApproveBodySchema } from '../types';

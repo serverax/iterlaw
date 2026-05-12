@@ -1,5 +1,5 @@
 {
-  "name": "@rightsnow/ai-orchestrator",
+  "name": "@iterlaw/ai-orchestrator",
   "version": "0.1.0",
   "private": true,
   "description": "IterLaw AI orchestrator — mock legal pipeline (AEE → ART → Risk → LVC)",

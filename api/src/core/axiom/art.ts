@@ -3,7 +3,7 @@
  * Cheap-first model routing (OpenRouter / Gemini) must be implemented here — never in web/mobile.
  * This scaffold emits source-backed shapes so LVC can run offline in CI.
  */
-import type { ArtRuntimeOptions } from '@rightsnow/shared';
+import type { ArtRuntimeOptions } from '@iterlaw/shared';
 import type { AeeOutput } from './aee';
 
 export type ArtOutput = {

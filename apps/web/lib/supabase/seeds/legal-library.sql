@@ -1,4 +1,4 @@
--- RightsNow Axiom — core UK employment statutory library (seed).
+-- IterLaw Axiom — core UK employment statutory library (seed).
 -- Run in Supabase SQL editor after creating tables (or merge into migrations).
 
 create table if not exists public.legal_statutes (

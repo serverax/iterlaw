@@ -9,4 +9,4 @@ export {
   GUARANTEED_HOURS_REVIEW_MESSAGE,
   type WeekHoursEntry,
   type ZeroHoursReferenceState,
-} from '@rightsnow/legal-core';
+} from '@iterlaw/legal-core';

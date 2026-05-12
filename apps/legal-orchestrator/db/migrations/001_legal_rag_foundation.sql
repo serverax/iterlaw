@@ -1,7 +1,7 @@
 -- =====================================================================
 -- 001_legal_rag_foundation.sql
 -- =====================================================================
--- OrdinoxAI / RightsNow legal RAG foundation.
+-- IterLaw legal RAG foundation. (legacy name: RightsNow)
 --
 -- Scope: structural-only. No real scraped data is inserted. The schema is
 -- reusable across domains (UK employment first, with room for housing,

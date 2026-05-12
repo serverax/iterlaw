@@ -1,4 +1,6 @@
-# Phase 0 — completion gate (IterLaw / RightsNow)
+# Phase 0 — completion gate (IterLaw)
+
+> Legacy name: RightsNow.
 
 Phase 0 is **closed only when every item below is true**. This is not a “best effort” checklist: if any gate fails, **do not start Phase 1**.
 
@@ -62,9 +64,9 @@ These exist **by design** for **Azure Static Web Apps + Next.js 14 + npm workspa
 
 ### 2. `apps/web/scripts/post-next-standalone.cjs`
 
-**Why:** Microsoft’s standalone hosting pattern requires copying **`.next/static`** and **`public`** into the standalone tree after `next build`. The script also **removes** the `@rightsnow/shared` entry from **`apps/web/.next/standalone/apps/web/package.json`**.
+**Why:** Microsoft’s standalone hosting pattern requires copying **`.next/static`** and **`public`** into the standalone tree after `next build`. The script also **removes** the `@iterlaw/shared` entry from **`apps/web/.next/standalone/apps/web/package.json`**.
 
-**Why remove the dependency:** In the repo, `@rightsnow/shared` is declared as `file:../../packages/shared`. The standalone folder deployed to SWA **does not include** `packages/` at that relative path. Azure’s follow-up `npm install` in the standalone directory would try to resolve that `file:` URL and **fail** (or leave a broken symlink). The shared library code is **already inside the traced server bundles** because of `outputFileTracingRoot`, so removing the **metadata-only** `package.json` line is correct and **not** a loss of runtime code.
+**Why remove the dependency:** In the repo, `@iterlaw/shared` is declared as `file:../../packages/shared`. The standalone folder deployed to SWA **does not include** `packages/` at that relative path. Azure’s follow-up `npm install` in the standalone directory would try to resolve that `file:` URL and **fail** (or leave a broken symlink). The shared library code is **already inside the traced server bundles** because of `outputFileTracingRoot`, so removing the **metadata-only** `package.json` line is correct and **not** a loss of runtime code.
 
 ### 3. `skip_app_build: true` and `app_location: apps/web/.next/standalone/apps/web`
 
@@ -72,11 +74,11 @@ These exist **by design** for **Azure Static Web Apps + Next.js 14 + npm workspa
 
 **Why:** Per Azure’s “skip building front-end app” documentation, `app_location` points at the **pre-built output** and `skip_app_build: true` avoids Oryx performing a second full monorepo build that cannot reproduce workspace layout reliably inside SWA’s isolated copy.
 
-### 4. “Verify Static Web App build” materializes `@rightsnow/shared`
+### 4. “Verify Static Web App build” materializes `@iterlaw/shared`
 
 **File:** `.github/workflows/deploy.yml` (step **Verify Static Web App build**)  
 
-**Why:** Before `next build`, `apps/web/node_modules/@rightsnow/shared` is replaced with a **real directory copy** of `packages/shared`. This matches how a robust install resolves the workspace package for the compiler and avoids relying on a symlink that differs between local OS and CI. The **same** pattern is used in the **CI** production build step (`ci-reusable.yml`) so PRs and pushes match deploy.
+**Why:** Before `next build`, `apps/web/node_modules/@iterlaw/shared` is replaced with a **real directory copy** of `packages/shared`. This matches how a robust install resolves the workspace package for the compiler and avoids relying on a symlink that differs between local OS and CI. The **same** pattern is used in the **CI** production build step (`ci-reusable.yml`) so PRs and pushes match deploy.
 
 ### 5. Demo Supabase `NEXT_PUBLIC_*` defaults in workflow `env`
 
@@ -100,7 +102,7 @@ These exist **by design** for **Azure Static Web Apps + Next.js 14 + npm workspa
 
 **Files:** `.github/workflows/deploy.yml`, `.github/workflows/deploy-functions.yml`  
 
-**Why:** The API package uses `file:../packages/*`. Those paths **do not exist** on Azure after zip upload. The workflow **vendors** `packages/shared` and `packages/legal-core` into `api/node_modules/@rightsnow/*` as **real directories** before deploy. This is the supported pattern for monorepo Functions on Consumption without remote Oryx.
+**Why:** The API package uses `file:../packages/*`. Those paths **do not exist** on Azure after zip upload. The workflow **vendors** `packages/shared` and `packages/legal-core` into `api/node_modules/@iterlaw/*` as **real directories** before deploy. This is the supported pattern for monorepo Functions on Consumption without remote Oryx.
 
 ---
 

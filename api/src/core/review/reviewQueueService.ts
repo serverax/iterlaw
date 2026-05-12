@@ -9,7 +9,7 @@ import {
   type EnqueueForLegalReviewInput,
   type RejectAnswerInput,
   type ReviewQueueStatus,
-} from '@rightsnow/shared';
+} from '@iterlaw/shared';
 
 function nowIso(): string {
   return new Date().toISOString();

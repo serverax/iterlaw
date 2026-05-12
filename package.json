@@ -1,23 +1,23 @@
 {
-  "name": "rightsnow",
+  "name": "iterlaw",
   "version": "0.1.0",
   "private": true,
   "workspaces": ["apps/web", "api", "packages/*"],
   "description": "UK employment law assistant — Gov APIs first, AI fallback, cached answers",
   "scripts": {
-    "dev": "npm run dev -w @rightsnow/web",
-    "build": "npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web",
-    "start": "npm run start -w @rightsnow/web",
-    "lint": "npm run lint -w @rightsnow/web",
-    "typecheck": "npm run typecheck -w @rightsnow/web",
+    "dev": "npm run dev -w @iterlaw/web",
+    "build": "npm run build -w @iterlaw/shared && npm run build -w @iterlaw/web",
+    "start": "npm run start -w @iterlaw/web",
+    "lint": "npm run lint -w @iterlaw/web",
+    "typecheck": "npm run typecheck -w @iterlaw/web",
     "format": "prettier --write .",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:ci": "jest --coverage --passWithNoTests",
-    "ci": "npm run lint && npm run typecheck && npm run test && npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web",
-    "build:packages": "npm run build -w @rightsnow/shared && npm run build -w @rightsnow/legal-core",
-    "build:api": "npm run build -w @rightsnow/api",
-    "build:web": "npm run build -w @rightsnow/shared && npm run build -w @rightsnow/web"
+    "ci": "npm run lint && npm run typecheck && npm run test && npm run build -w @iterlaw/shared && npm run build -w @iterlaw/web",
+    "build:packages": "npm run build -w @iterlaw/shared && npm run build -w @iterlaw/legal-core",
+    "build:api": "npm run build -w @iterlaw/api",
+    "build:web": "npm run build -w @iterlaw/shared && npm run build -w @iterlaw/web"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

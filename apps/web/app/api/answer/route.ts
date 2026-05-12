@@ -73,7 +73,7 @@ export async function POST(req: Request) {
     if (includeDocument) {
       const buf = await buildAnswerDocxBuffer(result.answer);
       payload.document = {
-        fileName: 'rightsnow-answer.docx',
+        fileName: 'iterlaw-answer.docx',
         mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         base64: buf.toString('base64'),
       };

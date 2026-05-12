@@ -1,4 +1,4 @@
-/** @rightsnow/legal-core — deterministic legal pipeline (AEE/ART/LVC/SEA) + UK constants */
+/** @iterlaw/legal-core — deterministic legal pipeline (AEE/ART/LVC/SEA) + UK constants */
 export * from './legal/constants/ukEmploymentRates2026';
 export * from './legal/rules/unfairDismissalTransition';
 export * from './legal/rules/fireAndRehire';

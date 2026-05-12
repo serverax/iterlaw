@@ -1,5 +1,5 @@
 {
-  "name": "@rightsnow/legal-core",
+  "name": "@iterlaw/legal-core",
   "version": "0.1.0",
   "private": true,
   "description": "AEE/ART/LVC/SEA pipeline logic and UK employment law constants — server-side only",

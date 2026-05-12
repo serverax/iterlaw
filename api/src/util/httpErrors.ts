@@ -1,4 +1,4 @@
-import { LegalReviewError } from '@rightsnow/shared';
+import { LegalReviewError } from '@iterlaw/shared';
 import type { HttpResponseInit } from '@azure/functions';
 import { ZodError } from 'zod';
 

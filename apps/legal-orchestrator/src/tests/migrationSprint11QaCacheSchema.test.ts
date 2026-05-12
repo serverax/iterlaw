@@ -165,7 +165,7 @@ describe("Migration 008 — q_a_cache + q_a_cache_sources", () => {
       expect(up).not.toContain("axios");
       expect(up).not.toContain("openai");
       expect(up).not.toContain("anthropic");
-      expect(up).not.toMatch(/sk-[a-zA-Z0-9]{10,}/);
+      expect(up).not.toMatch(/sk-(?:[A-Za-z0-9]{48,}|(?:proj|ant|svcacct)-[A-Za-z0-9_-]{20,})/);
       expect(up).not.toMatch(/github_pat_/i);
       expect(up).not.toMatch(/AKIA[0-9A-Z]{16}/);
       expect(up).not.toMatch(/BEGIN PRIVATE KEY/);

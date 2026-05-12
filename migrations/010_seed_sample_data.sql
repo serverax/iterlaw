@@ -34,8 +34,8 @@ INSERT INTO public.solicitor_partners (
   is_active
 ) VALUES (
   '33333333-3333-4333-8333-333333333333'::uuid,
-  'RightsNow Test Solicitors LLP',
-  'partners@rightsnow.test',
+  'IterLaw Test Solicitors LLP',
+  'partners@iterlaw.test',
   '+44 20 0000 0000',
   ARRAY['england_wales']::text[],
   99.00,
@@ -51,7 +51,7 @@ INSERT INTO public.users (
   jurisdiction
 ) VALUES (
   '11111111-1111-4111-8111-111111111111'::uuid,
-  'test@rightsnow.local',
+  'test@iterlaw.local',
   'google',
   'test-google-id',
   'free',
@@ -83,7 +83,7 @@ INSERT INTO public.case_timeline_entries (
   CURRENT_DATE,
   'note_added',
   'Case opened (seed)',
-  'Seed data for RightsNow manual QA'
+  'Seed data for IterLaw manual QA'
 );
 
 INSERT INTO public.questions (

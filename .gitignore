@@ -58,6 +58,10 @@ yarn-error.log*
 .idea
 .vscode/*
 !.vscode/extensions.json
+iterlaw.code-workspace
+
+# Claude Code harness state (per-workstation, never committed)
+.claude/
 
 # TypeScript
 *.tsbuildinfo

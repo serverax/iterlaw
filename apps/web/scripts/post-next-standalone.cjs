@@ -40,8 +40,8 @@ if (fs.existsSync(pub)) {
 // into the server bundle — drop the workspace dependency from the deploy manifest.
 const pkgPath = path.join(standaloneApp, 'package.json');
 const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-if (pkg.dependencies && pkg.dependencies['@rightsnow/shared']) {
-  delete pkg.dependencies['@rightsnow/shared'];
+if (pkg.dependencies && pkg.dependencies['@iterlaw/shared']) {
+  delete pkg.dependencies['@iterlaw/shared'];
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
 }
 

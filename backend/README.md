@@ -1,4 +1,4 @@
-# RightsNow API — Phase 0 (skeleton)
+# IterLaw API — Phase 0 (skeleton)
 
 Express + TypeScript + Supabase client wiring only. **No domain routes yet** (legal review comes in a later step).
 

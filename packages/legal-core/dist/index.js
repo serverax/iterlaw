@@ -1,5 +1,5 @@
 "use strict";
-/** @rightsnow/legal-core — deterministic legal pipeline (AEE/ART/LVC/SEA) + UK constants */
+/** @iterlaw/legal-core — deterministic legal pipeline (AEE/ART/LVC/SEA) + UK constants */
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);

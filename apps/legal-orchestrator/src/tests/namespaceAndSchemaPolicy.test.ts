@@ -166,6 +166,80 @@ describe("RAG schema canonical decision", () => {
   });
 });
 
+describe("legal_cases canonical migration (102)", () => {
+  const m102 = join(
+    REPO_ROOT,
+    "apps",
+    "legal-orchestrator",
+    "db",
+    "migrations",
+    "102_add_legal_cases_table.sql"
+  );
+
+  it("102_add_legal_cases_table.sql exists in the approved migration chain", () => {
+    expect(statSync(m102).isFile()).toBe(true);
+  });
+
+  it("creates public.legal_cases idempotently with the canonical columns", () => {
+    const body = readFileSync(m102, "utf8");
+    expect(body).toMatch(/CREATE TABLE IF NOT EXISTS public\.legal_cases\b/);
+    for (const col of [
+      "neutral_citation",
+      "case_name",
+      "court",
+      "jurisdiction",
+      "decision_date",
+      "url",
+      "source_provider",
+      "summary",
+      "metadata",
+    ]) {
+      expect(body).toMatch(new RegExp(`\\b${col}\\b`));
+    }
+    expect(body).toMatch(/CREATE EXTENSION IF NOT EXISTS pgcrypto/);
+  });
+
+  it("declares the expected indexes idempotently", () => {
+    const body = readFileSync(m102, "utf8");
+    for (const idx of [
+      "idx_legal_cases_neutral_citation",
+      "idx_legal_cases_court",
+      "idx_legal_cases_decision_date",
+      "idx_legal_cases_source_provider",
+      "idx_legal_cases_metadata_gin",
+    ]) {
+      expect(body).toMatch(new RegExp(`CREATE INDEX IF NOT EXISTS ${idx}\\b`));
+    }
+  });
+
+  it("contains no destructive SQL (DROP / TRUNCATE / DELETE) outside comments", () => {
+    const body = readFileSync(m102, "utf8");
+    const stripped = body
+      .split("\n")
+      .filter((line) => !/^\s*--/.test(line))
+      .join("\n");
+    expect(stripped).not.toMatch(/\bDROP\b/i);
+    expect(stripped).not.toMatch(/\bTRUNCATE\b/i);
+    expect(stripped).not.toMatch(/\bDELETE\b/i);
+  });
+
+  it("contains no destructive ALTER (DROP COLUMN / RENAME) outside comments", () => {
+    const body = readFileSync(m102, "utf8");
+    const stripped = body
+      .split("\n")
+      .filter((line) => !/^\s*--/.test(line))
+      .join("\n");
+    expect(stripped).not.toMatch(/ALTER TABLE[^\n]*\bDROP\b/i);
+    expect(stripped).not.toMatch(/ALTER TABLE[^\n]*\bRENAME\b/i);
+  });
+
+  it("is referenced in the canonical schema decision doc", () => {
+    const docPath = join(REPO_ROOT, "docs", "iterlaw", "RAG_SCHEMA_CANONICAL_DECISION.md");
+    const body = readFileSync(docPath, "utf8");
+    expect(body).toMatch(/102_add_legal_cases_table\.sql/);
+  });
+});
+
 describe("Master-Order example secrets contain no real credentials", () => {
   const root = join(REPO_ROOT, "k8s", "iterlaw-disabled-master-order");
 

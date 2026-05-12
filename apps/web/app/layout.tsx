@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'RightsNow',
+  title: 'IterLaw',
   description: 'UK employment law assistant — official sources first.',
 };
 

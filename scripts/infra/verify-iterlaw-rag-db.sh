@@ -23,6 +23,7 @@ CANONICAL_DOC="${REPO_ROOT}/docs/iterlaw/RAG_SCHEMA_CANONICAL_DECISION.md"
 M_001="${MIG_DIR}/001_legal_rag_foundation.sql"
 M_100="${MIG_DIR}/100_iterlaw_core_rag_foundation.sql"
 M_101="${MIG_DIR}/101_reconcile_legal_rag_schema.sql"
+M_102="${MIG_DIR}/102_add_legal_cases_table.sql"
 
 report() { printf "%-12s %s\n" "$1" "$2"; }
 
@@ -59,7 +60,8 @@ if [[ -f "${M_101}" ]]; then
       report "FAIL" "101_* missing ${t}"
     fi
   done
-  # 101 must NOT touch the 001-canonical tables.
+  # 101 must NOT touch the 001-canonical tables. `legal_cases` is now
+  # owned by 102_*, so 101 must not declare it either.
   for t in legal_sources legal_documents legal_chunks legal_cases; do
     if grep -qE "CREATE TABLE IF NOT EXISTS ${t}\\b" "${M_101}"; then
       report "FAIL" "101_* redefines canonical table ${t} — must be additive only"
@@ -71,6 +73,36 @@ if [[ -f "${M_101}" ]]; then
   report "PASS" "101_* leaves 001-canonical tables untouched"
 else
   report "FAIL" "missing 101_reconcile_legal_rag_schema.sql"
+fi
+
+# ---------------------------------------------------------------------
+# 102_add_legal_cases_table.sql — checks.
+# ---------------------------------------------------------------------
+if [[ -f "${M_102}" ]]; then
+  report "PASS" "102_add_legal_cases_table.sql present"
+
+  if grep -qE "CREATE TABLE IF NOT EXISTS (public\\.)?legal_cases\\b" "${M_102}"; then
+    report "PASS" "102_* defines legal_cases"
+  else
+    report "FAIL" "102_* missing CREATE TABLE legal_cases"
+  fi
+
+  # 102 must be additive only: no DROP / DELETE / TRUNCATE / destructive
+  # ALTER. Comments are stripped first so a comment that *names* a
+  # banned keyword does not trip the check.
+  if grep -vE '^\s*--' "${M_102}" | grep -qiE '\b(DROP|TRUNCATE|DELETE)\b'; then
+    report "FAIL" "102_* contains destructive SQL (DROP / TRUNCATE / DELETE)"
+  else
+    report "PASS" "102_* contains no destructive SQL"
+  fi
+
+  if grep -vE '^\s*--' "${M_102}" | grep -qiE '\bALTER TABLE\b.*\b(DROP|RENAME)\b'; then
+    report "FAIL" "102_* contains destructive ALTER (DROP / RENAME)"
+  else
+    report "PASS" "102_* has no destructive ALTER"
+  fi
+else
+  report "FAIL" "missing 102_add_legal_cases_table.sql"
 fi
 
 # ---------------------------------------------------------------------
@@ -119,3 +151,5 @@ done
 for t in verified_answers_cache rag_runs source_update_log answer_verification_log; do
   check_table "${t}"
 done
+# Additive table from 102.
+check_table legal_cases

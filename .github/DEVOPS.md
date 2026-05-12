@@ -1,4 +1,4 @@
-# CI/CD — 30-minute setup (RightsNow)
+# CI/CD — 30-minute setup (IterLaw)
 
 **Accuracy baseline (five doc corrections, commit history):** [`docs/CRUSER_DEVOPS_ACCURACY_BASELINE.md`](../docs/CRUSER_DEVOPS_ACCURACY_BASELINE.md)
 

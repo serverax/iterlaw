@@ -1,4 +1,6 @@
-# IterLaw / RightsNow — project plan (phased roadmap)
+# IterLaw — project plan (phased roadmap)
+
+> Legacy name: RightsNow.
 
 This document is the **product and architecture plan** for IterLaw. Implementation is tracked separately in issues and PRs; nothing here is a commitment to ship order inside a phase.
 
@@ -223,7 +225,7 @@ User input / document / OCR text
   → SEA drafts next-step documents only if approved
 ```
 
-**Note:** `LVC` (Legal Verification Controller) in `@rightsnow/legal-core` may run **adjacent to or within** the “ART → Risk → Safety” chain; exact ordering is an **implementation** decision. This roadmap fixes **product intent**: Risk Assessment is **rule-backed**, **source-mapped**, and **upstream of unconstrained drafting**.
+**Note:** `LVC` (Legal Verification Controller) in `@iterlaw/legal-core` may run **adjacent to or within** the “ART → Risk → Safety” chain; exact ordering is an **implementation** decision. This roadmap fixes **product intent**: Risk Assessment is **rule-backed**, **source-mapped**, and **upstream of unconstrained drafting**.
 
 ### Relationship to other phases
 

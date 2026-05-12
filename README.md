@@ -1,12 +1,14 @@
-# RightsNow
+# IterLaw
 
-**RightsNow** is a UK employment law AI assistant for workers in active workplace disputes. It is designed to be **cheaper**, **more defensible**, and **better cited** than “LLM-only” products by treating **official UK government sources as primary** and **generative AI as fallback**.
+**IterLaw** is a UK employment law AI assistant for workers in active workplace disputes. It is designed to be **cheaper**, **more defensible**, and **better cited** than "LLM-only" products by treating **official UK government sources as primary** and **generative AI as fallback**.
+
+> **Legacy name:** Earlier internal notes refer to this product as **RightsNow**. The active product name is **IterLaw**; any remaining `RightsNow` references in disabled workflows under `.github/workflows-disabled/`, parked manifests under `k8s/iterlaw-disabled-master-order/`, and historical handoff documents under `docs/CRUSER_*` are legacy material kept for traceability.
 
 ---
 
 ## Legal disclaimer
 
-RightsNow provides **general information**, not legal advice. Employment outcomes depend on facts, jurisdiction, and procedure. **Always** confirm critical points with a qualified solicitor or trade union adviser, especially before deadlines (for example limitation dates or tribunal case management orders).
+IterLaw provides **general information**, not legal advice. Employment outcomes depend on facts, jurisdiction, and procedure. **Always** confirm critical points with a qualified solicitor or trade union adviser, especially before deadlines (for example limitation dates or tribunal case management orders).
 
 ---
 
@@ -54,7 +56,7 @@ The router is built to fan out to several connectors. These are **common, docume
 | 2 | [legislation.gov.uk](https://www.legislation.gov.uk/) | Statute and regulations text (employment rights acts, TUPE, etc.). |
 | 3 | [data.gov.uk](https://data.gov.uk/) (CKAN API) | Datasets and reference material published as open data. |
 | 4 | Tribunal / court **open data** and GOV.UK **decision listings** (where exposed) | Factual context on procedure and anonymised outcomes — **not** as substitute for case-specific advice. |
-| 5 | Additional GOV.UK paths and **department** content surfaced via the same Content API pattern | Targeted fetch for “employment” and related tax/benefit pages where relevant. |
+| 5 | Additional GOV.UK paths and **department** content surfaced via the same Content API pattern | Targeted fetch for "employment" and related tax/benefit pages where relevant. |
 
 **Operational note:** Each upstream has **terms of use** and **rate limits**. Production deployments should cache aggressively, backoff on errors, and log provenance for every paragraph shown to the user.
 
@@ -81,7 +83,7 @@ After your first `npm install`, check `npm outdated` and align `next` / `eslint-
 ### Install
 
 ```bash
-cd rightsnow
+cd iterlaw
 npm install
 ```
 
@@ -111,9 +113,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## Project phases (IterLaw / RightsNow roadmap)
+## Project phases (IterLaw roadmap)
 
-High-level phased plan for the **product** (distinct from early Cruser “Phase 0 step” handoff docs under `docs/CRUSER_*`).
+High-level phased plan for the **product** (distinct from early Cruser "Phase 0 step" handoff docs under `docs/CRUSER_*`).
 
 | Phase | Focus |
 |-------|--------|

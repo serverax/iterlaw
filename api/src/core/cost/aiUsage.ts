@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { CallerRole, CostControlConfig } from '@rightsnow/shared';
-import { dailyAiLimitForRole } from '@rightsnow/shared';
+import type { CallerRole, CostControlConfig } from '@iterlaw/shared';
+import { dailyAiLimitForRole } from '@iterlaw/shared';
 
 export async function tryConsumeDailyAiCredit(
   sb: SupabaseClient,

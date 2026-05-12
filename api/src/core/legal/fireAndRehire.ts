@@ -4,4 +4,4 @@ export {
   FIRE_AND_REHIRE_EVIDENCE_CHECKLIST,
   type FireAndRehireAssessment,
   type FireAndRehireInput,
-} from '@rightsnow/legal-core';
+} from '@iterlaw/legal-core';

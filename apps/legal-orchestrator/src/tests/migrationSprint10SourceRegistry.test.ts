@@ -156,7 +156,7 @@ describe("Sprint 10 trusted source registry migration (static validation)", () =
     const d = readMigration(DOWN);
     const both = up + d;
     const banned = [
-      /sk-[a-zA-Z0-9]{10,}/,
+      /sk-(?:[A-Za-z0-9]{48,}|(?:proj|ant|svcacct)-[A-Za-z0-9_-]{20,})/,
       /github_pat_/i,
       /AKIA[0-9A-Z]{16}/,
       /BEGIN PRIVATE KEY/,

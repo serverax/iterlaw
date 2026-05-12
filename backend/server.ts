@@ -5,5 +5,5 @@ const env = loadEnv();
 const app = createApp(env);
 
 app.listen(env.PORT, () => {
-  console.log(`rightsnow-api listening on http://localhost:${env.PORT}`);
+  console.log(`iterlaw-api listening on http://localhost:${env.PORT}`);
 });

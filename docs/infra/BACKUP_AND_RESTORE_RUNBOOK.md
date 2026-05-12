@@ -29,13 +29,18 @@ manifest, or running `psql` against production.
 | `uk_emp_rag.legal_answer_evidence` (audit) | Postgres | Included in the nightly dump |
 | `uk_emp_rag.legal_ingestion_runs` (ingestion audit) | Postgres | Included in the nightly dump |
 | `rag_runs`, `answer_verification_log`, `verified_answers_cache`, `source_update_log` (101_reconcile tables) | Postgres | Included in the nightly dump |
+| `public.legal_cases` (102_add_legal_cases_table — UK case-law ingestion target) | Postgres | Included in the nightly dump |
 | Uploaded user documents | NOT IMPLEMENTED YET — no file-upload path in v1 | Will need separate object-storage backup when added |
 | Local-only operator files (`.claude/`, `iterlaw.code-workspace`) | Operator workstation only | INTENTIONALLY UNTRACKED — these are harness/IDE state, not product data |
 
-`pg_dump` is currently scoped to `--schema=uk_emp_rag`. That excludes
-any `public.*` table from the dump. When the application schema
-genuinely lives in `public` (the 001-chain canonical tables), the
-dump command needs widening — see §9.
+**Update (2026-05-12):** `pg_dump` has already been widened. The
+current `k8s/iterlaw-data/backups/cronjob.yaml` now runs
+`pg_dump --format=custom --no-owner --no-privileges --schema=public`
+unconditionally and adds `--schema=uk_emp_rag` only when a `psql`
+probe confirms the schema exists. The `public` schema (which holds
+the 001-chain canonical tables plus the new `public.legal_cases`
+from migration 102) is therefore always captured. The §2.4 gap
+that motivated this widening is now closed.
 
 ---
 
@@ -43,9 +48,9 @@ dump command needs widening — see §9.
 
 ### 2.1 GitHub (source code)
 
-- Authoritative remote: `https://github.com/serverax/iterlaw.git`
-- Local at HEAD `7670227` is in sync with `origin/master` (ahead 0, behind 0).
-- A clone + reapply of K8s manifests + a fresh Postgres is sufficient to bring up an empty IterLaw on any cluster.
+- Authoritative remote: `https://github.com/serverax/iterlaw.git`.
+- The working tree on the operator workstation may be **ahead of `origin/master`** during in-progress sprints. The protected copy is the one on GitHub, not the local clone — never depend on the workstation copy.
+- A clone + reapply of K8s manifests + a fresh Postgres is sufficient to bring up an empty IterLaw on any cluster. Verify by `git ls-remote https://github.com/serverax/iterlaw.git master` and comparing against the last operator-confirmed SHA.
 
 ### 2.2 Local/untracked operator state
 
@@ -54,7 +59,7 @@ dump command needs widening — see §9.
 
 Neither contains product data. Both are intentionally untracked.
 
-### 2.3 Postgres backup CronJob (current)
+### 2.3 Postgres backup CronJob (current — `iterlaw-postgres-backup`)
 
 From `k8s/iterlaw-data/backups/cronjob.yaml`:
 
@@ -66,33 +71,42 @@ From `k8s/iterlaw-data/backups/cronjob.yaml`:
 | Schedule | `15 2 * * *` (02:15 UTC, daily) |
 | Concurrency | `Forbid` |
 | Job history | 3 successful / 3 failed retained |
-| Tool | `pg_dump --format=plain --no-owner --no-privileges --schema=uk_emp_rag` piped through `gzip -9` |
-| Output path | `/backups/iterlaw-YYYYMMDDTHHMMSSZ.sql.gz` |
+| Tool | `pg_dump --format=custom --no-owner --no-privileges --schema=public` plus conditional `--schema=uk_emp_rag` when present |
+| Output path | `/backups/iterlaw-YYYYMMDDTHHMMSSZ.dump` |
 | Output PVC | `iterlaw-postgres-backup` (20 Gi, `ReadWriteOnce`, in-cluster only) |
-| Retention | **NONE.** Operator must prune manually. |
-| Encryption at rest | Whatever the cluster StorageClass provides; not explicit. |
-| Encryption in transit | N/A — no upload. |
-| Remote upload | **NOT IMPLEMENTED.** |
+| Local retention | **NONE.** Operator must prune `/backups` manually. Borg upload (see §2.4) handles remote retention. |
+| Encryption at rest | Whatever the cluster StorageClass provides; not explicit. Borg upload adds client-side encryption for the remote copy. |
+| Encryption in transit | N/A on the local dump; SSH+Borg for the upload. |
+| Remote upload | **MANIFEST DRAFTED — not yet applied.** See §2.4. |
 | WAL archiving / PITR | NOT CONFIGURED. |
 | Credentials | `iterlaw-postgres-credentials` SealedSecret |
 | ServiceAccount | `iterlaw-postgres` (no-API Role; bound via `k8s/iterlaw-data/rbac.yaml`) |
-| Egress NetworkPolicy | DNS only (per `k8s/iterlaw-data/postgres/networkpolicy.yaml`) — there is no policy that would allow remote upload today |
+| Egress NetworkPolicy | DNS only on the Postgres pod itself; the upload pod has a separate (draft) policy in `upload-networkpolicy.yaml` |
 
-### 2.4 Backup format gap (must change before remote upload)
+### 2.4 Borg upload + verify CronJobs (drafted, not yet applied)
 
-`pg_dump --format=plain` is text-only. The next iteration will
-switch to `--format=custom` so:
+The remote-backup path is **drafted in repo** but no manifest has
+been applied to the cluster yet. Each YAML carries
+`iterlaw.io/status: draft-not-applied`.
 
-- the output is a single binary file ready for `pg_restore` with
-  selective restore (`--list`, `--use-list`),
-- the output already includes index and constraint metadata,
-- corruption is detectable via the format header.
+| Manifest | Purpose | Status |
+| --- | --- | --- |
+| `k8s/iterlaw-data/backups/upload-cronjob.yaml` | Nightly Borg upload of the latest `iterlaw-*.dump` to a Hetzner Storage Box. Mounts the backup PVC **read-only**. `automountServiceAccountToken: false`. Schedule `15 3 * * *`. | Draft. Image placeholder is `ghcr.io/serverax/iterlaw-backup-uploader:REPLACE_ME_DIGEST_OR_TAG` — must be replaced with a digest pin before any `kubectl apply`. |
+| `k8s/iterlaw-data/backups/upload-networkpolicy.yaml` | Egress allow-list for the upload pod: DNS + SSH on port 23 to the Storage Box. | Draft. Carries `iterlaw.io/policy-todo: "pin Storage Box /32 CIDR before apply"`. The `to.ipBlock.cidr` is currently `0.0.0.0/0`, which is wider than acceptable for production. |
+| `k8s/iterlaw-data/backups/verify-cronjob.yaml` | Weekly restore-verification drill (Mondays 06:00 UTC). Lists the Borg repo, runs `borg check --verify-data`, extracts the latest archive, runs `pg_restore --list` against the extracted dump, asserts both `public` + `uk_emp_rag` schemas. Does **NOT** restore into a live database. | Draft. Same image-placeholder constraint. |
+| `k8s/iterlaw-data/secrets/iterlaw-backup-borg.example.yaml` | Template Secret carrying `REPLACE_ME_*` placeholders for `BORG_REPO`, `BORG_PASSPHRASE`, `STORAGEBOX_HOST`, `STORAGEBOX_USER`, `SSH_PRIVATE_KEY`, plus optional alert envs. Not a SealedSecret — the operator runs `kubeseal` over the filled-in copy. | Example only. Never applied directly. |
+| `apps/backup-uploader/` | Source for the image referenced by both CronJobs. Alpine 3.20 + `borg`, `openssh-client`, `postgresql16-client`, `tini`. Non-root UID 70. | Source-present; image not yet built or pushed. |
+| `scripts/infra/build-backup-uploader-image.sh` | Helper to build (and optionally `--push`) the uploader image. Reports `DOCKER_NOT_AVAILABLE` if docker is missing. | Implemented. Not executed in any sprint to date. |
+| `scripts/infra/create-backup-borg-sealedsecret-template.sh` | Helper that reads `BORG_REPO`, `BORG_PASSPHRASE`, etc. from the environment and emits a raw Secret YAML to stdout (or `--kubeseal`-pipes it). Refuses `REPLACE_ME` and empty values. | Implemented. Not executed in any sprint to date. |
+| `apps/legal-orchestrator/scripts/restore-from-borg.sh` | Manual restore helper. Requires `FORCE_RESTORE=1` and refuses to touch anything matching `iterlaw-postgres.iterlaw-data.svc.cluster.local`. | Implemented. Never executed against a real archive (no archive exists yet). |
+| `scripts/infra/verify-iterlaw-backup.sh` | Repo-level verifier: 26 static checks across cronjobs, networkpolicy, example secret, restore script. | Implemented. Current state: PARTIAL — 25 PASS, 1 WARN on the broad CIDR. |
 
 ### 2.5 Restore drill state
 
-**NO drill has ever been executed.** No script exists to run a drill
-automatically. Restore today is a manual sequence (see §6 below) — but
-it has never been validated against a real dump.
+**NO drill has ever been executed against a real archive.** All
+drill machinery is drafted but unrun. The `verify-cronjob.yaml`
+is the closest piece of "automated drill" we will have once the
+uploader image is built and the secret is sealed.
 
 ---
 
@@ -269,19 +283,39 @@ or its secrets.
 
 ## 8. Required future implementation
 
+### 8.1 Already implemented (do NOT redo)
+
+| # | Artefact | Where |
+| --- | --- | --- |
+| ✓ | Local nightly `pg_dump --format=custom` covering `public` + conditional `uk_emp_rag` | `k8s/iterlaw-data/backups/cronjob.yaml` |
+| ✓ | Borg upload CronJob (draft, not applied) | `k8s/iterlaw-data/backups/upload-cronjob.yaml` |
+| ✓ | Storage-Box egress NetworkPolicy (draft, not applied) | `k8s/iterlaw-data/backups/upload-networkpolicy.yaml` |
+| ✓ | Weekly verify CronJob (draft, not applied) | `k8s/iterlaw-data/backups/verify-cronjob.yaml` |
+| ✓ | Example Secret template with `REPLACE_ME_*` placeholders | `k8s/iterlaw-data/secrets/iterlaw-backup-borg.example.yaml` |
+| ✓ | Uploader image source | `apps/backup-uploader/` (Dockerfile + entrypoint.sh + README.md) |
+| ✓ | Image build script | `scripts/infra/build-backup-uploader-image.sh` |
+| ✓ | SealedSecret generator script | `scripts/infra/create-backup-borg-sealedsecret-template.sh` |
+| ✓ | Manual restore helper with FORCE_RESTORE guard + production-host refusal | `apps/legal-orchestrator/scripts/restore-from-borg.sh` |
+| ✓ | Repo-level verifier with 26 static checks | `scripts/infra/verify-iterlaw-backup.sh` |
+| ✓ | SealedSecret workflow doc | `k8s/iterlaw-data/secrets/README.md` |
+| ✓ | Alerting placeholders in upload + verify CronJobs | `BACKUP_ALERT_WEBHOOK_URL`, `BACKUP_ALERT_TELEGRAM_BOT_TOKEN`, `BACKUP_ALERT_TELEGRAM_CHAT_ID` |
+
+### 8.2 Still required before any production traffic
+
 | # | Artefact | Notes |
 | --- | --- | --- |
-| 1 | `k8s/iterlaw-data/secrets/iterlaw-backup-borg.example.yaml` | SealedSecret template carrying `BORG_PASSPHRASE`, `BORG_REPO`, `SSH_PRIVATE_KEY`, `SSH_KNOWN_HOSTS`. Sealed at commit time. Example file uses `REPLACE_ME_*` placeholders only. |
-| 2 | `k8s/iterlaw-data/backups/upload-cronjob.yaml` | New CronJob `iterlaw-postgres-backup-upload`. Mounts the existing `iterlaw-postgres-backup` PVC **read-only**. Image carries `borg`. Pulls credentials from the SealedSecret. Runs `borg create … && borg prune …`. `automountServiceAccountToken: false`. |
-| 3 | `k8s/iterlaw-data/backups/upload-networkpolicy.yaml` | NetworkPolicy permitting egress from `app.kubernetes.io/name: iterlaw-postgres-backup-upload` to `your-storagebox.de:23` (Hetzner SFTP). Default-deny everything else. |
-| 4 | `k8s/iterlaw-data/backups/verify-cronjob.yaml` | Monday verify job. Pulls the latest Borg archive, runs `pg_restore --list`, runs smoke counts against a temporary scratch database, exits non-zero on any mismatch. |
-| 5 | `apps/legal-orchestrator/scripts/restore-from-borg.sh` | Manual restore helper. Wraps the Borg + `pg_restore` sequence in a single supervised script. Refuses to write to the live `iterlaw-postgres` host. |
-| 6 | `scripts/infra/verify-iterlaw-backup.sh` | Repo-level verifier: confirms (1) the upload CronJob manifest exists, (2) its SealedSecret reference resolves to a sealed file (not plaintext), (3) the verify CronJob exists, (4) the manual restore script is `chmod +x`. |
-| 7 | Telegram/email alert in steps 2 + 4 | Hook to fire on `failed` exit code. Operator chooses transport. Credentials go in the same Borg SealedSecret (or a sibling). |
-| 8 | Switch the existing `iterlaw-postgres-backup` CronJob to `pg_dump --format=custom` and include both `uk_emp_rag` and `public` schemas | Single line change in `k8s/iterlaw-data/backups/cronjob.yaml`. Required before upload-cronjob is useful. |
+| 1 | **Build + push the uploader image** | Run `bash scripts/infra/build-backup-uploader-image.sh --push` from an environment that has Docker and a `docker login` to the chosen registry. Capture the resulting `@sha256:` digest. |
+| 2 | **Pin the digest in both CronJob manifests** | Replace `image: ghcr.io/serverax/iterlaw-backup-uploader:REPLACE_ME_DIGEST_OR_TAG` with `image: ghcr.io/serverax/iterlaw-backup-uploader@sha256:<digest>` in `upload-cronjob.yaml` and `verify-cronjob.yaml`. The verifier asserts this before promotion. |
+| 3 | **Resolve the Storage Box IP and pin the CIDR** | Replace `0.0.0.0/0` in `upload-networkpolicy.yaml` with `<storagebox-ip>/32`. CNI must enforce NetworkPolicy (Cilium / Calico — not the default k3s flannel). |
+| 4 | **Generate and seal the real `iterlaw-backup-borg` Secret** | Run the SealedSecret generator script with real env vars, pipe through `kubeseal`, commit only the resulting `*-sealedsecret.yaml`. The raw `.raw.yaml` MUST be `shred -u`'d. |
+| 5 | **Apply the four backup manifests in dry-run, then in production** | `kubectl apply --dry-run=server -f k8s/iterlaw-data/backups/`, review, then unattended apply on operator authorisation. |
+| 6 | **Provide real alert values** | Seal `BACKUP_ALERT_WEBHOOK_URL` (Slack / Discord / PagerDuty) OR `BACKUP_ALERT_TELEGRAM_BOT_TOKEN`+`BACKUP_ALERT_TELEGRAM_CHAT_ID` into the same SealedSecret. The current pods log alert *intent* only; an upgrade to fire a `curl` call is a small TODO inside `apps/backup-uploader/entrypoint.sh`. |
+| 7 | **First end-to-end drill** | After §5 succeeds for one night, run the §5-of-this-doc procedure (extract latest archive, `pg_restore --list`, smoke counts) end-to-end against a throwaway namespace. Record the result in operator notes. The weekly `verify-cronjob` automates most of this from there onward. |
+| 8 | **Storage Box DNS resolver script** | Small helper `scripts/infra/resolve-storagebox-ip.sh` to translate `uXXXXXX.your-storagebox.de` to a stable `/32` (Hetzner publishes a stable IP per box). Used as a pre-apply step for the NetworkPolicy. Listed but optional — operator can also paste the IP by hand once. |
 
-**None of the above is implemented in this commit.** This runbook
-defines them as the next sprint's scope.
+**None of the §8.2 items has been executed yet.** Items 1–4 are
+prerequisites for §8.2 item 5. Item 6 is independent and can land
+in any later sprint without blocking 1–5.
 
 ---
 
@@ -306,14 +340,33 @@ defines them as the next sprint's scope.
 
 ## 10. Recommended next task
 
-Implement the eight artefacts in §8 in order. The smallest unit of
-useful progress is **§8 item 8** (widen `pg_dump` to include
-`public.legal_*` + switch to `--format=custom`), because the current
-backup is **incomplete** as long as the runtime queries the canonical
-public-schema tables.
+The §8.1 inventory is complete in source. The §8.2 list is what
+moves IterLaw off single-PVC dependency.
 
-**Biggest data-loss risk today:** the entire RAG corpus
-(`uk_emp_rag.legal_*` + `public.legal_*` once it's populated) is
-backed up to **one local PVC inside one AKS cluster**. If the cluster
-or its StorageClass is destroyed, every nightly dump is lost. Add
-remote upload (§8 items 1–3) before any production traffic begins.
+**The single most useful next task is §8.2 item 1 + 2 together:**
+build + push the uploader image, capture its sha256 digest, and pin
+that digest into both `upload-cronjob.yaml` and `verify-cronjob.yaml`.
+The four backup manifests are otherwise non-applicable (no image
+exists at the placeholder location). Once items 1–2 land, item 4
+(real SealedSecret) becomes possible, item 3 (CIDR pin) is a one-line
+operator action, and item 5 (apply) unblocks every downstream step.
+
+**Biggest data-loss risk today:** every dump produced by the nightly
+CronJob lives **only on a single 20 Gi `ReadWriteOnce` PVC inside
+the cluster**. Cluster destruction, StorageClass corruption, or
+namespace deletion loses every backup. The upload-cronjob manifest
+is drafted but **not applied** because the image it references does
+not yet exist — the placeholder tag `REPLACE_ME_DIGEST_OR_TAG` is a
+deliberate defense to prevent an early apply. Until §8.2 items 1–5
+are complete, the cluster is the single point of failure for the
+entire RAG corpus and every audit table this runbook lists in §1.
+
+**Acceptance for "remote-protected":**
+
+- A Borg archive named `iterlaw-YYYYMMDDTHHMMSSZ` exists in the
+  Hetzner Storage Box repo, dated within the last 25 hours.
+- `borg check --verify-data` against that archive PASSes.
+- `pg_restore --list` against the extracted dump shows both
+  `SCHEMA - public` and (if populated) `SCHEMA - uk_emp_rag`.
+- `verify-iterlaw-backup.sh` reports `summary: PASS (0 warn)` (the
+  current 1-WARN on the broad CIDR has been closed by §8.2 item 3).

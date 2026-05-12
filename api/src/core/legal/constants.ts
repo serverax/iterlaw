@@ -8,4 +8,4 @@ export {
   LOWER_EARNINGS_LIMIT_WEEKLY_GBP,
   sspWeeklyPayGbp,
   statutoryFamilyPayWeeklyGbp,
-} from '@rightsnow/legal-core';
+} from '@iterlaw/legal-core';

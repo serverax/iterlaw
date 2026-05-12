@@ -64,12 +64,17 @@ spec:
               type: RuntimeDefault
           containers:
             - name: borg-upload
-              # PLACEHOLDER IMAGE. The image must carry `borg` and
-              # `openssh-client`. Build a small image in a later sprint
-              # and pin a digest here. Until then this manifest will
-              # ImagePullBackOff if applied — which is the correct
-              # safe-by-default behaviour.
-              image: iterlaw/borg-uploader:placeholder
+              # PLACEHOLDER REFERENCE — must be replaced with a
+              # digest-pinned image before any kubectl apply.
+              # Source: apps/backup-uploader/. Build + push via
+              # scripts/infra/build-backup-uploader-image.sh; then
+              # replace `REPLACE_ME_DIGEST_OR_TAG` with the digest
+              # the build script printed (preferred), e.g.:
+              #   image: ghcr.io/serverax/iterlaw-backup-uploader@sha256:REPLACE_ME
+              # A floating tag is allowed for dev, but production
+              # MUST pin a digest. The verifier reports WARN until
+              # the value contains `@sha256:`.
+              image: ghcr.io/serverax/iterlaw-backup-uploader:REPLACE_ME_DIGEST_OR_TAG
               imagePullPolicy: IfNotPresent
               envFrom:
                 - secretRef:

@@ -3,4 +3,4 @@ export {
   lvcConfidenceBand,
   type VerifyLegalInput,
   type VerifyLegalOutput,
-} from '@rightsnow/legal-core';
+} from '@iterlaw/legal-core';

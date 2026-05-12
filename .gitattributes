@@ -1,0 +1,49 @@
+# IterLaw — line-ending policy.
+#
+# Windows Git Bash will otherwise check out shell scripts with CRLF
+# because of `core.autocrlf=true`, which breaks `bash -n` and any
+# heredoc that ends with `EOF\r`. These rules force shell, YAML, and
+# Dockerfile checkouts to LF on every platform.
+#
+# Re-normalize an existing working tree with:
+#   git add --renormalize .
+
+* text=auto eol=lf
+
+# Shell scripts must always be LF.
+*.sh             text eol=lf
+*.bash           text eol=lf
+
+# Container / orchestration manifests must always be LF.
+Dockerfile       text eol=lf
+*.Dockerfile     text eol=lf
+*.dockerfile     text eol=lf
+*.yaml           text eol=lf
+*.yml            text eol=lf
+
+# JSON-family configs.
+*.json           text eol=lf
+
+# Source code.
+*.ts             text eol=lf
+*.tsx            text eol=lf
+*.js             text eol=lf
+*.jsx            text eol=lf
+*.cjs            text eol=lf
+*.mjs            text eol=lf
+*.sql            text eol=lf
+
+# Docs.
+*.md             text eol=lf
+
+# Binary types — never normalize.
+*.png            binary
+*.jpg            binary
+*.jpeg           binary
+*.gif            binary
+*.ico            binary
+*.pdf            binary
+*.zip            binary
+*.gz             binary
+*.tgz            binary
+*.dump           binary

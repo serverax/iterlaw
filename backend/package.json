@@ -1,8 +1,8 @@
 {
-  "name": "rightsnow-api",
+  "name": "iterlaw-api",
   "version": "0.1.0",
   "private": true,
-  "description": "RightsNow Phase 0 API — Express + Supabase (no OAuth in this package)",
+  "description": "IterLaw Phase 0 API — Express + Supabase (no OAuth in this package)",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch server.ts",

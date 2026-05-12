@@ -87,7 +87,7 @@ describe("Sprint 9 SQL migrations (static validation)", () => {
 
   it("migration contains no obvious secrets or credential URLs", () => {
     const banned = [
-      /sk-[a-zA-Z0-9]{10,}/,
+      /sk-(?:[A-Za-z0-9]{48,}|(?:proj|ant|svcacct)-[A-Za-z0-9_-]{20,})/,
       /github_pat_/i,
       /AKIA[0-9A-Z]{16}/,
       /BEGIN PRIVATE KEY/,

@@ -1,8 +1,8 @@
 {
-  "name": "@rightsnow/api",
+  "name": "@iterlaw/api",
   "version": "0.1.0",
   "private": true,
-  "description": "RightsNow Azure Functions — sole AI + legal pipeline + review_queue",
+  "description": "IterLaw Azure Functions — sole AI + legal pipeline + review_queue",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@azure/functions": "^4.6.0",
-    "@rightsnow/legal-core": "file:../packages/legal-core",
-    "@rightsnow/shared": "file:../packages/shared",
+    "@iterlaw/legal-core": "file:../packages/legal-core",
+    "@iterlaw/shared": "file:../packages/shared",
     "@supabase/supabase-js": "^2.45.0",
     "zod": "^3.23.8"
   },

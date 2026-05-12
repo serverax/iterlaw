@@ -7,7 +7,7 @@ app.http('health', {
   handler: async (_request: HttpRequest, _ctx: InvocationContext): Promise<HttpResponseInit> => {
     return {
       status: 200,
-      jsonBody: { ok: true, service: 'rightsnow-functions' },
+      jsonBody: { ok: true, service: 'iterlaw-functions' },
     };
   },
 });

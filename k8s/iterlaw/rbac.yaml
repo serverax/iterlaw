@@ -1,0 +1,95 @@
+# IterLaw RBAC — namespace iterlaw-ai.
+#
+# Policy:
+#   * No ClusterRole or ClusterRoleBinding is permitted in this file or any
+#     other manifest under k8s/iterlaw/. Verification scripts enforce this.
+#   * Each workload's ServiceAccount is bound to a namespace-scoped Role
+#     that grants ZERO API permissions. The combination of
+#     `automountServiceAccountToken: false` and an empty Role means a
+#     compromised pod cannot reach the Kubernetes API.
+#   * If a workload ever genuinely needs API access, add the minimum
+#     verbs/resources to its dedicated Role here — never via ClusterRole.
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: legal-orchestrator-no-api
+  namespace: iterlaw-ai
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: legal-orchestrator-no-api
+  namespace: iterlaw-ai
+subjects:
+  - kind: ServiceAccount
+    name: legal-orchestrator
+    namespace: iterlaw-ai
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: legal-orchestrator-no-api
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: synthesis-worker-no-api
+  namespace: iterlaw-ai
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: synthesis-worker-no-api
+  namespace: iterlaw-ai
+subjects:
+  - kind: ServiceAccount
+    name: synthesis-worker
+    namespace: iterlaw-ai
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: synthesis-worker-no-api
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: synthesis-redis-no-api
+  namespace: iterlaw-ai
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: synthesis-redis-no-api
+  namespace: iterlaw-ai
+subjects:
+  - kind: ServiceAccount
+    name: synthesis-redis
+    namespace: iterlaw-ai
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: synthesis-redis-no-api
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: iterlaw-web-no-api
+  namespace: iterlaw-ai
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: iterlaw-web-no-api
+  namespace: iterlaw-ai
+subjects:
+  - kind: ServiceAccount
+    name: iterlaw-web
+    namespace: iterlaw-ai
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: iterlaw-web-no-api

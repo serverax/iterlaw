@@ -1,5 +1,63 @@
 # IterLaw — Network Model
 
+## ⚠ CNI enforcement caveat
+
+The NetworkPolicy manifests under `k8s/iterlaw/**` and `k8s/iterlaw-data/**`
+are written for a policy-capable CNI. **They are not guaranteed to be
+enforced on the current K3s cluster.**
+
+Current observed cluster state (from `kubectl -n kube-system get ds`):
+
+```
+coredns
+local-path-provisioner
+metrics-server
+traefik
+svclb-traefik
+```
+
+No `cilium`, `calico`, or `kube-router` DaemonSet is present. K3s defaults
+to a minimal CNI (Flannel-based) that does **not** enforce
+`networking.k8s.io/v1` NetworkPolicy. Until a policy-capable CNI is
+installed, every NetworkPolicy in this repo is best treated as
+**advisory documentation** — Kubernetes will accept the manifest, but
+pods will still be reachable across the namespaces unless an
+out-of-cluster firewall blocks them.
+
+### Required before relying on pod-level isolation
+
+Install either:
+
+- **Cilium** (recommended for IterLaw scale, supports L7 policies),
+- **Calico** (mature, well-documented), or
+- **kube-router**.
+
+Installation is **out of scope** of this repository. After the chosen
+CNI is in place, `scripts/infra/verify-iterlaw-cluster.sh` will report
+`PASS policy-capable CNI detected`. Until then it reports `WARN
+NetworkPolicy may not be enforced`.
+
+### What still works without a policy CNI
+
+- Service type enforcement (`ClusterIP`-only, no NodePort/LoadBalancer)
+  — done by the kube-apiserver, independent of the CNI.
+- Ingress-controller routing — Traefik on K3s already routes only what
+  the Ingress object declares.
+- Pod-Security baseline/restricted labels on namespaces — enforced by
+  the kube-apiserver admission controller, independent of the CNI.
+- Read-only root filesystem, dropped capabilities, non-root user —
+  enforced by the kubelet, independent of the CNI.
+
+### What does NOT work without a policy CNI
+
+- The per-workload `NetworkPolicy` objects (e.g. "only legal-orchestrator
+  may reach iterlaw-postgres on 5432").
+- The `synthesis-worker → ordinox-ai/ollama:11434` egress restriction.
+- The blanket "no public egress" pattern for any pod.
+
+Treat the NetworkPolicy files as a contract that becomes load-bearing
+once the CNI is installed. Do not delete them.
+
 ## Trust zones
 
 ```

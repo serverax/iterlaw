@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 # verify-iterlaw-cluster.sh — read-only checks against the live K3s cluster.
 #
-# Reports PASS / FAIL / NOT DEPLOYED / NOT EXECUTED per check. Never mutates
-# cluster state.
+# Reports one of:
+#   PASS         — expected object exists and matches the contract
+#   FAIL         — exists but disagrees with the contract
+#   WARN         — non-fatal contract gap (e.g. CNI cannot enforce NetworkPolicy)
+#   NOT DEPLOYED — object does not exist (acceptable pre-deploy)
+#   NOT EXECUTED — the check could not run (e.g. no kubectl context)
+#
+# Never mutates cluster state.
 
 set -uo pipefail
 
@@ -109,6 +115,47 @@ check_svc_clusterip "${DATA_NS}" iterlaw-postgres
 
 check_not_public "${NS}"      synthesis-worker
 check_not_public "${DATA_NS}" iterlaw-postgres
+
+# CNI enforcement capability. The IterLaw NetworkPolicy manifests are
+# enforced only when a policy-capable CNI is installed. K3s defaults
+# (Flannel) accept the manifests but do NOT enforce them.
+detect_cni() {
+  local ds_names
+  ds_names=$(kubectl -n kube-system get ds -o name 2>/dev/null || true)
+  if [[ -z "${ds_names}" ]]; then
+    report "NOT EXECUTED" "CNI detection (kube-system DaemonSets unreadable)"
+    return
+  fi
+  if echo "${ds_names}" | grep -qiE 'cilium|calico|kube-router'; then
+    local match
+    match=$(echo "${ds_names}" | grep -iE 'cilium|calico|kube-router' | head -1 | sed 's|daemonset.apps/||')
+    report "PASS" "policy-capable CNI detected (${match})"
+  else
+    report "WARN" "NetworkPolicy may not be enforced — install Cilium or Calico"
+    report "WARN" "  observed kube-system DaemonSets:"
+    echo "${ds_names}" | sed 's|daemonset.apps/|             |'
+  fi
+}
+detect_cni
+
+# Pod-security namespace labels — enforced by the kube-apiserver,
+# independent of the CNI.
+check_pss_label() {
+  local ns="$1"
+  if ! kubectl get ns "${ns}" > /dev/null 2>&1; then
+    report "NOT DEPLOYED" "pod-security labels on ${ns}"
+    return
+  fi
+  local enforce
+  enforce=$(kubectl get ns "${ns}" -o jsonpath='{.metadata.labels.pod-security\.kubernetes\.io/enforce}' 2>/dev/null || true)
+  if [[ "${enforce}" == "baseline" || "${enforce}" == "restricted" ]]; then
+    report "PASS" "pod-security enforce=${enforce} on ${ns}"
+  else
+    report "FAIL" "pod-security enforce label missing or weak on ${ns} (got '${enforce:-<empty>}')"
+  fi
+}
+check_pss_label "${NS}"
+check_pss_label "${DATA_NS}"
 
 # Sanity: no rightsnow workloads anywhere in the cluster.
 if kubectl get deploy,sts --all-namespaces -o name 2>/dev/null | grep -i rightsnow > /dev/null; then

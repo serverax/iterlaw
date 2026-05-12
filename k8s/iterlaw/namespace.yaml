@@ -6,4 +6,5 @@ metadata:
     app.kubernetes.io/name: iterlaw
     app.kubernetes.io/part-of: iterlaw
     pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/audit: restricted
     pod-security.kubernetes.io/warn: restricted

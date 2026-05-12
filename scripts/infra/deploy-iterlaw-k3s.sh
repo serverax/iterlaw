@@ -45,12 +45,16 @@ fi
 APPLY_PATHS=(
   # iterlaw-data first — orchestrator readiness depends on Postgres being up.
   "${ROOT}/k8s/iterlaw-data/namespace.yaml"
+  "${ROOT}/k8s/iterlaw-data/resourcequotas.yaml"
+  "${ROOT}/k8s/iterlaw-data/limitranges.yaml"
+  "${ROOT}/k8s/iterlaw-data/rbac.yaml"
   "${ROOT}/k8s/iterlaw-data/secrets/"
   "${ROOT}/k8s/iterlaw-data/postgres/"
   "${ROOT}/k8s/iterlaw-data/backups/"
   # iterlaw-ai application tier.
   "${ROOT}/k8s/iterlaw/namespace.yaml"
   "${ROOT}/k8s/iterlaw/serviceaccount.yaml"
+  "${ROOT}/k8s/iterlaw/rbac.yaml"
   "${ROOT}/k8s/iterlaw/resourcequotas.yaml"
   "${ROOT}/k8s/iterlaw/limitranges.yaml"
   "${ROOT}/k8s/iterlaw/secrets/"

@@ -83,6 +83,7 @@ project.
 ## Allowed deviations
 
 - Historical mentions of retired names (e.g. inside `db/` migrations that have
-  already shipped, or inside the legacy `k8s/legal-orchestrator/` tree) are
+  already shipped, or inside the archived
+  `k8s/iterlaw-disabled-standalone-legal-orchestrator/` tree) are
   out of scope of this contract. The contract applies to *new* IterLaw infra
   surface only.

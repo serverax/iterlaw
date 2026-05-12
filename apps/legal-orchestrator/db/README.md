@@ -8,6 +8,24 @@ SQL migrations for the OrdinoxAI legal RAG schema (UK employment first).
 
 ## Files
 
+Migrations are **numbered PostgreSQL `.sql` files only** (no `.ts` runners in
+`db/migrations/`). Optional paired `*.down.sql` files roll back the matching
+forward file. Static validation runs via `npm run validate:migrations` in
+`apps/legal-orchestrator` (Vitest; no live DB).
+
+### Sprint 10+ numbering (canonical forward chain excerpt)
+
+| File | Role |
+|------|------|
+| `000_pgvector_prerequisite.sql` | Extension prerequisite. |
+| `001`–`010`, `101_reconcile_legal_rag_schema.sql` | Core RAG + reconciliation (see `docs/iterlaw/RAG_SCHEMA_CANONICAL_DECISION.md`). |
+| `102_add_legal_cases_table.sql` | Adds `public.legal_cases` (additive; no DROP). |
+| *(no `103_*.sql`)* | **Reserved** for future GraphRAG foundation — see header in `104_user_workspace_foundation.sql`. |
+| `104_user_workspace_foundation.sql` | Users / workspaces / members (tenant data). |
+| `105_case_workspace.sql`, `106_enable_rls.sql` | Case workspace + RLS (see each file). |
+
+**Draft:** `100_iterlaw_core_rag_foundation.sql` — **do not apply** (bannered draft).
+
 ```
 migrations/
   001_legal_rag_foundation.sql   — Core domain, sources, documents, chunks,

@@ -20,7 +20,7 @@ described in [`docs/adr/004-internal-synthesis-worker.md`](../../docs/adr/004-in
   `SealedSecret` in the operator repo per ADR 004 §6. The single key
   consumed is `password`. Do not commit a placeholder Secret here.
 - **The `iterlaw-ai` namespace.** Already declared by
-  `k8s/legal-orchestrator/namespace.yaml`. Apply that base first.
+  `k8s/iterlaw/namespace.yaml`. Apply that base first.
 - **The `synthesis-worker` Deployment.** ADR §10.3 follow-up ticket
   (not §10.3.b).
 - **Orchestrator-side wiring (per-pod response-stream consumer,
@@ -30,7 +30,7 @@ described in [`docs/adr/004-internal-synthesis-worker.md`](../../docs/adr/004-in
 
 ADR 004 §6 refers to `iterlaw-prod` for the worker's SealedSecret
 namespace. The shipped legal-orchestrator manifests run in
-`iterlaw-ai` (`k8s/legal-orchestrator/namespace.yaml`). This Redis
+`iterlaw-ai` (`k8s/iterlaw/namespace.yaml`). This Redis
 StatefulSet runs in `iterlaw-ai` to be co-located with its only
 clients (the orchestrator and the future synthesis-worker). The ADR
 text should be reconciled in a follow-up doc revision.

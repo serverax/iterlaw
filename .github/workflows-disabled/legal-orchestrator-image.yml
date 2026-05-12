@@ -8,7 +8,8 @@ on:
     paths:
       - "apps/legal-orchestrator/**"
       - ".github/workflows/legal-orchestrator-image.yml"
-      - "k8s/legal-orchestrator/**"
+      - "k8s/iterlaw/**"
+      - "k8s/iterlaw-disabled-standalone-legal-orchestrator/**"
 
 permissions:
   contents: read

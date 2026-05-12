@@ -24,6 +24,9 @@ M_001="${MIG_DIR}/001_legal_rag_foundation.sql"
 M_100="${MIG_DIR}/100_iterlaw_core_rag_foundation.sql"
 M_101="${MIG_DIR}/101_reconcile_legal_rag_schema.sql"
 M_102="${MIG_DIR}/102_add_legal_cases_table.sql"
+M_104="${MIG_DIR}/104_user_workspace_foundation.sql"
+M_105="${MIG_DIR}/105_case_workspace.sql"
+M_106="${MIG_DIR}/106_enable_rls.sql"
 
 report() { printf "%-12s %s\n" "$1" "$2"; }
 
@@ -106,6 +109,52 @@ else
 fi
 
 # ---------------------------------------------------------------------
+# 104 / 105 / 106 — user-data + case-workspace + RLS block (static).
+# ---------------------------------------------------------------------
+for mig in "${M_104}" "${M_105}" "${M_106}"; do
+  name=$(basename "${mig}")
+  if [[ -f "${mig}" ]]; then
+    report "PASS" "${name} present"
+    if grep -vE '^\s*--' "${mig}" | grep -qiE '\b(DROP\s+(TABLE|COLUMN|INDEX|SCHEMA|EXTENSION)|TRUNCATE|DELETE\s+FROM)\b'; then
+      report "FAIL" "  ${name} contains destructive SQL (DROP / TRUNCATE / DELETE)"
+    else
+      report "PASS" "  ${name} contains no destructive SQL"
+    fi
+    if grep -vE '^\s*--' "${mig}" | grep -qiE 'ALTER\s+TABLE[^\n]*\b(DROP|RENAME)\b'; then
+      report "FAIL" "  ${name} contains destructive ALTER (DROP / RENAME)"
+    else
+      report "PASS" "  ${name} has no destructive ALTER"
+    fi
+    if grep -qE 'DATABASE_URL\s*=|\bfetch\s*\(|\bcurl\b|\bwget\b|postgres(ql)?://[^\s]+:[^\s]+@' "${mig}"; then
+      report "FAIL" "  ${name} contains secrets / HTTP call"
+    else
+      report "PASS" "  ${name} carries no secrets / HTTP call"
+    fi
+  else
+    report "FAIL" "missing ${name}"
+  fi
+done
+
+# 106 — RLS surface checks (static).
+if [[ -f "${M_106}" ]]; then
+  if grep -E "^\s*ALTER\s+TABLE\s+public\\.(legal_sources|legal_documents|legal_chunks|legal_cases|legal_citations|legal_case_law|tribunal_decisions|rag_runs|rag_query_audit|answer_audit_log|verified_answers_cache|source_update_log|answer_verification_log)\b" "${M_106}" | grep -qE 'ENABLE\s+ROW\s+LEVEL\s+SECURITY'; then
+    report "FAIL" "  106 wrongly enables RLS on a corpus table"
+  else
+    report "PASS" "  106 leaves corpus tables RLS-OFF"
+  fi
+  if grep -qF "ENABLE ROW LEVEL SECURITY" "${M_106}"; then
+    report "PASS" "  106 enables RLS on user-data tables"
+  else
+    report "FAIL" "  106 does not enable RLS"
+  fi
+  if grep -qE "current_setting\('app\.user_id', true\)" "${M_106}"; then
+    report "PASS" "  106 reads app.user_id GUC"
+  else
+    report "FAIL" "  106 missing app.user_id GUC reader"
+  fi
+fi
+
+# ---------------------------------------------------------------------
 # Live DB checks (best effort).
 # ---------------------------------------------------------------------
 
@@ -153,3 +202,10 @@ for t in verified_answers_cache rag_runs source_update_log answer_verification_l
 done
 # Additive table from 102.
 check_table legal_cases
+
+# Live-DB checks for the 104/105 tables (when DATABASE_URL + psql available).
+for t in users workspaces workspace_members legal_case_records \
+         legal_case_facts legal_case_documents legal_case_drafts \
+         legal_case_timeline legal_case_sources; do
+  check_table "${t}"
+done

@@ -35,6 +35,9 @@ schema that matches whichever ran first.
 | `100_iterlaw_core_rag_foundation.sql` (Master Order draft) | `legal_sources`, `legal_documents`, `legal_chunks`, `legal_cases`, `verified_answers_cache`, `rag_runs`, `source_update_log`, `answer_verification_log` |
 | `101_reconcile_legal_rag_schema.sql` (additive) | Adds the four genuinely-new Master-Order tables that do not exist in the 001 chain, and adds a small set of additive columns to bring `001`'s `legal_chunks` / `legal_documents` closer to the Master-Order shape. |
 | `102_add_legal_cases_table.sql` (Sprint 9 QA fix, additive) | Adds `public.legal_cases` to the approved chain. Suitable for UK case-law ingestion (Find Case Law / BAILII). The draft `100_*` file mentioned `legal_cases` only in commented form; this migration is the canonical owner. |
+| `104_user_workspace_foundation.sql` (Sprint 13 prerequisite, additive) | First user-data migration. Adds `public.users`, `public.workspaces`, `public.workspace_members` with CHECK-constraint role/status taxonomies. Skips 103 (reserved for future GraphRAG / AI Architect AIA). |
+| `105_case_workspace.sql` (Sprint 13 prerequisite, additive) | User CASE workspace tables: `legal_case_records` (the user's IterLaw case — not the corpus `legal_cases`), `legal_case_facts`, `legal_case_documents`, `legal_case_drafts`, `legal_case_timeline` (user-journey events), `legal_case_sources` (JOIN to corpus rows). |
+| `106_enable_rls.sql` (Sprint 13 prerequisite, additive) | Enables Row-Level Security and creates policies on the nine user-data tables only. Corpus tables remain RLS-OFF (shared knowledge). Policies use `app.user_id` / `app.user_role` GUCs; fail closed when unset. Admin override via `current_app_user_is_admin()`. Solicitor role restricted to assigned cases. |
 
 ## Conflict summary
 
@@ -121,6 +124,10 @@ should:
 010_legal_documents_statutory_seed.sql
 101_reconcile_legal_rag_schema.sql        ← additive only
 102_add_legal_cases_table.sql             ← additive only
+                                          (skip 103 — reserved for future GraphRAG)
+104_user_workspace_foundation.sql         ← additive; first user-data migration
+105_case_workspace.sql                    ← additive; legal_case_* user tables
+106_enable_rls.sql                        ← RLS ON for user-data tables only
                                           (DO NOT apply 100_*.sql)
 ```
 

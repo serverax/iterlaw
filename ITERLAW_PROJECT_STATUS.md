@@ -93,6 +93,65 @@ Operator-side pending (Sprint 10 → DONE):
 
 No deploy, no production `psql`, no `kubectl apply`, no real secrets created.
 
+## Sprint 11 — Local LLM Gateway and Bounded Synthesis
+
+Status: In Progress
+
+### Goal
+
+Add a safe local LLM gateway interface and bounded synthesis guard.
+
+### Current Policy
+
+The LLM gateway defaults to disabled.
+
+IterLaw must not generate legal answers from model memory.
+
+All user-facing legal answers remain controlled by retrieval, citations, policy gates, and effective-date checks.
+
+### Runtime Decision
+
+Ollama-compatible local gateway is the first interface target.
+
+llama.cpp may be benchmarked later.
+
+WasmEdge/WASI-NN remains experimental and benchmark-only.
+
+### Performance Policy
+
+No sub-second synthesis claims are accepted until measured.
+
+### Sprint 10 Dependency
+
+Sprint 10 remains PARTIAL until live dev/staging DB verification and smoke tests are executed.
+
+### Files added in Sprint 11
+
+- `docs/iterlaw/SPRINT_11_LOCAL_LLM_GATEWAY_PLAN.md`
+- `docs/benchmarks/SPRINT_11_LOCAL_LLM_BENCHMARK_PLAN.md`
+- `scripts/benchmarks/sprint11-local-llm-benchmark.sh`
+- `apps/legal-orchestrator/src/legal/llm/llmGateway.types.ts`
+- `apps/legal-orchestrator/src/legal/llm/localLlmGateway.ts`
+- `apps/legal-orchestrator/src/legal/llm/boundedSynthesis.ts`
+- `apps/legal-orchestrator/src/legal/llm/index.ts`
+- `apps/legal-orchestrator/src/tests/sprint11LlmGateway.test.ts`
+- `apps/legal-orchestrator/src/tests/boundedSynthesis.test.ts`
+- `scripts/qa/verify-iterlaw-v3-safety.sh`
+
+### /ready additions (no leak)
+
+`/ready` now reports `llm.local_gateway_configured`, `llm.local_gateway_mode`, and `llm.local_gateway_available`. Base URLs, API keys, model paths, and `DATABASE_URL` are never returned. Tests assert no leakage.
+
+## Legal Source Correction
+
+The Employment Rights Act 2025 exists and received Royal Assent on 18 December 2025.
+
+The Employment Rights Act 1996 remains a core canonical statute.
+
+Employment Rights Act 2025 rules must only be used with verified commencement and effective-date metadata from trusted sources.
+
+Do not hardcode 2025 Act provisions without source-backed effective-date controls.
+
 ### Sprint 11: Official source ingestion
 Goal:
 - Add controlled ingestion for GOV.UK, legislation.gov.uk, ACAS, tribunal/case-law sources.

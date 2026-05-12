@@ -13,6 +13,7 @@ import {
   sanitiseSnapshot,
 } from "./synthesis/synthesisHealth.js";
 import type { SynthesisHealthPort } from "./synthesis/synthesisHealth.js";
+import { describeLocalLlmGateway } from "./legal/llm/localLlmGateway.js";
 
 type RagReadySlice = {
   configured: boolean;
@@ -82,9 +83,15 @@ export function createApp(opts: CreateAppOptions = {}) {
       status: "ready",
       service: "legal-orchestrator",
       rag,
-      llm: {
-        external_llm_enabled: false,
-      },
+      llm: (() => {
+        const gw = describeLocalLlmGateway();
+        return {
+          external_llm_enabled: false,
+          local_gateway_configured: gw.configured,
+          local_gateway_mode: gw.mode,
+          local_gateway_available: gw.available,
+        };
+      })(),
       synthesis,
       legal_safety: {
         citation_required: true,

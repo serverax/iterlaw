@@ -30,7 +30,12 @@ describe("Sprint 8 — /ready envelope", () => {
         mode: "mock",
         database: "not_configured",
       },
-      llm: { external_llm_enabled: false },
+      llm: {
+        external_llm_enabled: false,
+        local_gateway_configured: false,
+        local_gateway_mode: "disabled",
+        local_gateway_available: false,
+      },
       synthesis: {
         configured: false,
         reachable: false,

@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: iterlaw-web
+  namespace: iterlaw-ai
+  labels:
+    app.kubernetes.io/name: iterlaw-web
+    app.kubernetes.io/part-of: iterlaw
+  annotations:
+    # Placeholder; operator should substitute the live class (e.g. "traefik"
+    # in default K3s, or "nginx") and TLS issuer at apply time.
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: iterlaw.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: iterlaw-web
+                port:
+                  number: 3000

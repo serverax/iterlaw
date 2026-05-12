@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: legal-orchestrator
+  namespace: iterlaw-ai
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: legal-orchestrator
+  policyTypes: ["Ingress", "Egress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: iterlaw-web
+      ports:
+        - protocol: TCP
+          port: 3012
+  egress:
+    # synthesis-redis (in-cluster)
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: synthesis-redis
+      ports:
+        - protocol: TCP
+          port: 6379
+    # DNS for in-cluster lookups
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Postgres egress is intentionally unrestricted at this layer; the
+    # database may live outside the cluster. Cluster-network restriction
+    # is enforced at the cluster firewall, not here.

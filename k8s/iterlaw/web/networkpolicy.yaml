@@ -1,0 +1,37 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: iterlaw-web
+  namespace: iterlaw-ai
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: iterlaw-web
+  policyTypes: ["Ingress", "Egress"]
+  ingress:
+    # Permit the Ingress controller (Traefik on K3s default) to reach the
+    # web pod. The selector intentionally accepts any namespace label —
+    # operators using a stricter label scheme should tighten this.
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 3000
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: legal-orchestrator
+      ports:
+        - protocol: TCP
+          port: 3012
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53

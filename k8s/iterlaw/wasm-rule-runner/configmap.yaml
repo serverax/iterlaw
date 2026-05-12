@@ -1,12 +1,29 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: iterlaw-wasm-rules
+  name: iterlaw-wasm-rule-runner
   namespace: iterlaw-ai
+  labels:
+    app.kubernetes.io/name: wasm-rule-runner
+    app.kubernetes.io/part-of: iterlaw
+binaryData: {}
 data:
-  README.md: |
-    IterLaw WASM rule modules.
-    WASM is only for deterministic legal rule acceleration.
-    No LLM calls.
-    No network access.
-    No user-uploaded modules.
+  # This file is the manifest for the read-only WASM bundle mounted at
+  # /app/wasm-rules in the legal-orchestrator pod. Binaries are intentionally
+  # absent: the TypeScript fallback implementations in
+  # apps/legal-orchestrator/src/wasm/rules/ are authoritative until real
+  # .wasm binaries are produced and reviewed.
+  #
+  # Allowed binary keys (binaryData), when added later, MUST match the
+  # logical module IDs in infra/iterlaw/wasm-contract.md.
+  #
+  # Allowed keys:
+  #   deadline_calculator.wasm
+  #   redundancy_calculator.wasm
+  #   nmw_rate_selector.wasm
+  #   vento_band_selector.wasm
+  #   citation_validator.wasm
+  #   chunk_scorer.wasm
+  README.txt: |
+    This ConfigMap is the read-only mount source for WASM rule binaries.
+    See infra/iterlaw/wasm-contract.md for the full contract.

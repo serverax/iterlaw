@@ -3,27 +3,79 @@ kind: StatefulSet
 metadata:
   name: synthesis-redis
   namespace: iterlaw-ai
+  labels:
+    app.kubernetes.io/name: synthesis-redis
+    app.kubernetes.io/part-of: iterlaw
 spec:
   serviceName: synthesis-redis
   replicas: 1
   selector:
     matchLabels:
-      app: synthesis-redis
+      app.kubernetes.io/name: synthesis-redis
   template:
     metadata:
       labels:
-        app: synthesis-redis
+        app.kubernetes.io/name: synthesis-redis
+        app.kubernetes.io/part-of: iterlaw
     spec:
+      serviceAccountName: synthesis-redis
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: redis
           image: redis:7-alpine
+          args:
+            - redis-server
+            - --appendonly
+            - "yes"
+            - --maxmemory
+            - 256mb
+            - --maxmemory-policy
+            - noeviction
+            - --protected-mode
+            - "yes"
+            - --bind
+            - 0.0.0.0
           ports:
-            - containerPort: 6379
-          command: ["redis-server", "--appendonly", "yes"]
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: redis
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: redis
+            initialDelaySeconds: 15
+            periodSeconds: 20
           resources:
             requests:
-              cpu: "100m"
-              memory: "128Mi"
+              cpu: 100m
+              memory: 256Mi
             limits:
-              cpu: "500m"
-              memory: "512Mi"
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi

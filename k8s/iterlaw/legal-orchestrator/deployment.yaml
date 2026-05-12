@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: legal-orchestrator
+  namespace: iterlaw-ai
+  labels:
+    app.kubernetes.io/name: legal-orchestrator
+    app.kubernetes.io/part-of: iterlaw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: legal-orchestrator
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: legal-orchestrator
+        app.kubernetes.io/part-of: iterlaw
+    spec:
+      serviceAccountName: legal-orchestrator
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: legal-orchestrator
+          image: iterlaw/legal-orchestrator:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3012
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: legal-orchestrator-config
+          env:
+            - name: DATABASE_URL_FROM_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: iterlaw-orchestrator-db
+                  key: DATABASE_URL
+            - name: SYNTHESIS_REDIS_URL_FROM_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: iterlaw-synthesis-redis
+                  key: SYNTHESIS_REDIS_URL
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: wasm-rules
+              mountPath: /app/wasm-rules
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: wasm-rules
+          configMap:
+            name: iterlaw-wasm-rule-runner
+            optional: true
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi

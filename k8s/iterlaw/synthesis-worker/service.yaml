@@ -1,0 +1,21 @@
+# synthesis-worker has no inbound traffic — it consumes from Redis Streams.
+# A headless Service is still defined to enable peer discovery and metrics
+# scraping by an in-cluster Prometheus, but it is ClusterIP-internal only.
+apiVersion: v1
+kind: Service
+metadata:
+  name: synthesis-worker
+  namespace: iterlaw-ai
+  labels:
+    app.kubernetes.io/name: synthesis-worker
+    app.kubernetes.io/part-of: iterlaw
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: synthesis-worker
+  ports:
+    - name: metrics
+      port: 9100
+      targetPort: 9100
+      protocol: TCP

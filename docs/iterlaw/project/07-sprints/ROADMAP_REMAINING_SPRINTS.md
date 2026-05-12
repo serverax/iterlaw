@@ -94,3 +94,16 @@ Future scope must **not** delay the first IterLaw beta. If any Sprint 18+ work i
 - Active product name: **IterLaw**.
 - Forbidden in active material: `RightsNow`, bare `iterlaw` namespace, `iterlaw-prod`.
 - Canonical Kubernetes namespaces: `iterlaw-ai`, `iterlaw-rag`, `iterlaw-api`, `iterlaw-monitoring`, `iterlaw-security`.
+
+## Offline-first legal DB model — mandatory across the roadmap
+
+Locked decision: [`../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md). Architecture contract: [`../01-architecture/OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md`](../01-architecture/OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md).
+
+- The offline-first legal DB model is **mandatory** for every sprint that touches the answer path.
+- **Each country engine requires its own offline legal DB** built + seeded + human-reviewed before that country can launch. No country launches without its DB ready.
+- **LLM fallback / background builder is a later layer**, not the first answer path. Sprint 27+ runtime optimisations sit on top of the offline-first tier infrastructure, not in place of it.
+- **Sprints 18–25** must be aligned to the offline-first DB model (Law Module Engine, section registry, Q&A cache, generation queue, country expansion, module isolation, knowledge seeding, persistent memory).
+- **Sprints 26–34** optimise speed and streaming **on top of** the offline-first model (HNSW, keep-alive, structured output, RAV, speculative prefill, two-stage cascade, knowledge graph, SSE, graceful failure).
+- **Sprints 35–45** apply WASM to the offline-first engine (gateway, cache, retrieval router, classifier, sources, LLM routing, synthesis, validation, streaming, observability, hardening).
+
+No future sprint is marked complete by this update.

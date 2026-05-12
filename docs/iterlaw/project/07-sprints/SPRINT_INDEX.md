@@ -25,6 +25,19 @@ The full multi-country / multi-domain platform roadmap is in [`ROADMAP_REMAINING
 
 These are roadmap entries, not committed delivery. They land **after** first IterLaw beta (UK Employment) is shipped. The legacy Sprint 18 / 19 entries above remain valid until they are folded into the new numbering during a future planning sprint.
 
+## Offline-first legal DB model — mandatory roadmap constraint
+
+The offline-first legal DB model is now a locked architectural decision — see [`../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md) and [`../01-architecture/OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md`](../01-architecture/OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md).
+
+- **Offline-first is mandatory**, not optional. Every future-sprint deliverable that touches the answer path must serve from the local DB / cache / section registry / knowledge graph before considering the LLM.
+- **Each country engine requires its own offline legal DB** before that country can launch. No country goes live without its DB built + human-reviewed seed rows.
+- **LLM fallback / background builder is a later layer**, not the first answer path. Sprint 27+ optimisations are applied **after** the offline-first tier infrastructure is in place.
+- **Sprints 18–25** must be aligned to this offline-first DB model — Law Module Engine, section registry, Q&A cache, generation queue, country expansion engine, module-specific AI isolation, knowledge seeding, persistent legal memory.
+- **Sprints 26–34** optimise speed / streaming **on top of** the offline-first model — HNSW, keep-alive, structured fill-in-the-blank, RAV, speculative prefill, two-stage cascade, knowledge graph, SSE, graceful failure.
+- **Sprints 35–45** apply WASM to the offline-first engine — gateway, cache, retrieval router, classifier, legal sources, LLM routing, synthesis, streaming, observability, hardening.
+
+No future sprint is marked complete by this docs update.
+
 ## Sprint 10 close-out — what's pending
 
 Operator-side action required (no agent will perform these). Authoritative procedure: [`../09-operations/SPRINT_10_STAGING_DB_OPERATOR_CHECKLIST.md`](../09-operations/SPRINT_10_STAGING_DB_OPERATOR_CHECKLIST.md).

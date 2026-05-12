@@ -110,6 +110,18 @@ The LLM is the **slow path**, not the default path. External provider LLMs are *
 
 WASM is **not** the heavy LLM. Heavy inference stays in Ollama / vLLM / llama.cpp workers, sidecars, or shared runtime. See [`WASM_INTELLIGENCE_ARCHITECTURE.md`](WASM_INTELLIGENCE_ARCHITECTURE.md).
 
+## Country engine isolation
+
+IterLaw runs **one legal engine per country**, on top of the shared platform.
+
+- Each country has its **own offline legal DB** — separate `legal_sources`, `legal_documents`, `legal_chunks`, `legal_chunk_embeddings`, `law_section_modules`, `module_qa_cache`, `answer_generation_queue`, `legal_fact_registry`, retrieval indexes, citation rules, legal rule packs, document templates, calculators, language settings, and specialist AIA workflows.
+- Country engines **do not share legal answers** unless an explicit, operator-approved mapping is in place (none today).
+- Module routing **must never mix** countries / domains accidentally. The `(country_id, module_id)` pair is validated server-side on every request before retrieval can begin.
+- A defect or stale-source incident in one country engine must not change the behaviour of another country engine.
+- New country launch = new offline DB build → seeding → human review of seed rows → enable subscription module → release. **No country is launched without its offline DB ready.**
+
+See [`OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md`](OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md) and [`../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md).
+
 ## Country / domain adapters
 
 Each module ships an adapter that the shared platform calls:

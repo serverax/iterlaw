@@ -120,3 +120,26 @@ The local LLM is reserved for:
 - Difficult / edge-case explanation.
 
 External provider LLMs (OpenAI / Anthropic / Gemini / Cohere / Mistral) are **never** in the live answer path. Sprint 11 transport policy denies their hostnames at runtime; the Phase 2A test set asserts no provider SDK in `apps/legal-orchestrator/package.json`.
+
+## RAG is not the first tier (offline-first model)
+
+RAG is **not** the first tier for repeated / common questions. The offline-first model serves earlier tiers first:
+
+- **Tier 0 (Redis exact cache)** and **Tier 1 (semantic Q&A cache)** come before RAG.
+- **Tier 2 (`law_section_modules` registry)** comes before RAG when the question maps to an addressable section reference.
+- **Tier 4 (deterministic knowledge graph / formula lookup)** answers facts like qualifying periods, statutory caps, and ACAS clock without retrieval at all.
+- RAG (Tier 3) runs when the earlier tiers cannot answer.
+
+This is the IterLaw offline-first contract — see [`../01-architecture/OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md`](../01-architecture/OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md) and [`../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md).
+
+## RAG is scoped by country / module
+
+Every retrieval call carries `(country_id, module_id)`. The retrieval port filters on jurisdiction + domain + the module's source allow-list:
+
+- UK Employment chunks are never returned to a UK Housing query.
+- UK chunks are never returned to a Germany query.
+- A cross-module / cross-country read in the answer path requires an explicit federated flag that does not exist today.
+
+## Retrieved chunks must be citation-verified
+
+Every retrieved chunk must carry `chunk_id`, `document_id`, `title`, `url`, `citation_label`. A chunk missing any of these fields fails the citation gate. The local LLM (Tier 5) **never** sees a chunk that fails the gate, and never emits a citation that did not arrive in the supplied retrieval set.

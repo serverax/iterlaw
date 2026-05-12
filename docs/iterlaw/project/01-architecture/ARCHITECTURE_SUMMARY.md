@@ -83,6 +83,19 @@ The local LLM (Ollama / vLLM / llama.cpp worker) is used for:
 
 External LLM (OpenAI / Anthropic / Gemini / Cohere / Mistral) is **not** the default path. The Sprint 11 transport policy denies their hostnames at runtime.
 
+## 8. Offline-First Legal Database Model
+
+IterLaw is **offline-first**. The offline / local legal database is the **first source of truth** for every legal answer; the LLM is a fallback / background builder, not the default answer engine.
+
+- **Offline / local DB is first source of truth.** A live HTTP call to anything (LLM, external API) is not in the default answer path.
+- **LLM is the slow path, not the default path.** A request only reaches the LLM after Redis cache, Q&A cache, section registry, deterministic rules / knowledge graph, and RAG have each had a chance to answer safely.
+- **Answers must come from verified local data + citations.** Each tier emits a citation set that the citation gate then verifies against the local corpus.
+- **Repeated questions are served from cache / DB.** The hot path for a frequent question is Tier 0 (Redis) or Tier 1 (semantic Q&A cache), with no LLM call.
+- **LLM-generated answers must be validated and stored for future reuse.** When the LLM does run, its output is validated (citation + RAV) and written into `module_qa_cache` so the next user with the same question hits Tier 1.
+- **Each country engine has its own offline DB and rules.** UK has one offline DB; Germany has another; they do not share answers unless an explicit, approved mapping exists. Country / module isolation is enforced before retrieval, not after.
+
+Full contract: [`OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md`](OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md). Decision record: [`../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md).
+
 ## Request flow (intended target)
 
 1. **User asks** a legal question inside a chosen module.
@@ -90,12 +103,13 @@ External LLM (OpenAI / Anthropic / Gemini / Cohere / Mistral) is **not** the def
 3. **Classify** the request (topic, area, deadline check).
 4. **Extract facts** (dismissal_date, employment_start_date, ACAS status, ...).
 5. **Immediate risk check** — deadline imminent? → short-circuit warning.
-6. **Multi-tier retrieval** (see Tier 0–4 in `MULTI_TIER_RETRIEVAL_ARCHITECTURE.md`):
+6. **Multi-tier retrieval** (see Tier 0–5 in `MULTI_TIER_RETRIEVAL_ARCHITECTURE.md`):
    - Tier 0: Redis exact hash cache.
    - Tier 1: HNSW semantic Q&A cache.
    - Tier 2: `law_section_modules` tag / section lookup.
-   - Tier 3: semantic law section search.
-   - Tier 4: bounded local LLM synthesis.
+   - Tier 3: semantic law section / RAG search.
+   - Tier 4: deterministic legal knowledge graph / formula lookup.
+   - Tier 5: bounded local LLM fallback.
 7. **Citation gate** — every retrieved chunk must carry `chunk_id`, `document_id`, `title`, `url`, `citation_label`. Drops on missing fields.
 8. **Bounded local LLM synthesis** — only after retrieval succeeds. Local model only. Citations preserved.
 9. **Safety gate** — policy + citation verifier. Block weak / uncited / out-of-jurisdiction.

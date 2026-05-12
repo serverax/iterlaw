@@ -4,6 +4,16 @@ How WebAssembly fits into IterLaw: as the **deterministic intelligence and orche
 
 **Status:** target architecture. Existing WASM rule-runner is the only WASM in production today. The module set below is roadmap (Sprints 35–45).
 
+## Role in the offline-first model
+
+WASM is the **control plane** of the offline-first legal DB engine. It orchestrates the route from user request through cache → section registry → deterministic rules → RAG → validation → streaming, and it enforces the safety contract at the boundary of every step. See [`OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md`](OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md) and the [`../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md).
+
+- **WASM controls the offline-first routing path.** Tier 0 → Tier 1 → Tier 2 → Tier 3 → Tier 4 → Tier 5 fall-through logic runs through WASM modules, not through the LLM.
+- **WASM orchestrates** the cache lookup (Tier 0/1), section lookup (Tier 2), deterministic rules / knowledge graph (Tier 4), RAG (Tier 3), validation (citation + RAV), and streaming.
+- **Heavy LLM inference remains outside WASM.** Ollama / vLLM / llama.cpp workers run in dedicated services. WASM hands the bounded prompt to the LLM worker and validates the response.
+- **WASM must never bypass citation validation.** Every served byte — whether the answer came from cache, section registry, knowledge graph, RAG, or LLM — passes through the WASM validator before the streamer emits it.
+- **Country / module isolation must be enforced before retrieval.** The WASM gateway / retrieval_router rejects mismatched `(country_id, module_id)` requests before any tier runs.
+
 ## What WASM is for in IterLaw
 
 | Capability | Why WASM |

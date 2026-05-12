@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: synthesis-redis
+  namespace: iterlaw-ai
+spec:
+  serviceName: synthesis-redis
+  replicas: 1
+  selector:
+    matchLabels:
+      app: synthesis-redis
+  template:
+    metadata:
+      labels:
+        app: synthesis-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          command: ["redis-server", "--appendonly", "yes"]
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

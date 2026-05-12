@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iterlaw-wasm-rules
+  namespace: iterlaw-ai
+data:
+  README.md: |
+    IterLaw WASM rule modules.
+    WASM is only for deterministic legal rule acceleration.
+    No LLM calls.
+    No network access.
+    No user-uploaded modules.

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iterlaw-postgres-config
+  namespace: iterlaw-data
+data:
+  POSTGRES_DB: "iterlaw"

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iterlaw-web-config
+  namespace: iterlaw-ai
+data:
+  NODE_ENV: "production"
+  NEXT_PUBLIC_APP_NAME: "IterLaw"
+  ORCHESTRATOR_INTERNAL_URL: "http://legal-orchestrator:3012"
+  NEXT_PUBLIC_API_BASE: "/api"

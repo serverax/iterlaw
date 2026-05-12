@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: synthesis-worker-config
+  namespace: iterlaw-ai
+data:
+  NODE_ENV: "production"
+  LOG_LEVEL: "info"
+  SYNTHESIS_REDIS_URL: "redis://synthesis-redis:6379"
+  SYNTHESIS_REQUEST_STREAM: "iterlaw:synthesis:requests"
+  SYNTHESIS_RESPONSE_STREAM: "iterlaw:synthesis:responses"
+  SYNTHESIS_WORKER_GROUP: "iterlaw-synthesis-workers"
+  SYNTHESIS_WORKER_NAME: "synthesis-worker-0"
+  MODEL_MODE: "internal"
+  INTERNAL_MODEL_ENDPOINT: "http://ollama.ordinox-ai.svc.cluster.local:11434"
+  INTERNAL_MODEL_DEFAULT: "uk-employment-qwen:latest"
+  INTERNAL_MODEL_DRAFTING: "uk-employment-drafting:latest"
+  INTERNAL_MODEL_DOCUMENT: "uk-employment-document:latest"
+  EXTERNAL_LLM_ENABLED: "false"

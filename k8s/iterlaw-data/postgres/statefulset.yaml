@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: iterlaw-postgres
+  namespace: iterlaw-data
+spec:
+  serviceName: iterlaw-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iterlaw-postgres
+  template:
+    metadata:
+      labels:
+        app: iterlaw-postgres
+    spec:
+      serviceAccountName: iterlaw-data
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: iterlaw-postgres-config
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: iterlaw-postgres-secret
+                  key: POSTGRES_USER
+                  optional: false
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: iterlaw-postgres-secret
+                  key: POSTGRES_PASSWORD
+                  optional: false
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "2"
+              memory: "2Gi"
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 50Gi

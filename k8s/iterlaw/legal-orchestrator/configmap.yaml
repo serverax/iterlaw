@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: legal-orchestrator-config
+  namespace: iterlaw-ai
+data:
+  NODE_ENV: "production"
+  PORT: "3012"
+  LOG_LEVEL: "info"
+  RAG_MODE: "postgres"
+  SYNTHESIS_MODE: "redis_streams"
+  SYNTHESIS_REDIS_URL: "redis://synthesis-redis:6379"
+  SYNTHESIS_REQUEST_STREAM: "iterlaw:synthesis:requests"
+  SYNTHESIS_RESPONSE_STREAM: "iterlaw:synthesis:responses"
+  SYNTHESIS_TIMEOUT_MS: "15000"
+  EXTERNAL_LLM_ENABLED: "false"
+  EXTERNAL_LLM_USED: "false"
+  WASM_RULES_ENABLED: "true"
+  WASM_RULES_PATH: "/app/wasm-rules"
+  WASM_RULE_TIMEOUT_MS: "50"
+  WASM_RULE_MAX_INPUT_BYTES: "32768"
+  WASM_RULE_FALLBACK_ENABLED: "true"

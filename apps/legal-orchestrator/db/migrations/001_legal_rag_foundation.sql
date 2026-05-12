@@ -433,25 +433,28 @@ $$;
 -- =====================================================================
 -- PGVECTOR section (optional)
 -- =====================================================================
--- If `vector` extension is installed, add the embedding column and an
--- IVFFlat index. The migration is safe to run on a database without
--- pgvector — the embedding column simply isn't created and the
--- application falls back to FTS-only retrieval (embedding_status stays
--- 'disabled' for affected rows; the app should set that explicitly).
+-- pgvector is REQUIRED for IterLaw RAG. The prerequisite migration
+-- 000_pgvector_prerequisite.sql must have been applied first (it runs
+-- `CREATE EXTENSION IF NOT EXISTS vector;`). If that step is skipped
+-- this block fails clearly rather than silently degrading the deploy
+-- to FTS-only retrieval — see infra/iterlaw/database-contract.md.
 DO $$
 DECLARE
   has_vector boolean;
 BEGIN
   SELECT EXISTS(SELECT 1 FROM pg_extension WHERE extname = 'vector') INTO has_vector;
-  IF has_vector THEN
-    EXECUTE 'ALTER TABLE legal_chunks ADD COLUMN IF NOT EXISTS embedding vector(1536)';
-    -- IVFFlat: good for >1000 rows. Smaller corpora can drop the index;
-    -- queries still work without it (sequential scan).
-    EXECUTE 'CREATE INDEX IF NOT EXISTS legal_chunks_embedding_ivfflat_idx ON legal_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100)';
-    RAISE NOTICE 'pgvector detected: embedding column + IVFFlat index added.';
-  ELSE
-    RAISE NOTICE 'pgvector NOT installed. Embedding column not added. Run "CREATE EXTENSION vector;" then re-run this migration to add vector support.';
+  IF NOT has_vector THEN
+    RAISE EXCEPTION USING
+      ERRCODE = 'feature_not_supported',
+      MESSAGE = 'pgvector extension is not installed in this database.',
+      DETAIL  = 'Migration 001 requires the `vector` extension for the legal_chunks.embedding column and the IVFFlat index.',
+      HINT    = 'Run migration 000_pgvector_prerequisite.sql first, or ensure the Postgres image is pgvector/pgvector:pg16.';
   END IF;
+  EXECUTE 'ALTER TABLE legal_chunks ADD COLUMN IF NOT EXISTS embedding vector(1536)';
+  -- IVFFlat: good for >1000 rows. Smaller corpora can drop the index;
+  -- queries still work without it (sequential scan).
+  EXECUTE 'CREATE INDEX IF NOT EXISTS legal_chunks_embedding_ivfflat_idx ON legal_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100)';
+  RAISE NOTICE 'pgvector confirmed: embedding column + IVFFlat index in place.';
 END
 $$;
 

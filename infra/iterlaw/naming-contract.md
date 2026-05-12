@@ -21,12 +21,16 @@ This contract is **load-bearing**. CI and the infra verification scripts under
 | Redis workload            | `synthesis-redis` (in `iterlaw-ai`)         |
 | Postgres workload         | `iterlaw-postgres` (in `iterlaw-data`)      |
 | Postgres internal DNS     | `iterlaw-postgres.iterlaw-data.svc.cluster.local` |
+| Postgres image            | `pgvector/pgvector:pg16` (StatefulSet)      |
 | Database name             | `iterlaw`                                   |
-| Database schema           | `uk_emp_rag`                                |
-| Documents table           | `uk_emp_rag.legal_documents`                |
-| Chunks table              | `uk_emp_rag.legal_document_chunks`          |
-| Embeddings table          | `uk_emp_rag.legal_chunk_embeddings`         |
+| Runtime RAG schema        | `public` (the orchestrator queries `public.legal_chunks` etc.) |
+| UK-employment domain schema | `uk_emp_rag` (statutory rates, Q&A cache, evidence, superseded_by) |
+| Runtime chunks table      | `public.legal_chunks` (with `search_vector`, `applicable_to`, `embedding vector(1536)`) |
+| Domain-slice chunks       | `uk_emp_rag.legal_document_chunks`          |
+| Domain-slice embeddings   | `uk_emp_rag.legal_chunk_embeddings`         |
 | Statutory rates           | `uk_emp_rag.statutory_rate`                 |
+| Source registry           | `uk_emp_rag.legal_sources` (no separate `legal_source_registry` table) |
+| Source-fetch audit        | `public.source_fetch_audit` (replaces earlier-drafted `source_freshness`) |
 | Secrets backend           | SealedSecrets                               |
 
 ## Namespace split

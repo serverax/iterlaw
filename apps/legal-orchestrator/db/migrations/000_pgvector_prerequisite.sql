@@ -1,0 +1,23 @@
+-- =====================================================================
+-- 000_pgvector_prerequisite.sql
+-- =====================================================================
+-- Prerequisite for migration 001 (legal RAG foundation). Installs the
+-- pgvector extension so that 001 can ADD the embedding column on
+-- public.legal_chunks (and the IVFFlat index) without falling back to
+-- FTS-only retrieval.
+--
+-- The Postgres image referenced by k8s/iterlaw-data/postgres/statefulset.yaml
+-- is `pgvector/pgvector:pg16` (the upstream pgvector image, built on
+-- postgres:16). That image ships the `vector` extension binary; this
+-- migration simply enables it inside the `iterlaw` database.
+--
+-- Run order:
+--   psql "$DATABASE_URL" -f apps/legal-orchestrator/db/migrations/000_pgvector_prerequisite.sql
+--   psql "$DATABASE_URL" -f apps/legal-orchestrator/db/migrations/001_legal_rag_foundation.sql
+--   ...
+--
+-- Idempotent: CREATE EXTENSION IF NOT EXISTS. No INSERTs.
+-- No secrets. No scraping. No HTTP.
+-- =====================================================================
+
+CREATE EXTENSION IF NOT EXISTS vector;

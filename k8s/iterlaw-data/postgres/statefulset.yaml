@@ -29,14 +29,26 @@ spec:
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
-        runAsUser: 70
-        runAsGroup: 70
-        fsGroup: 70
+        # postgres UID/GID in the Debian-based pgvector/pgvector:pg16 image
+        # is 999 (the official postgres:16 base). When we previously used
+        # postgres:16-alpine this was 70 — do not "downgrade" without also
+        # changing the image, or PGDATA permissions will break on first boot.
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
         seccompProfile:
           type: RuntimeDefault
       containers:
         - name: postgres
-          image: postgres:16-alpine
+          # pgvector/pgvector:pg16 is the upstream pgvector image built on
+          # the official postgres:16 base. It ships the `vector` extension
+          # binary so migration 000_pgvector_prerequisite.sql can run
+          # `CREATE EXTENSION IF NOT EXISTS vector;`. Without this image
+          # the embedding column and IVFFlat index in migration 001 cannot
+          # be created and RAG retrieval would silently degrade to FTS-only.
+          # The backup CronJob in ../backups/cronjob.yaml still uses
+          # postgres:16-alpine because pg_dump does not need the extension.
+          image: pgvector/pgvector:pg16
           imagePullPolicy: IfNotPresent
           ports:
             - name: postgres

@@ -4,6 +4,14 @@ Last updated: 13 May 2026.
 
 This file is the **canonical project status**. The root `ITERLAW_PROJECT_STATUS.md` is a pointer to this file.
 
+## Current verified gate state
+
+- Sprint 10 code-side migration verification: **PASS**.
+- Sprint 10 real staging DB verification: **PENDING** — operator runbook at [`07-sprints/SPRINT_10_STAGING_DB_OPERATOR_RUNBOOK.md`](07-sprints/SPRINT_10_STAGING_DB_OPERATOR_RUNBOOK.md).
+- Sprint 10 overall: **PARTIAL**.
+- Sprint 11: **BLOCKED**.
+- Production: **BLOCKED**.
+
 ## Current delivery status
 
 - **Completed:** Sprints 1–9.

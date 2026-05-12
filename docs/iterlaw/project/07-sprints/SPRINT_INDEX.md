@@ -2,6 +2,14 @@
 
 Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/ITERLAW_SPRINT_ROADMAP.md`. Project status: [`../ITERLAW_PROJECT_STATUS.md`](../ITERLAW_PROJECT_STATUS.md).
 
+## Current verified gate state
+
+- Sprint 10 code-side migration verification: **PASS**.
+- Sprint 10 real staging DB verification: **PENDING** — operator runbook at [`SPRINT_10_STAGING_DB_OPERATOR_RUNBOOK.md`](SPRINT_10_STAGING_DB_OPERATOR_RUNBOOK.md).
+- Sprint 10 overall: **PARTIAL**.
+- Sprint 11: **BLOCKED**.
+- Production: **BLOCKED**.
+
 ## Sprint count
 
 - **Total roadmap target:** Sprint 45.

@@ -7,7 +7,12 @@ Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/IT
 - Sprint 10 code-side migration verification: **PASS**.
 - Sprint 10 real Docker staging DB replay: **PASS** (2026-05-13, container `iterlaw-staging-postgres` from `pgvector/pgvector:pg16`; see `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`). **Not** AKS staging, **not** production, **not** the live operator staging DB.
 - Sprint 10 overall: **PASS** (Docker staging scope). The non-Docker staging targets remain a separate operator decision.
-- Sprint 11: **UNBLOCKED / READY TO START** — Phase 1 + Phase 2A mock-safe foundation already landed (commits `b896764`, `b14fd2d`); Phase 2B (live HTTP transport) + Phase 4 (pipeline wiring) **NOT STARTED**; no implementation is claimed complete by this update.
+- Sprint 11: **PASS** — Phase 2B (live local HTTP transport, commit `3681fab`) + Phase 4 (pipeline wiring of `runLocalDraftingStep` into `handleLegalRequest`, commit `120b9de`) both implemented and tested. Production unblock is **NOT** claimed by Sprint 11; first live backup remains the separate gate.
+- Sprint 12: **PASS FOR DRY-RUN FOUNDATION ONLY** — live backup + live restore NOT EXECUTED.
+- Sprint 13: **PASS FOR OPERATOR-WORKSTATION READINESS ONLY** — first live backup remains NOT AUTHORISED.
+- Sprint 14: **PASS FOR INTELLIGENCE FOUNDATION / CODE-PREPARED ONLY** — not wired into the answer path.
+- Sprint 15: **PASS FOR FEATURE-FLAGGED LOCAL WIRING ONLY** — Intelligence Layer disabled by default.
+- Sprint 12A (this audit-reconciliation sprint): **PASS** for `SPRINT_INDEX` truth reconciliation, source-header corrections, and Windows-bash test resolver.
 - Production: **BLOCKED**.
 
 ### Sprint 10 migration replay blockers fixed and replayed
@@ -21,10 +26,10 @@ Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/IT
 ## Sprint count
 
 - **Total roadmap:** **57 sprints**.
-- **Completed:** **10** (Sprints 1–10).
-- **Current:** **Sprint 11**.
-- **Remaining:** **47**.
-- **Remaining range:** **Sprint 11 → Sprint 57.**
+- **Completed:** **15** (Sprints 1–11 PASS; Sprint 12 PASS-for-dry-run-foundation; Sprint 13 PASS-for-operator-workstation-readiness; Sprint 14 PASS-for-intelligence-foundation; Sprint 15 PASS-for-feature-flagged-local-wiring; plus correction Sprint 12A).
+- **Current:** **Sprint 16** (planned start).
+- **Remaining:** **42**.
+- **Remaining range:** **Sprint 16 → Sprint 57.**
 - Sprint 10: **PASS** — Docker staging verification passed (`reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`).
 - Sprint 11: **PASS** — Phase 1 + Phase 2A + hardening tests + Phase 2B (live local HTTP transport, commit `3681fab`) + Phase 4 (pipeline wiring of `runLocalDraftingStep` into `handleLegalRequest`, commit `120b9de`) all green. Full suite **58 files / 763 tests PASS**. Closeout QA report: [`../11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md`](../11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md). ADR: [`../11-ai-governance/ADR_SPRINT_11_LOCAL_LLM_TRANSPORT_AND_PIPELINE_WIRING.md`](../11-ai-governance/ADR_SPRINT_11_LOCAL_LLM_TRANSPORT_AND_PIPELINE_WIRING.md).
 - Sprint 12: **PASS FOR DRY-RUN FOUNDATION ONLY** — Track B operator-side backup + restore-verify scripts, manifest validator, restore-target validator, 39 new vitest tests, runbook, ADR. Full suite **59 files / 802 tests PASS** (commits `a750f88` → `fdafca3`). Live backup + live restore **NOT EXECUTED**. Track A (cluster Borg path) **unchanged**. Closeout QA report: [`../12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md`](../12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md).
@@ -37,15 +42,15 @@ Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/IT
 
 ## Sprint 11 — Local LLM Gateway + Cited RAG Answer Path
 
-**Status:** **READY TO START / UNBLOCKED.** Sprint 10 PASS gate cleared on 2026-05-13.
+**Status:** **PASS** (closed). Phase 1 + Phase 2A + hardening + Phase 2B (commit `3681fab`) + Phase 4 (commit `120b9de`) all implemented and tested. Sprint 11 is NOT a production-unblock sprint — first live backup, live restore, and production deployment remain gated by their own sprints.
 
-**Purpose:**
+**Delivered:**
 
-- Build the local LLM gateway safely with injected transport only, no external provider calls.
-- Wire the cited RAG answer path (Postgres mode when `DATABASE_URL` is configured; mock when not).
-- Run deterministic legal gates (PII → risk → deadline → citation → policy → rule checks) before any LLM call; LLM cannot override any gate.
-- Emit a redacted audit envelope per request (no DSN / no raw prompt / no full answer body).
-- Standardise the API response envelope across all eight refusal / `ok` statuses.
+- Local LLM gateway with injected transport only — no external provider calls.
+- Cited RAG answer path (Postgres mode when `DATABASE_URL` is configured; mock when not).
+- Deterministic legal gates (PII → risk → deadline → citation → policy → rule checks) run before any LLM call; LLM cannot override any gate.
+- Redacted audit envelope per request (no DSN / no raw prompt / no full answer body).
+- API response envelope standardised across all refusal / `ok` statuses.
 
 Sprint 11 task contract: [`./SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md`](./SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md).
 Earlier planning docs (foundation phase): [`./SPRINT_11_LOCAL_LLM_GATEWAY_AND_TRANSPORT_POLICY.md`](./SPRINT_11_LOCAL_LLM_GATEWAY_AND_TRANSPORT_POLICY.md) + [`./SPRINT_11_LOCAL_LLM_GATEWAY_PLAN.md`](./SPRINT_11_LOCAL_LLM_GATEWAY_PLAN.md) + [`./SPRINT_11_IMPLEMENTATION_CHECKLIST.md`](./SPRINT_11_IMPLEMENTATION_CHECKLIST.md).
@@ -59,19 +64,20 @@ Governance: every Sprint 11 model / prompt / routing / transport-policy change i
 | --- | --- | --- | --- |
 | 1–8 | Foundation (repo + orchestrator + safety gates + WASM rule-runner + module pipeline + RAG DB foundation + ingestion framework + readiness/retrieval injection) | **DONE** | Commits + tests + verifiers. |
 | 9 | Rename cleanup + backup safety baseline | **DONE** | `@rightsnow/*` → `@iterlaw/*`; LF policy; backup uploader + sealed-secret workflow; `legal_cases` (102). |
-| 10 | Live RAG retrieval + corpus ingestion + DB user-workspace + RLS | **PARTIAL** — repo implementation **PASS** (typecheck/build/vitest 615 / 51 green); **local Docker DB migration-chain verification PASS** (2026-05-12, `pgvector/pgvector:pg16`, full forward chain applied; see report); real **staging DB verification PENDING** (operator action — needs confirmed non-production staging context; AKS verification blocked until a non-prod kubeconfig exists); production **BLOCKED** | See [`SPRINT_10_DB_DECISIONS.md`](SPRINT_10_DB_DECISIONS.md) + [`../09-operations/SPRINT_10_STAGING_DB_OPERATOR_CHECKLIST.md`](../09-operations/SPRINT_10_STAGING_DB_OPERATOR_CHECKLIST.md) + `reports/ITERLAW_QA_REPORT_SPRINT_10_DB_IMPLEMENTATION.md` + `reports/ITERLAW_SPRINT_10_LOCAL_DOCKER_DB_VERIFY.md` |
-| 11 | Local LLM gateway + model routing + bounded synthesis | **PARTIAL** — Phase 1 foundation **PASS** (router + citation-bound prompt + output guard + disabled-by-default drafting helper); Phase 2A audit + transport guardrails **PASS** (audit types + redactor + Noop/InMemory sinks + transport policy auto-allowing loopback / cluster-DNS, blocking public providers; 42 new tests; total 689 / 53 PASS); live HTTP transport **NOT STARTED**; pipeline wiring **NOT STARTED** (`runLocalDraftingStep` still not called from `handleLegalRequest`); live gateway **DISABLED / MOCK-SAFE**; real deployment **BLOCKED** until Sprint 10 real staging DB verification passes; production **BLOCKED**. | See [`SPRINT_11_LOCAL_LLM_GATEWAY_PLAN.md`](SPRINT_11_LOCAL_LLM_GATEWAY_PLAN.md) + [`SPRINT_11_IMPLEMENTATION_CHECKLIST.md`](SPRINT_11_IMPLEMENTATION_CHECKLIST.md) + `docs/iterlaw/SPRINT_11_LOCAL_LLM_GATEWAY_PLAN.md` (long-form) + `docs/benchmarks/SPRINT_11_LOCAL_LLM_BENCHMARK_EXECUTION_CHECKLIST.md` + `reports/ITERLAW_QA_REPORT_SPRINT_11_LOCAL_LLM_GATEWAY.md` (§12 Phase 2A) |
+| 10 | Live RAG retrieval + corpus ingestion + DB user-workspace + RLS | **PASS** (Docker staging scope) — local Docker DB migration-chain verification PASS (2026-05-13, `pgvector/pgvector:pg16`, full forward chain applied; report `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`). AKS staging + production verification remain a separate operator decision. | See [`SPRINT_10_DB_DECISIONS.md`](SPRINT_10_DB_DECISIONS.md) + [`../09-operations/SPRINT_10_STAGING_DB_OPERATOR_CHECKLIST.md`](../09-operations/SPRINT_10_STAGING_DB_OPERATOR_CHECKLIST.md) + `reports/ITERLAW_QA_REPORT_SPRINT_10_DB_IMPLEMENTATION.md` + `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md` |
+| 11 | Local LLM gateway + cited RAG answer path | **PASS** — Phase 1 foundation + Phase 2A audit/transport guardrails + Sprint 11 hardening tests + Phase 2B (live local HTTP transport, commit `3681fab`) + Phase 4 (pipeline wiring of `runLocalDraftingStep` into `handleLegalRequest`, commit `120b9de`) all green. Full suite **58 files / 763 tests PASS** at Sprint 11 close. Sprint 11 does NOT unblock production. | See [`SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md`](SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md) + [`../11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md`](../11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md) + [`../11-ai-governance/ADR_SPRINT_11_LOCAL_LLM_TRANSPORT_AND_PIPELINE_WIRING.md`](../11-ai-governance/ADR_SPRINT_11_LOCAL_LLM_TRANSPORT_AND_PIPELINE_WIRING.md) |
 | 12 | Backup go-live | **PASS FOR DRY-RUN FOUNDATION ONLY** | Track B operator-side scripts (`scripts/backup/*`), manifest + sha256 + isolated-target validators, 39 vitest tests, runbook, ADR. Live backup + live restore NOT EXECUTED. Track A (cluster Borg path) unchanged. Closeout QA: [`../12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md`](../12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md). |
 | 13 | Backup MVP polish + operator readiness | **PASS FOR OPERATOR-WORKSTATION READINESS ONLY** | `--check` toolchain probes on both Track B scripts; operator toolchain doc (Windows / Linux / macOS); first-live-backup authorisation checklist (default NO); 25 new vitest tests; ADR. First live backup + live restore NOT AUTHORISED. Closeout QA: [`../13-backup-mvp-polish/SPRINT_13_BACKUP_MVP_POLISH_QA_REPORT.md`](../13-backup-mvp-polish/SPRINT_13_BACKUP_MVP_POLISH_QA_REPORT.md). |
 | 14 | Intelligence Layer foundation | **PASS FOR INTELLIGENCE FOUNDATION / CODE-PREPARED ONLY** | 11 pure-function modules under `apps/legal-orchestrator/src/intelligence/`; 7 test files (54 tests); 6 architecture docs under `docs/iterlaw/architecture/`. Not wired into answer path by this sprint. Commits `5470757`, `427e8ff`, `b53fa9a`. |
 | 15 | Intelligence Layer feature-flagged wiring | **PASS FOR FEATURE-FLAGGED LOCAL WIRING ONLY** | Feature flag config (`ITERLAW_INTELLIGENCE_LAYER_ENABLED` / `_MODE`, default off); shadow-mode wiring of `runIntelligenceGateway` in `handleLegalRequest` (intentional PARTIAL ACTIVE wiring; gateway result discarded); `/ready` additive `intelligence_layer` field; 26 new vitest tests. Full suite **72 files / 907 tests PASS**. Intelligence Layer disabled by default; first live backup + live restore remain NOT AUTHORISED. ADR: [`../15-intelligence-layer-wiring/ADR_SPRINT_15_INTELLIGENCE_LAYER_FEATURE_FLAGGED_WIRING.md`](../15-intelligence-layer-wiring/ADR_SPRINT_15_INTELLIGENCE_LAYER_FEATURE_FLAGGED_WIRING.md). |
-| 13 | MVP polish + smoke test | Planned | Web UI, end-to-end cited answer against seeded corpus. |
-| 14 | Member / auth / subscription foundation | Planned | Local-first auth path; tiered rate limits. |
-| 15 | Admin / legal-review UI | Planned | Human-in-the-loop review pipeline. |
-| 16 | Live evolution + safe optimisation | Planned | `docs/iterlaw/SPRINT_16_LIVE_EVOLUTION_AND_SAFE_OPTIMISATION_PLAN.md`. **HITL approval required for every prompt / rule change.** |
-| 17 | UK GDPR / DPA 2018 / Data (Use and Access) Act 2025 retention + consent | Planned | Retention enforcement job; consent ledger. |
-| 18 | Multimodal evidence grounding beta *(legacy entry; superseded by the post-core roadmap below)* | Planned (future backlog) | `docs/iterlaw/SPRINT_18_MULTIMODAL_EVIDENCE_GROUNDING_BETA_PLAN.md`. DPIA-gated; local-only; pilot capped at 5 users. |
-| 19 | Production hardening + public launch | Planned | Load test, SLO, on-call rota, ingress TLS plan complete. |
+| 12A | Audit reconciliation + Windows bash test fix (correction sprint) | **PASS** | `SPRINT_INDEX.md` contradictions reconciled; stale source headers in `handleLegalRequest.ts` + `runLocalDraftingStep.ts` corrected; `resolveBash.ts` helper + `resolveBash.test.ts` added; Sprint 12 + Sprint 13 bash-using tests now resolve bash via `BASH_PATH` / PATH / common Git Bash locations and fail loudly instead of silently skipping. Full suite **73 files / 912 tests PASS**. Audit report retained at `reports/CURSOR_AUDIT_CLAUDE_SPRINT_11_12_QA_REPORT.md`. |
+| 16 | MVP polish + smoke test | Planned | Web UI, end-to-end cited answer against seeded corpus. |
+| 17 | Member / auth / subscription foundation | Planned | Local-first auth path; tiered rate limits. |
+| 18 | Admin / legal-review UI | Planned | Human-in-the-loop review pipeline. |
+| 19 | Live evolution + safe optimisation | Planned | `docs/iterlaw/SPRINT_16_LIVE_EVOLUTION_AND_SAFE_OPTIMISATION_PLAN.md`. **HITL approval required for every prompt / rule change.** |
+| 20 | UK GDPR / DPA 2018 / Data (Use and Access) Act 2025 retention + consent | Planned | Retention enforcement job; consent ledger. |
+| 21 | Multimodal evidence grounding beta *(legacy entry; superseded by the post-core roadmap below)* | Planned (future backlog) | `docs/iterlaw/SPRINT_18_MULTIMODAL_EVIDENCE_GROUNDING_BETA_PLAN.md`. DPIA-gated; local-only; pilot capped at 5 users. |
+| 22 | Production hardening + public launch | Planned | Load test, SLO, on-call rota, ingress TLS plan complete. |
 
 ## Post-core roadmap (Sprints 18–57 — target architecture)
 

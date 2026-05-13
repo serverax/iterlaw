@@ -124,6 +124,44 @@ Summary:
 
 `reports/ITERLAW_QA_REPORT_SPRINT_10_DB_IMPLEMENTATION.md` is the latest Sprint 10 evidence artefact at the time of writing. Always check `reports/` for newer reports before claiming a status.
 
+## IterLaw AI Agent Operating Model / Agent Factory Track (IA)
+
+**Track status:** NOT STARTED. This is a planning + governance track. **No IA sprint has begun.** No agents are running. No LangGraph / CrewAI / Dify / n8n / Haystack / OpenHands runtime has been installed. No K3s, firewall, SSH, or production change has been made for this track. Production readiness is **NOT** claimed.
+
+Authoritative documents for this track:
+
+- Operating model: [`../../architecture/ITERLAW_AI_AGENT_OPERATING_MODEL.md`](../../architecture/ITERLAW_AI_AGENT_OPERATING_MODEL.md).
+- Hard rules: [`../11-ai-governance/ITERLAW_AGENT_GOVERNANCE_RULES.md`](../11-ai-governance/ITERLAW_AGENT_GOVERNANCE_RULES.md).
+- Security boundaries: [`../../security/ITERLAW_AGENT_SECURITY_BOUNDARIES.md`](../../security/ITERLAW_AGENT_SECURITY_BOUNDARIES.md).
+- Before / after architecture: [`../../architecture/ITERLAW_BEFORE_AFTER_AGENT_ARCHITECTURE.md`](../../architecture/ITERLAW_BEFORE_AFTER_AGENT_ARCHITECTURE.md).
+- Sprint plan: [`./ITERLAW_AGENT_FACTORY_SPRINT_PLAN.md`](./ITERLAW_AGENT_FACTORY_SPRINT_PLAN.md).
+
+| IA Sprint | Title | Status | Evidence |
+| --- | --- | --- | --- |
+| IA-1 | Agent operating model docs | **NOT STARTED** | Planning doc only. No PASS recorded. |
+| IA-2 | Agent registry and role definitions | **NOT STARTED** | None. |
+| IA-3 | Task queue and evidence model | **NOT STARTED** | None. |
+| IA-4 | LangGraph workflow prototype | **NOT STARTED** | None. |
+| IA-5 | CrewAI sandbox team prototype | **NOT STARTED** | None. |
+| IA-6 | RAG / Ingestion agent design | **NOT STARTED** | None. |
+| IA-7 | QA / Audit agent implementation | **NOT STARTED** | None. |
+| IA-8 | Security agent discovery-only checks | **NOT STARTED** | None. |
+| IA-9 | Marketing / documentation agent sandbox | **NOT STARTED** | None. |
+| IA-10 | DevOps agent read-only K3s checks | **NOT STARTED** | None. |
+| IA-11 | Approval gate and risk classifier | **NOT STARTED** | None. |
+| IA-12 | Agent dashboard / admin UI | **NOT STARTED** | None. |
+| IA-13 | Integration with OrdinoxAI management layer | **NOT STARTED** | None. |
+| IA-14 | Production readiness review | **NOT STARTED** | None. |
+
+Track invariants (carry through every IA sprint):
+
+- Agents are helpers / workers. They are **not** the legal authority.
+- `citation_required` and `zero_citation_answer_blocked` remain **on** in every environment.
+- `legal_review_queue` and trusted-source-only retrieval are preserved.
+- No external LLM calls in the orchestrator request path.
+- No production deploy, no K3s mutation, no firewall mutation, no SSH change, no port exposure, no secret addition by an agent.
+- No PASS / DONE for an IA sprint without a captured QA / Audit evidence record under `reports/`.
+
 ## How to declare a sprint DONE
 
 A sprint is DONE only when:

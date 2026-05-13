@@ -27,12 +27,13 @@ Authoritative naming reference: [`docs/iterlaw/project/00-index/CANONICAL_NAMES.
 ### Sprint progress
 
 - **Total roadmap:** 57 sprints.
-- **Completed:** 10.
-- **Current sprint:** Sprint 11.
-- **Remaining:** 47.
-- **Remaining range:** Sprint 11 → Sprint 57.
+- **Completed:** 12 (Sprints 1–11 PASS; Sprint 12 PASS-for-dry-run-foundation).
+- **Current sprint:** Sprint 13 (planned start).
+- **Remaining:** 45.
+- **Remaining range:** Sprint 13 → Sprint 57.
 - **Sprint 10:** **PASS** — Docker staging verification passed.
 - **Sprint 11:** **PASS** — Phase 1 + Phase 2A + hardening + Phase 2B + Phase 4. Full suite 58 files / 763 tests PASS.
+- **Sprint 12:** **PASS FOR DRY-RUN FOUNDATION ONLY** — Track B operator-side backup + restore-verify scripts, manifest + sha256 + isolated-target validators, runbook, 39 new tests; full suite **59 files / 802 tests PASS**. Live backup + live restore **NOT EXECUTED**.
 - **Production:** **BLOCKED.**
 
 ### Sprint 10 PASS scope (narrow on purpose)
@@ -51,7 +52,8 @@ Authoritative naming reference: [`docs/iterlaw/project/00-index/CANONICAL_NAMES.
   - Real Docker staging DB replay: **PASS** (2026-05-13 via `scripts/operator/sprint10-docker-staging-replay.ps1`; report `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`).
   - Scope: local Docker container only. **Not** AKS staging, **not** production.
 - **Sprint 11 — Local LLM gateway + cited RAG answer path:** **PASS**. Phase 1 + Phase 2A + hardening tests + Phase 2B (live local HTTP transport, commit `3681fab`) + Phase 4 (pipeline wiring of `runLocalDraftingStep` into `handleLegalRequest`, commit `120b9de`). Full suite **58 files / 763 tests PASS**. Closeout QA report: [`docs/iterlaw/project/11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md`](docs/iterlaw/project/11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md). ADR: [`docs/iterlaw/project/11-ai-governance/ADR_SPRINT_11_LOCAL_LLM_TRANSPORT_AND_PIPELINE_WIRING.md`](docs/iterlaw/project/11-ai-governance/ADR_SPRINT_11_LOCAL_LLM_TRANSPORT_AND_PIPELINE_WIRING.md).
-- **Sprints 12–57:** **PLANNED only.** Roadmap table further down.
+- **Sprint 12 — Backup go-live (Track B operator-workstation foundation):** **PASS FOR DRY-RUN FOUNDATION ONLY**. ADR `a750f88`, backup script `dad1906`, restore-verify script `7683936`, 39 tests `4be05a6`, runbook `fdafca3`. Manifest + sha256 + production-host refusal + isolated-target refusal verified end-to-end in dry-run. Full suite **59 files / 802 tests PASS**. Live backup + live isolated restore **NOT EXECUTED** (deferred to operator decision). Closeout QA report: [`docs/iterlaw/project/12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md`](docs/iterlaw/project/12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md). ADR: [`docs/iterlaw/project/12-backup-go-live/ADR_SPRINT_12_BACKUP_AND_RECOVERY_POLICY.md`](docs/iterlaw/project/12-backup-go-live/ADR_SPRINT_12_BACKUP_AND_RECOVERY_POLICY.md). Runbook: [`docs/iterlaw/project/12-backup-go-live/SPRINT_12_BACKUP_RESTORE_RUNBOOK.md`](docs/iterlaw/project/12-backup-go-live/SPRINT_12_BACKUP_RESTORE_RUNBOOK.md). Track A (cluster-side Borg path) **unchanged** in this sprint.
+- **Sprints 13–57:** **PLANNED only.** Roadmap table further down.
 - **Production:** **BLOCKED.**
 - **External LLM in live answer path:** **FORBIDDEN** (transport policy denies provider hostnames at runtime).
 - **Offline-first legal DB model:** **ACCEPTED** ([`docs/iterlaw/project/10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](docs/iterlaw/project/10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md)).
@@ -69,11 +71,11 @@ DONE — see [`docs/iterlaw/ITERLAW_SPRINT_ROADMAP.md`](docs/iterlaw/ITERLAW_SPR
 ### In progress
 
 - **10** Live RAG DB wiring — **PASS** (Docker staging scope; report `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`).
-- **11** Local LLM gateway + bounded synthesis — **UNBLOCKED / READY TO START**. Phase 1 + Phase 2A mock-safe foundation landed; Phase 2B + Phase 4 NOT STARTED.
+- **11** Local LLM gateway + bounded synthesis — **PASS** (Phase 1 + Phase 2A + hardening + Phase 2B + Phase 4; commits `3681fab` + `120b9de` + `00f03f9`).
+- **12** Backup go-live — **PASS FOR DRY-RUN FOUNDATION ONLY** (Track B operator-side scripts + 39 tests; live backup + live restore NOT EXECUTED; commits `a750f88` → `fdafca3`).
 
-### Planned (12–17)
+### Planned (13–17)
 
-- **12** Backup go-live — **PLANNED**.
 - **13** MVP polish + smoke test — **PLANNED**.
 - **14** Member / auth / subscription foundation — **PLANNED**.
 - **15** Admin / legal-review UI — **PLANNED**.

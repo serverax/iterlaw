@@ -12,7 +12,7 @@ This file mirrors the canonical project status. The single source of truth lives
 - Sprint 10 real Docker staging DB replay: **PASS** (2026-05-13 via [`scripts/operator/sprint10-docker-staging-replay.ps1`](../../scripts/operator/sprint10-docker-staging-replay.ps1); container `iterlaw-staging-postgres` from `pgvector/pgvector:pg16`; report `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`). Docker scope only — **not** AKS, **not** production.
 - Sprint 10 overall: **PASS**.
 - Sprint 11: **PASS** — Phase 1 + Phase 2A + hardening + Phase 2B (commit `3681fab`) + Phase 4 (commit `120b9de`). Full suite **58 files / 763 tests PASS**. Closeout QA report: [`project/11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md`](project/11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md).
-- Sprint 12: **READY TO START** (backup go-live).
+- Sprint 12: **PASS FOR DRY-RUN FOUNDATION ONLY** — Track B operator-side backup + restore-verify scripts, manifest + sha256 + isolated-target validation, 39 new tests (commits `a750f88` → `fdafca3`). Full suite **59 files / 802 tests PASS**. Live backup + live restore **NOT EXECUTED**. Closeout QA report: [`project/12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md`](project/12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md).
 - Production: **BLOCKED**.
 
 ---
@@ -32,13 +32,14 @@ This file mirrors the canonical project status. The single source of truth lives
 ## Sprint count
 
 - **Total roadmap:** **57 sprints**.
-- **Completed:** **10** (Sprints 1–10).
-- **Current sprint:** **Sprint 11**.
-- **Remaining:** **47**.
-- **Remaining range:** **Sprint 11 → Sprint 57.**
+- **Completed:** **12** (Sprints 1–11 PASS; Sprint 12 PASS-for-dry-run-foundation).
+- **Current sprint:** **Sprint 13** (planned start).
+- **Remaining:** **45**.
+- **Remaining range:** **Sprint 13 → Sprint 57.**
 - **Sprint 10:** **PASS** — Docker staging verification.
-- **Sprint 11:** **READY TO START / UNBLOCKED.**
-- **Sprints 12–57:** **PLANNED.**
+- **Sprint 11:** **PASS** — Phase 1 + Phase 2A + hardening + Phase 2B + Phase 4.
+- **Sprint 12:** **PASS FOR DRY-RUN FOUNDATION ONLY** — Track B operator-side scripts; live not executed.
+- **Sprints 13–57:** **PLANNED.**
 - **Production:** **BLOCKED.**
 
 Roadmap detail: [`ITERLAW_SPRINT_ROADMAP.md`](ITERLAW_SPRINT_ROADMAP.md). Authoritative sprint table: [`project/07-sprints/SPRINT_INDEX.md`](project/07-sprints/SPRINT_INDEX.md). Sprint 11 task contract: [`project/07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md`](project/07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md). Remaining-sprint detail: [`project/07-sprints/ROADMAP_REMAINING_SPRINTS.md`](project/07-sprints/ROADMAP_REMAINING_SPRINTS.md).

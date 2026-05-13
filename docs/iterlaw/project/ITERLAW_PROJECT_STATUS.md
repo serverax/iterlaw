@@ -44,8 +44,9 @@ QA evidence:
 - **Remaining range:** **Sprint 11 → Sprint 57.**
 - **Sprint 10:** **PASS** — Docker staging verification.
 - **Sprint 11:** **PASS** — Phase 1 + Phase 2A foundation + Sprint 11 hardening tests + Phase 2B (live local HTTP transport, commit `3681fab`) + Phase 4 (pipeline wiring of `runLocalDraftingStep`, commit `120b9de`). Full suite **58 files / 763 tests PASS** (was 56 / 733 → +2 files / +30 tests). Closeout QA report: [`11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md`](11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md).
-- **Sprint 12:** **READY TO START** (backup go-live — independent operator workstream).
-- **Sprints 13–57:** **PLANNED.**
+- **Sprint 12:** **PASS FOR DRY-RUN FOUNDATION ONLY** — Track B operator-side backup script + restore-verify script + manifest validator + restore-target validator + 39 vitest tests + runbook + ADR (commits `a750f88` → `fdafca3`). Full suite **59 files / 802 tests PASS** (was 58 / 763 → +1 file / +39 tests). Live backup + live restore **NOT EXECUTED**. Track A (cluster Borg path) **unchanged**. Closeout QA report: [`12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md`](12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md). ADR: [`12-backup-go-live/ADR_SPRINT_12_BACKUP_AND_RECOVERY_POLICY.md`](12-backup-go-live/ADR_SPRINT_12_BACKUP_AND_RECOVERY_POLICY.md). Runbook: [`12-backup-go-live/SPRINT_12_BACKUP_RESTORE_RUNBOOK.md`](12-backup-go-live/SPRINT_12_BACKUP_RESTORE_RUNBOOK.md).
+- **Sprint 13:** **PLANNED** (MVP polish + smoke test).
+- **Sprints 14–57:** **PLANNED.**
 - **Production:** **BLOCKED.**
 
 Roadmap detail: [`07-sprints/ROADMAP_REMAINING_SPRINTS.md`](07-sprints/ROADMAP_REMAINING_SPRINTS.md). Sprint table: [`07-sprints/SPRINT_INDEX.md`](07-sprints/SPRINT_INDEX.md). Sprint 11 task contract: [`07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md`](07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md).

@@ -30,11 +30,11 @@ Active product name: **IterLaw**. Do **not** use `RightsNow` in active material.
 
 ## Status snapshot
 
-- Total roadmap: **57 sprints**. Completed: **10**. Current: **Sprint 11**. Remaining: **47**. Range: **Sprint 11 → Sprint 57**.
+- Total roadmap: **57 sprints**. Completed: **12** (Sprints 1–11 PASS; Sprint 12 PASS-for-dry-run-foundation). Current: **Sprint 13** (planned start). Remaining: **45**. Range: **Sprint 13 → Sprint 57**.
 - Sprint 10: **PASS** — Docker staging verification (2026-05-13; Docker scope only — not AKS, not production).
 - Sprint 11: **PASS** — Phase 1 + Phase 2A + hardening + Phase 2B (commit `3681fab`) + Phase 4 (commit `120b9de`); full suite 58 files / 763 tests PASS.
-- Sprint 12: **READY TO START** (backup go-live).
-- Sprints 12–57: **PLANNED only**.
+- Sprint 12: **PASS FOR DRY-RUN FOUNDATION ONLY** — Track B operator-side backup scripts + 39 tests (commits `a750f88` → `fdafca3`); full suite **59 files / 802 tests PASS**. Live backup + live restore **NOT EXECUTED**.
+- Sprints 13–57: **PLANNED only**.
 - Production: **BLOCKED**.
 - External LLM in live answer path: **FORBIDDEN**.
 - Offline-first legal DB model: **ACCEPTED**.

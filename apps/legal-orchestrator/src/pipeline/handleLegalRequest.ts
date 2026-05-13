@@ -4,7 +4,7 @@
 // but no LLM draft, citation verification refuses an empty uncited draft →
 // `citation_failed` until the gateway supplies a cited answer.
 
-import type { LegalRequest, LegalResponse, ExtractedFacts, RagChunk } from "../types/legal.js";
+import type { LegalRequest, LegalResponse, ExtractedFacts, RagChunk, Citation, SynthesisStatus, SynthesisMode } from "../types/legal.js";
 import { classifyRequest } from "./classifyRequest.js";
 import { immediateRiskCheck } from "./immediateRiskCheck.js";
 import { buildLegalPrompt } from "./buildLegalPrompt.js";
@@ -13,6 +13,10 @@ import type { Jurisdiction, RetrievedChunk } from "../modules/contracts.js";
 import { createRagService } from "../rag/rag.service.js";
 import type { RetrievalPort, RetrievedLegalChunk } from "../rag/retrieval.port.js";
 import { deriveApplicableLegalDate } from "../rag/temporalFilter.js";
+import { runLocalDraftingStep } from "../legal/llm/runLocalDraftingStep.js";
+import type { OllamaTransport } from "../legal/llm/llm.types.js";
+import type { LlmGatewayStatus, RetrievedLegalChunkForSynthesis, BoundedSynthesisCitation } from "../legal/llm/llmGateway.types.js";
+import type { LocalLlmAuditSink } from "../legal/llm/llmAuditSink.js";
 
 interface RagPort {
   search(input: { legal_pack: string; query: string; topic: string; jurisdiction: string; limit: number }): Promise<RagChunk[]>;
@@ -79,9 +83,28 @@ function extractLegalFactsFromInput(input: LegalRequest): ExtractedFacts {
   };
 }
 
+export interface HandleLegalRequestDeps {
+  rag?: RagPort;
+  retrieval?: RetrievalPort;
+  /**
+   * Optional local LLM transport. When supplied, the wired Phase 4
+   * drafting step runs AFTER retrieval + citation gate + policy gate
+   * approve the evidence pack. When omitted, the orchestrator returns
+   * the pre-Sprint-11 skeleton response — no drafting attempt is made,
+   * no network call is opened.
+   */
+  transport?: OllamaTransport;
+  gateway?: LlmGatewayStatus;
+  auditSink?: LocalLlmAuditSink;
+  /**
+   * Optional override of how drafted-status maps onto LegalResponse.
+   * Defaults to the safe mapper defined below.
+   */
+}
+
 export async function handleLegalRequest(
   input: LegalRequest,
-  deps?: { rag?: RagPort; retrieval?: RetrievalPort }
+  deps?: HandleLegalRequestDeps
 ): Promise<LegalResponse> {
   const rag = deps?.rag ?? emptyRag;
   const legalPack = input.legal_pack ?? "uk_employment_england_wales";
@@ -184,10 +207,41 @@ export async function handleLegalRequest(
 
   const retrievedChunks = chunks.map(ragChunkToRetrievedChunk);
 
-  // When retrieval returned chunks, the skeleton still has no LLM draft — we
-  // pass an empty draft so citation/policy gates refuse an uncited answer.
-  const draftForModules = chunks.length > 0 ? "" : undefined;
+  // Phase 4 path — if a transport is injected, defer the module pipeline
+  // until AFTER the drafter produces a draft + citations. The empty-draft
+  // skeleton path below is the no-transport back-compat behaviour: it
+  // intentionally fails the citation gate because there is no draft to
+  // validate.
+  if (deps?.transport && chunks.length > 0) {
+    const gateway: LlmGatewayStatus =
+      deps.gateway ?? { configured: true, mode: "ollama", available: true };
+    const drafted = await runLocalDraftingStep(
+      {
+        question: input.question ?? "",
+        facts: factsToModuleRecord(facts),
+        retrievedChunks: chunks.map(ragChunkToSynthChunk),
+      },
+      gateway,
+      {
+        transport: deps.transport,
+        auditSink: deps.auditSink,
+        requestId: input.request_id,
+        traceId: input.request_id,
+      },
+    );
+    return mapDrafterOutputToLegalResponse({
+      input,
+      classification,
+      legalPack,
+      risk,
+      drafted,
+      sourceChunks: chunks,
+    });
+  }
 
+  // No transport injected — run the module pipeline with the empty
+  // skeleton draft. This is the pre-Sprint-11 path.
+  const draftForModules = chunks.length > 0 ? "" : undefined;
   const modulePipelineOut = runLegalModulePipeline({
     userQuestion: input.question ?? "",
     draftAnswer: draftForModules,
@@ -250,6 +304,8 @@ export async function handleLegalRequest(
     };
   }
 
+  // No transport injected — preserve the pre-Sprint-11 skeleton response
+  // for callers that haven't opted into Phase 4 wiring.
   return {
     request_id: input.request_id,
     status: "safe_answer",
@@ -265,6 +321,119 @@ export async function handleLegalRequest(
     citations: [],
     next_steps: [],
   };
+}
+
+function ragChunkToSynthChunk(c: RagChunk): RetrievedLegalChunkForSynthesis {
+  return {
+    chunkId: c.chunk_id,
+    documentId: c.document_id,
+    title: c.title,
+    url: c.url ?? "",
+    citationLabel: c.title,
+    text: c.chunk_text,
+    authorityLevel: String(c.authority_level),
+    sourceType: c.source_type,
+  };
+}
+
+function synthCitationToCitation(c: BoundedSynthesisCitation, source?: RagChunk): Citation {
+  return {
+    chunk_id: c.chunkId,
+    document_id: c.documentId,
+    source_type: source?.source_type ?? "unknown",
+    source_title: c.title,
+    source_url: c.url,
+    section_reference: source?.section_reference,
+    paragraph_reference: source?.paragraph_reference,
+    authority_level: source?.authority_level ?? 0,
+  };
+}
+
+function mapDrafterOutputToLegalResponse(args: {
+  input: LegalRequest;
+  classification: ReturnType<typeof classifyRequest>;
+  legalPack: string;
+  risk: ReturnType<typeof immediateRiskCheck>;
+  drafted: Awaited<ReturnType<typeof runLocalDraftingStep>>;
+  sourceChunks: RagChunk[];
+}): LegalResponse {
+  const { input, classification, legalPack, risk, drafted, sourceChunks } = args;
+  const chunkById = new Map<string, RagChunk>();
+  for (const c of sourceChunks) chunkById.set(c.chunk_id, c);
+
+  const base = {
+    request_id: input.request_id,
+    legal_pack: legalPack,
+    jurisdiction: classification.jurisdiction,
+    risk_level: risk.risk_level,
+    rag_used: true,
+    external_llm_used: false,
+    synthesis_mode: "direct_local" as SynthesisMode,
+  };
+
+  switch (drafted.status) {
+    case "synthesised":
+      return {
+        ...base,
+        status: "safe_answer",
+        answer: drafted.answer ?? "",
+        confidence_score: 0.6,
+        synthesis_status: "completed" as SynthesisStatus,
+        citations: drafted.citations.map((c) => synthCitationToCitation(c, chunkById.get(c.chunkId))),
+        next_steps: [],
+      };
+    case "citation_failed":
+      return {
+        ...base,
+        status: "citation_failed",
+        answer:
+          "The drafted answer did not pass citation verification. No legal answer is being returned.",
+        confidence_score: 0,
+        synthesis_status: "error" as SynthesisStatus,
+        citations: [],
+        next_steps: [
+          ...(drafted.safetyNotes ?? []),
+          "Operator review required.",
+        ],
+      };
+    case "blocked_by_policy":
+      return {
+        ...base,
+        status: "policy_failed",
+        answer:
+          "Policy gate rejected the drafted answer. No legal answer is being returned.",
+        confidence_score: 0,
+        synthesis_status: "error" as SynthesisStatus,
+        citations: [],
+        next_steps: [
+          ...(drafted.safetyNotes ?? []),
+          "Operator review required.",
+        ],
+      };
+    case "insufficient_sources":
+      return {
+        ...base,
+        status: "insufficient_sources",
+        answer:
+          "The drafter could not produce an answer from the supplied sources.",
+        confidence_score: 0,
+        synthesis_status: "not_attempted" as SynthesisStatus,
+        citations: [],
+        next_steps: drafted.safetyNotes ?? [],
+      };
+    case "llm_unavailable":
+    default:
+      return {
+        ...base,
+        status: "llm_unavailable",
+        answer:
+          "The local legal drafting model is currently unavailable. No legal answer has been generated.",
+        confidence_score: 0,
+        synthesis_status: "unavailable" as SynthesisStatus,
+        citations: [],
+        next_steps: drafted.safetyNotes ?? [],
+      };
+  }
 }
 
 function ragChunkToRetrievedChunk(c: RagChunk): RetrievedChunk {

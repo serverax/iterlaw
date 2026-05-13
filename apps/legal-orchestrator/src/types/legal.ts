@@ -11,7 +11,8 @@ export type AnswerStatus =
   | "external_review_needed"
   | "document_required"
   | "citation_failed"
-  | "policy_failed";
+  | "policy_failed"
+  | "llm_unavailable";
 
 export type RiskLevel = "low" | "medium" | "high" | "critical" | "unknown";
 
@@ -117,7 +118,7 @@ export type SynthesisStatus =
   | "timeout"         // No response within SYNTHESIS_TIMEOUT_MS.
   | "error";          // synthesis_internal_error from the worker.
 
-export type SynthesisMode = "redis_streams" | "disabled";
+export type SynthesisMode = "redis_streams" | "disabled" | "direct_local";
 
 export interface LegalResponse {
   request_id: string;

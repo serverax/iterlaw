@@ -3,7 +3,7 @@
 **Date:** 2026-05-13
 **Container image:** pgvector/pgvector:pg16
 **Container name:** iterlaw-staging-postgres
-**Repo HEAD:** 42b2fcca8167ce840a60d59072703d9371f85c8d
+**Repo HEAD:** 5edf9535341784cc288595e83b0379c1fe5da04d
 **Branch:** master
 
 ## Status
@@ -162,7 +162,7 @@ workspace_members=0
 
 - typecheck exit: 0
 - build exit:     0
-- vitest:         [2m Test Files [22m [1m[32m55 passed[39m[22m[90m (55)[39m | [2m Tests [22m [1m[32m708 passed[39m[22m[90m (708)[39m | [2m Duration [22m 21.20s[2m (transform 13.57s, setup 0ms, collect 35.59s, tests 5.86s, environment 33ms, prepare 29.74s)[22m
+- vitest:         [2m Test Files [22m [1m[32m55 passed[39m[22m[90m (55)[39m | [2m Tests [22m [1m[32m708 passed[39m[22m[90m (708)[39m | [2m Duration [22m 16.72s[2m (transform 9.15s, setup 0ms, collect 22.31s, tests 3.40s, environment 27ms, prepare 28.28s)[22m
 
 ## `/ready` JSON (DSN-redacted, password-redacted)
 

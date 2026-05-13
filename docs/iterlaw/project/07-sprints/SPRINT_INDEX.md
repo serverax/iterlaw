@@ -26,7 +26,7 @@ Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/IT
 - **Remaining:** **47**.
 - **Remaining range:** **Sprint 11 → Sprint 57.**
 - Sprint 10: **PASS** — Docker staging verification passed (`reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`).
-- Sprint 11: **PARTIAL** — Phase 1 + Phase 2A foundation **PASS**; Sprint 11 hardening tests **PASS** (`reports/ITERLAW_SPRINT_11_LOCAL_LLM_RAG_GATEWAY_QA_2026-05-13.md`); Phase 2B (live HTTP transport) and Phase 4 (pipeline wiring of `runLocalDraftingStep` into `handleLegalRequest`) **NOT STARTED** and out of scope per the locked task contract.
+- Sprint 11: **PARTIAL** — Phase 1 + Phase 2A foundation **PASS**; Sprint 11 hardening tests **PASS** (`reports/ITERLAW_SPRINT_11_LOCAL_LLM_RAG_GATEWAY_QA_2026-05-13.md`); Phase 2B (live HTTP transport) and Phase 4 (pipeline wiring of `runLocalDraftingStep` into `handleLegalRequest`) **NOT STARTED**, pending ADR + operator approval. Closeout ADR: [`../11-ai-governance/ADR_SPRINT_11_LOCAL_LLM_TRANSPORT_AND_PIPELINE_WIRING.md`](../11-ai-governance/ADR_SPRINT_11_LOCAL_LLM_TRANSPORT_AND_PIPELINE_WIRING.md). Implementation plan: [`SPRINT_11_CLOSEOUT_IMPLEMENTATION_PLAN.md`](SPRINT_11_CLOSEOUT_IMPLEMENTATION_PLAN.md).
 - Sprints 12–57: **PLANNED.**
 - Production: **BLOCKED.**
 

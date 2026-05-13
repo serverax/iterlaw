@@ -92,7 +92,7 @@
       "evidence_path": "reports/ITERLAW_SPRINT_15_K3S_TRAEFIK_READONLY_VERIFICATION.md",
       "command": "powershell -File scripts/infra/verify-iterlaw-live-readonly.ps1",
       "last_verified_at": null,
-      "blocker": "Sprint 15 deliverable; SSH/kubectl access to master 138.201.253.56 required."
+      "blocker": "Sprint 15 script committed at scripts/infra/verify-iterlaw-live-readonly.ps1. Script refuses on wrong master IP (forbidden: 138.201.253.245), refuses any mutating remote command, refuses on missing SSH env vars. Live run requires operator to export ITERLAW_LIVE_SSH_USER + ITERLAW_LIVE_SSH_HOST=138.201.253.56 and have an SSH agent/key already authorised on the master. Not run in this environment (no operator-issued SSH credential)."
     },
     {
       "gate_id": "G11",

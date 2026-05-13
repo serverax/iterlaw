@@ -1,8 +1,9 @@
-// Disabled-by-default local drafting step. Sprint 11 lands the
-// surface; the pipeline does NOT call this yet. Current production
-// behaviour is unchanged.
+// Local drafting step. **Wired into `handleLegalRequest` since Sprint 11
+// Phase 4** (commit `120b9de`) — invoked when a caller injects
+// `deps.transport` AND retrieval returned >= 1 chunk. Without an
+// injected transport, the pipeline runs the pre-Phase-4 skeleton path.
 //
-// Safety contract:
+// Safety contract (unchanged — every branch still enforced):
 //   * Empty retrieved chunks -> `insufficient_sources`. The transport
 //     is never reached.
 //   * Gateway unavailable    -> `llm_unavailable`. The transport is
@@ -13,15 +14,14 @@
 //   * Transport returns non-`ok` -> `llm_unavailable`. No answer text.
 //   * Output guard rejects   -> `citation_failed`. Citations preserved
 //     from the retrieved set, never from the model.
-//   * Output guard accepts   -> `synthesised`. First place this status
-//     ever returns text — and only via the injected transport, never
-//     via global `fetch` / `axios` / `node-fetch`.
+//   * Output guard accepts   -> `synthesised`. The only branch that
+//     returns text — and only via the injected transport, never via
+//     global `fetch` / `axios` / `node-fetch`.
 //
 // Sprint 11 Phase 2A: when an `auditSink` is injected, the helper
 // emits a redacted, asserted-safe `LocalLlmAuditEvent` for each path
 // (disabled, unavailable, citation_failed, synthesised). The sink is
-// optional; omitting it preserves prior behaviour bit-for-bit. The
-// helper still does NOT touch the orchestrator pipeline.
+// optional; omitting it preserves prior audit-side behaviour bit-for-bit.
 
 import type {
   BoundedSynthesisInput,

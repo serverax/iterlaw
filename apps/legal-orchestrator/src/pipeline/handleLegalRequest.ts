@@ -1,8 +1,27 @@
-// Orchestration entry point. Skeleton-only: no DB, no Ollama, no external LLM.
-// Deterministic modules run via `runLegalModulePipeline` after retrieval.
-// Default RAG port is empty → usually `insufficient_sources`. When chunks exist
-// but no LLM draft, citation verification refuses an empty uncited draft →
-// `citation_failed` until the gateway supplies a cited answer.
+// Orchestration entry point.
+//
+// Behaviour (as of Sprint 11 Phase 4 + Sprint 15 feature-flagged wiring):
+//
+// - Default retrieval is the in-process `createRagService()` (mock-safe
+//   when DATABASE_URL is unset; Postgres-backed when configured).
+// - If a caller injects `deps.retrieval`, that overrides the default.
+//   If a caller injects `deps.rag`, the legacy RagPort interface is used.
+// - If a caller injects `deps.transport` AND retrieval returned >= 1
+//   chunk, `runLocalDraftingStep` is invoked behind the local-only
+//   transport (no external network). The drafter's output is mapped to
+//   a LegalResponse via the mapper at the bottom of this file. Citation
+//   verification, zero-citation blocking, immediate-risk checks, and
+//   deadline / limitation warnings are ALL still enforced — the LLM
+//   cannot bypass any legal-safety gate.
+// - If no transport is injected, the pre-Phase-4 skeleton path runs and
+//   the module pipeline produces a refusal (typically `citation_failed`
+//   or `insufficient_sources`).
+// - Sprint 15 wires the Intelligence Layer behind two env vars
+//   (`ITERLAW_INTELLIGENCE_LAYER_ENABLED` + `_MODE`). Default off. In
+//   shadow / active mode the gateway is invoked for telemetry only; the
+//   result is discarded and the public response shape is unchanged.
+// - No external LLM call. No `fetch` invocation in this file. Active
+//   mode is intentional PARTIAL — see ADR_SPRINT_15_INTELLIGENCE_LAYER_FEATURE_FLAGGED_WIRING.md.
 
 import type { LegalRequest, LegalResponse, ExtractedFacts, RagChunk, Citation, SynthesisStatus, SynthesisMode } from "../types/legal.js";
 import { classifyRequest } from "./classifyRequest.js";

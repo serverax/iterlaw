@@ -31,11 +31,11 @@ Active product name: **IterLaw**. Do **not** use `RightsNow` in active material.
 ## Status snapshot
 
 - Sprint 10 code-side migration verification: **PASS**.
-- Sprint 10 real staging DB verification: **PENDING** (operator action; required after commit `c17ffc2`).
-- Sprint 10 overall: **PARTIAL**.
-- Sprint 11: **BLOCKED**.
+- Sprint 10 real Docker staging DB replay: **PASS** (2026-05-13; Docker scope only — not AKS, not production).
+- Sprint 10 overall: **PASS**.
+- Sprint 11: **UNBLOCKED / READY TO START** (implementation not claimed; Phase 2B + Phase 4 NOT STARTED).
 - Production: **BLOCKED**.
 - External LLM in live answer path: **FORBIDDEN**.
 - Offline-first legal DB model: **ACCEPTED**.
 
-Full detail in the canonical file linked above. Latest QA evidence: `reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md`.
+Full detail in the canonical file linked above. Evidence: `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md` + `reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md`.

@@ -7,21 +7,21 @@ This file is the **canonical project status**. The root `ITERLAW_PROJECT_STATUS.
 ## Current verified gate state
 
 - Sprint 10 code-side migration verification: **PASS**.
-- Sprint 10 real staging DB verification: **PENDING** — operator runbook at [`07-sprints/SPRINT_10_STAGING_DB_OPERATOR_RUNBOOK.md`](07-sprints/SPRINT_10_STAGING_DB_OPERATOR_RUNBOOK.md).
-- Sprint 10 overall: **PARTIAL**.
-- Sprint 11: **BLOCKED**.
+- Sprint 10 real Docker staging DB replay: **PASS** (2026-05-13; container `iterlaw-staging-postgres` from `pgvector/pgvector:pg16`; see [`../../../reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`](../../../reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md)).
+- Sprint 10 overall: **PASS** (Docker staging scope).
+- Sprint 11: **UNBLOCKED / READY TO START** — Phase 1 + Phase 2A mock-safe foundation already landed; Phase 2B (live HTTP transport) + Phase 4 (pipeline wiring) **NOT STARTED**; no implementation is claimed complete by this update.
 - Production: **BLOCKED**.
 
-## Sprint 10 migration replay blocker fixed in code
+## Sprint 10 closeout — what passed and what is still scoped out
 
-- Migration 102 compatibility issue fixed by commit `c17ffc2`.
-- Static / code verification passes (typecheck / build / 55 files / 708 tests).
-- Full test suite passes.
-- Sprint 10 remains **PARTIAL** until real dev / staging DB replay passes.
-- Sprint 11 remains **BLOCKED**.
-- Production remains **BLOCKED**.
+- Migration 100 compatibility shim landed in commit `21364f4`.
+- Migration 102 compatibility shim landed in commit `c17ffc2`.
+- Operator replay executed by [`scripts/operator/sprint10-docker-staging-replay.ps1`](../../../scripts/operator/sprint10-docker-staging-replay.ps1) on 2026-05-13. Output: all forward migrations applied, extensions (`pgcrypto`, `vector`, `pg_trgm`, `unaccent`) present, key tables present (`users`, `workspaces`, `workspace_members`, `legal_sources`, `legal_documents`, `legal_chunks`, `legal_cases`, `legal_case_*`), RLS enabled where required, fail-closed RLS demonstrated by sessionless smoke counts (0 rows for user-data tables), policies present, orchestrator typecheck / build / vitest 55-files / 708-tests PASS, `/ready` returned the required field shape with no DSN / password / `POSTGRES_PASSWORD` / `DATABASE_URL` in the response body.
+- Scope of this PASS: the locally-managed Docker container only. **Not** AKS staging, **not** any real operator-managed dev DB, **not** production. Promotion beyond Docker staging remains a separate operator decision.
 
-QA evidence: [`../../../reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md`](../../../reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md).
+QA evidence:
+- [`../../../reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md`](../../../reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md)
+- [`../../../reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`](../../../reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md)
 
 ## Current delivery status
 

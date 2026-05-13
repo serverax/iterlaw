@@ -9,9 +9,9 @@ This file mirrors the canonical project status. The single source of truth lives
 ## Current verified gate state
 
 - Sprint 10 code-side migration verification: **PASS**.
-- Sprint 10 real Docker staging DB replay: **PENDING** operator execution of [`scripts/operator/sprint10-docker-staging-replay.ps1`](../../scripts/operator/sprint10-docker-staging-replay.ps1).
-- Sprint 10 overall: **PARTIAL**.
-- Sprint 11: **BLOCKED** by Sprint 10 closeout. Phase 1 (foundation) + Phase 2A (audit / transport guardrails) mock-safe code landed; live HTTP transport + pipeline wiring: **NOT STARTED**.
+- Sprint 10 real Docker staging DB replay: **PASS** (2026-05-13 via [`scripts/operator/sprint10-docker-staging-replay.ps1`](../../scripts/operator/sprint10-docker-staging-replay.ps1); container `iterlaw-staging-postgres` from `pgvector/pgvector:pg16`; report `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`). Docker scope only — **not** AKS, **not** production.
+- Sprint 10 overall: **PASS**.
+- Sprint 11: **UNBLOCKED / READY TO START** — Phase 1 + Phase 2A mock-safe foundation landed; Phase 2B (live HTTP transport) + Phase 4 (pipeline wiring) **NOT STARTED**; no implementation completion is claimed.
 - Production: **BLOCKED**.
 
 ---

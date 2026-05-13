@@ -25,10 +25,11 @@ Authoritative naming reference: [`docs/iterlaw/project/00-index/CANONICAL_NAMES.
 ## Current status (high level)
 
 - **Sprints 1–9:** DONE.
-- **Sprint 10 — Live RAG DB wiring:** **PARTIAL**.
+- **Sprint 10 — Live RAG DB wiring:** **PASS** (Docker staging scope).
   - Code-side migration verification: **PASS** (commits `21364f4`, `c17ffc2`).
-  - Real Docker staging DB replay: **PENDING operator execution** of `scripts/operator/sprint10-docker-staging-replay.ps1`.
-- **Sprint 11 — Local LLM gateway + bounded synthesis:** **BLOCKED** by Sprint 10 closeout. Phase 1 + Phase 2A mock-safe foundation landed; live HTTP transport and pipeline wiring are NOT STARTED.
+  - Real Docker staging DB replay: **PASS** (2026-05-13 via `scripts/operator/sprint10-docker-staging-replay.ps1`; container `iterlaw-staging-postgres` from `pgvector/pgvector:pg16`; report `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`).
+  - Scope: local Docker container only. **Not** AKS staging, **not** production.
+- **Sprint 11 — Local LLM gateway + bounded synthesis:** **UNBLOCKED / READY TO START**. Phase 1 + Phase 2A mock-safe foundation landed; Phase 2B (live HTTP transport) and Phase 4 (pipeline wiring) **NOT STARTED**. No implementation is claimed complete.
 - **Production:** **BLOCKED**.
 - **External LLM in live answer path:** **FORBIDDEN** (transport policy denies provider hostnames at runtime).
 - **Offline-first legal DB model:** **ACCEPTED** ([`docs/iterlaw/project/10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](docs/iterlaw/project/10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md)).
@@ -45,8 +46,8 @@ DONE — see [`docs/iterlaw/ITERLAW_SPRINT_ROADMAP.md`](docs/iterlaw/ITERLAW_SPR
 
 ### In progress
 
-- **10** Live RAG DB wiring — **PARTIAL** (code-side PASS; real Docker staging DB replay PENDING).
-- **11** Local LLM gateway + bounded synthesis — **BLOCKED** by Sprint 10 closeout.
+- **10** Live RAG DB wiring — **PASS** (Docker staging scope; report `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`).
+- **11** Local LLM gateway + bounded synthesis — **UNBLOCKED / READY TO START**. Phase 1 + Phase 2A mock-safe foundation landed; Phase 2B + Phase 4 NOT STARTED.
 
 ### Planned (12–17)
 

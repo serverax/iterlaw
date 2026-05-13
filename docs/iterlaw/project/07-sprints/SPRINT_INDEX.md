@@ -5,18 +5,18 @@ Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/IT
 ## Current verified gate state
 
 - Sprint 10 code-side migration verification: **PASS**.
-- Sprint 10 real staging DB verification: **PENDING** — operator runbook at [`SPRINT_10_STAGING_DB_OPERATOR_RUNBOOK.md`](SPRINT_10_STAGING_DB_OPERATOR_RUNBOOK.md).
-- Sprint 10 overall: **PARTIAL**.
-- Sprint 11: **BLOCKED**.
+- Sprint 10 real Docker staging DB replay: **PASS** (2026-05-13, container `iterlaw-staging-postgres` from `pgvector/pgvector:pg16`; see `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`). **Not** AKS staging, **not** production, **not** the live operator staging DB.
+- Sprint 10 overall: **PASS** (Docker staging scope). The non-Docker staging targets remain a separate operator decision.
+- Sprint 11: **UNBLOCKED / READY TO START** — Phase 1 + Phase 2A mock-safe foundation already landed (commits `b896764`, `b14fd2d`); Phase 2B (live HTTP transport) + Phase 4 (pipeline wiring) **NOT STARTED**; no implementation is claimed complete by this update.
 - Production: **BLOCKED**.
 
-### Sprint 10 migration replay blocker fixed in code
+### Sprint 10 migration replay blockers fixed and replayed
 
-- Migration 102 compatibility issue fixed by commit `c17ffc2`.
-- Static / code verification passes (typecheck / build / 55 files / 708 tests).
-- Sprint 10 remains **PARTIAL** until real dev / staging DB replay passes.
-- Sprint 11 remains **BLOCKED**. Production remains **BLOCKED**.
-- QA evidence: `reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md`.
+- Migration 100 compatibility shim landed in commit `21364f4`.
+- Migration 102 compatibility shim landed in commit `c17ffc2`.
+- Static / code verification: typecheck PASS, build PASS, vitest **55 files / 708 tests PASS**.
+- Real Docker staging DB replay executed by `scripts/operator/sprint10-docker-staging-replay.ps1` on 2026-05-13: all migrations applied, extensions verified, key tables present, RLS enabled where expected, policies present, smoke counts captured, orchestrator `/ready` returned `rag.configured=true`, `rag.mode=postgres`, `rag.database=configured`, `legal_safety.citation_required=true`, `legal_safety.zero_citation_answer_blocked=true`. No DSN / password leaked in `/ready` or in any committed artefact.
+- QA evidence: `reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md` + `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`.
 
 ## Sprint count
 

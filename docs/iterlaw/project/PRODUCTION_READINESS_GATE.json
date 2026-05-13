@@ -3,6 +3,8 @@
   "last_updated": "2026-05-13",
   "production_readiness": "NO",
   "production_readiness_reason": "One or more gates are not PASS. See gate list.",
+  "mvp_smoke_status": "PASS (14/14 runnable checks; live /health and /ready are NOT_RUN by design unless ITERLAW_MVP_SMOKE_RUN_SERVER=1 is set)",
+  "mvp_smoke_evidence": "reports/ITERLAW_SPRINT_16_MVP_SMOKE_TEST_READINESS.md",
   "gates": [
     {
       "gate_id": "G01",

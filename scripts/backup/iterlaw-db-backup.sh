@@ -31,6 +31,7 @@ set -euo pipefail
 
 # --------------------- defaults ---------------------
 DRY_RUN=1                       # default safe
+CHECK_MODE=0                    # Sprint 13: --check toolchain probe
 OUTPUT_DIR=""
 LABEL="iterlaw-backup"
 ENV_LABEL="local-staging"
@@ -44,6 +45,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run)              DRY_RUN=1 ;;
     --no-dry-run)           DRY_RUN=0 ;;
+    --check)                CHECK_MODE=1 ;;
     --output-dir)           shift; OUTPUT_DIR="${1:-}" ;;
     --label)                shift; LABEL="${1:-}" ;;
     --environment-label)    shift; ENV_LABEL="${1:-}" ;;
@@ -62,6 +64,42 @@ while [ $# -gt 0 ]; do
   esac
   shift || true
 done
+
+# --------------------- Sprint 13 --check toolchain probe ---------------------
+# This branch NEVER reads ITERLAW_BACKUP_DATABASE_URL, NEVER calls pg_dump
+# against any target, NEVER opens a network socket, and NEVER runs kubectl.
+# It only probes local tool availability via --version and command -v.
+if [ "$CHECK_MODE" -eq 1 ]; then
+  pg_dump_available="false"
+  sha256_available="false"
+  date_available="false"
+  mktemp_available="false"
+
+  if command -v pg_dump >/dev/null 2>&1; then
+    if pg_dump --version >/dev/null 2>&1; then
+      pg_dump_available="true"
+    fi
+  fi
+  if command -v sha256sum >/dev/null 2>&1 || command -v shasum >/dev/null 2>&1; then
+    sha256_available="true"
+  fi
+  if command -v date >/dev/null 2>&1; then
+    date_available="true"
+  fi
+  if command -v mktemp >/dev/null 2>&1; then
+    mktemp_available="true"
+  fi
+
+  ready_for_dry_run="true"
+  if [ "$date_available" = "false" ] || [ "$mktemp_available" = "false" ]; then
+    ready_for_dry_run="false"
+  fi
+
+  # Single-line JSON to stdout. No DSN, no env value, no secret material.
+  printf '{"project":"iterlaw","mode":"check","script":"iterlaw-db-backup","database_touched":false,"production_touched":false,"network_opened":false,"kubectl_called":false,"pg_dump_available":%s,"sha256_available":%s,"date_available":%s,"mktemp_available":%s,"ready_for_dry_run":%s,"ready_for_live_backup":false,"reason_live_backup_not_ready":"operator authorisation and ITERLAW_BACKUP_DATABASE_URL required; --check mode never authorises live backup","secret_redaction":true}\n' \
+    "$pg_dump_available" "$sha256_available" "$date_available" "$mktemp_available" "$ready_for_dry_run"
+  exit 0
+fi
 
 if [ -z "$OUTPUT_DIR" ]; then
   echo "iterlaw-db-backup: --output-dir is required" >&2

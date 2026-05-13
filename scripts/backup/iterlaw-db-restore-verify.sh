@@ -33,6 +33,7 @@
 set -euo pipefail
 
 DRY_RUN=1
+CHECK_MODE=0           # Sprint 13: --check toolchain probe
 MANIFEST_PATH=""
 REPORT_OUT=""
 EXPECTED_PROJECT="iterlaw"
@@ -43,6 +44,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run)                       DRY_RUN=1 ;;
     --no-dry-run)                    DRY_RUN=0 ;;
+    --check)                         CHECK_MODE=1 ;;
     --backup-manifest)               shift; MANIFEST_PATH="${1:-}" ;;
     --report-out)                    shift; REPORT_OUT="${1:-}" ;;
     --expected-project)              shift; EXPECTED_PROJECT="${1:-}" ;;
@@ -59,6 +61,50 @@ while [ $# -gt 0 ]; do
   esac
   shift || true
 done
+
+# --------------------- Sprint 13 --check toolchain probe ---------------------
+# This branch NEVER reads ITERLAW_RESTORE_DATABASE_URL or
+# ITERLAW_BACKUP_DATABASE_URL, NEVER calls pg_restore against any target,
+# NEVER opens a network socket, and NEVER runs kubectl. It only probes
+# local tool availability via --version and command -v. The script can
+# NEVER self-authorise live restore — live_restore_authorised is always
+# emitted as false.
+if [ "$CHECK_MODE" -eq 1 ]; then
+  pg_restore_available="false"
+  psql_available="false"
+  sha256_available="false"
+  date_available="false"
+  mktemp_available="false"
+  node_available="false"
+
+  if command -v pg_restore >/dev/null 2>&1 && pg_restore --version >/dev/null 2>&1; then
+    pg_restore_available="true"
+  fi
+  if command -v psql >/dev/null 2>&1 && psql --version >/dev/null 2>&1; then
+    psql_available="true"
+  fi
+  if command -v sha256sum >/dev/null 2>&1 || command -v shasum >/dev/null 2>&1; then
+    sha256_available="true"
+  fi
+  if command -v date >/dev/null 2>&1; then
+    date_available="true"
+  fi
+  if command -v mktemp >/dev/null 2>&1; then
+    mktemp_available="true"
+  fi
+  if command -v node >/dev/null 2>&1; then
+    node_available="true"
+  fi
+
+  ready_for_dry_run="true"
+  if [ "$date_available" = "false" ] || [ "$mktemp_available" = "false" ] || [ "$node_available" = "false" ]; then
+    ready_for_dry_run="false"
+  fi
+
+  printf '{"project":"iterlaw","mode":"check","script":"iterlaw-db-restore-verify","database_touched":false,"production_touched":false,"network_opened":false,"kubectl_called":false,"pg_restore_available":%s,"psql_available":%s,"sha256_available":%s,"date_available":%s,"mktemp_available":%s,"node_available":%s,"ready_for_dry_run":%s,"live_restore_authorised":false,"reason_live_restore_not_authorised":"first live restore requires explicit operator authorisation per FIRST_LIVE_BACKUP_AUTHORISATION_CHECKLIST.md; --check mode never authorises live restore","secret_redaction":true}\n' \
+    "$pg_restore_available" "$psql_available" "$sha256_available" "$date_available" "$mktemp_available" "$node_available" "$ready_for_dry_run"
+  exit 0
+fi
 
 if [ -z "$MANIFEST_PATH" ]; then
   echo "iterlaw-db-restore-verify: --backup-manifest is required" >&2

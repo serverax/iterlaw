@@ -20,26 +20,30 @@ Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/IT
 
 ## Sprint count
 
-- **Total roadmap target:** Sprint 45.
-- **Completed:** 9.
-- **Current pending:** Sprint 10.
-- **Remaining including Sprint 10:** **36**.
-- **Remaining after Sprint 10 passes:** **35**.
+- **Total roadmap:** **57 sprints**.
+- **Completed:** **10** (Sprints 1–10).
+- **Current:** **Sprint 11**.
+- **Remaining:** **47**.
+- **Remaining range:** **Sprint 11 → Sprint 57.**
+- Sprint 10: **PASS** — Docker staging verification passed (`reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`).
+- Sprint 11: **READY TO START / UNBLOCKED.**
+- Sprints 12–57: **PLANNED.**
+- Production: **BLOCKED.**
 
-Sprint 46+ (Workspace + RLS + Supreme Controller + Approval + Document intelligence) is currently **post-Sprint-45 backlog** and is not counted in the 36 / 35 above.
+## Sprint 11 — Local LLM Gateway + Cited RAG Answer Path
 
-## Sprint 11 — Local LLM Gateway and Transport Policy
-
-**Status:** PLANNED / blocked by Sprint 10 staging DB closeout.
+**Status:** **READY TO START / UNBLOCKED.** Sprint 10 PASS gate cleared on 2026-05-13.
 
 **Purpose:**
 
-- Build the local LLM gateway safely.
-- Keep the offline-first model mandatory.
-- Keep external LLMs forbidden.
-- Keep the LLM as fallback / background builder only.
+- Build the local LLM gateway safely with injected transport only, no external provider calls.
+- Wire the cited RAG answer path (Postgres mode when `DATABASE_URL` is configured; mock when not).
+- Run deterministic legal gates (PII → risk → deadline → citation → policy → rule checks) before any LLM call; LLM cannot override any gate.
+- Emit a redacted audit envelope per request (no DSN / no raw prompt / no full answer body).
+- Standardise the API response envelope across all eight refusal / `ok` statuses.
 
-Plan: [`./SPRINT_11_LOCAL_LLM_GATEWAY_AND_TRANSPORT_POLICY.md`](./SPRINT_11_LOCAL_LLM_GATEWAY_AND_TRANSPORT_POLICY.md).
+Sprint 11 task contract: [`./SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md`](./SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md).
+Earlier planning docs (foundation phase): [`./SPRINT_11_LOCAL_LLM_GATEWAY_AND_TRANSPORT_POLICY.md`](./SPRINT_11_LOCAL_LLM_GATEWAY_AND_TRANSPORT_POLICY.md) + [`./SPRINT_11_LOCAL_LLM_GATEWAY_PLAN.md`](./SPRINT_11_LOCAL_LLM_GATEWAY_PLAN.md) + [`./SPRINT_11_IMPLEMENTATION_CHECKLIST.md`](./SPRINT_11_IMPLEMENTATION_CHECKLIST.md).
 
 Governance: every Sprint 11 model / prompt / routing / transport-policy change is reviewed under [`../11-ai-governance/SUPERIOR_AI_ARCHITECT_AIA_SPECIFICATION.md`](../11-ai-governance/SUPERIOR_AI_ARCHITECT_AIA_SPECIFICATION.md).
 

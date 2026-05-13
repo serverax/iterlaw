@@ -30,13 +30,17 @@ This file mirrors the canonical project status. The single source of truth lives
 
 ## Sprint count
 
-- **Roadmap target including post-45 tracks:** Sprint **57** (Sprints 46–57 are the Workspace + RLS + Supreme Controller + Approval + Document Intelligence tracks, listed below).
-- **Active short-form target (current beta-first roadmap):** Sprint **45**.
-- **Completed:** **9**.
-- **Remaining including current Sprint 10 (active target):** **36**.
-- **Remaining after Sprint 10 passes (active target):** **35**.
+- **Total roadmap:** **57 sprints**.
+- **Completed:** **10** (Sprints 1–10).
+- **Current sprint:** **Sprint 11**.
+- **Remaining:** **47**.
+- **Remaining range:** **Sprint 11 → Sprint 57.**
+- **Sprint 10:** **PASS** — Docker staging verification.
+- **Sprint 11:** **READY TO START / UNBLOCKED.**
+- **Sprints 12–57:** **PLANNED.**
+- **Production:** **BLOCKED.**
 
-Roadmap detail: [`../../docs/iterlaw/ITERLAW_SPRINT_ROADMAP.md`](ITERLAW_SPRINT_ROADMAP.md). Authoritative sprint table: [`project/07-sprints/SPRINT_INDEX.md`](project/07-sprints/SPRINT_INDEX.md). Remaining-sprint listing including the addendum: [`project/07-sprints/ROADMAP_REMAINING_SPRINTS.md`](project/07-sprints/ROADMAP_REMAINING_SPRINTS.md).
+Roadmap detail: [`ITERLAW_SPRINT_ROADMAP.md`](ITERLAW_SPRINT_ROADMAP.md). Authoritative sprint table: [`project/07-sprints/SPRINT_INDEX.md`](project/07-sprints/SPRINT_INDEX.md). Sprint 11 task contract: [`project/07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md`](project/07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md). Remaining-sprint detail: [`project/07-sprints/ROADMAP_REMAINING_SPRINTS.md`](project/07-sprints/ROADMAP_REMAINING_SPRINTS.md).
 
 ---
 

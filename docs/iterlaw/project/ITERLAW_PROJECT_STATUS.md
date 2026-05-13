@@ -37,14 +37,17 @@ QA evidence:
 
 ## Sprint count
 
-- **Total roadmap target:** Sprint 45.
-- **Completed:** 9.
-- **Remaining including current Sprint 10:** **36**.
-- **Remaining after Sprint 10 passes:** **35**.
+- **Total roadmap:** **57 sprints**.
+- **Completed:** **10** (Sprints 1–10).
+- **Current sprint:** **Sprint 11**.
+- **Remaining:** **47**.
+- **Remaining range:** **Sprint 11 → Sprint 57.**
+- **Sprint 10:** **PASS** — Docker staging verification.
+- **Sprint 11:** **READY TO START / UNBLOCKED.**
+- **Sprints 12–57:** **PLANNED.**
+- **Production:** **BLOCKED.**
 
-Roadmap detail: [`07-sprints/ROADMAP_REMAINING_SPRINTS.md`](07-sprints/ROADMAP_REMAINING_SPRINTS.md). Sprint table: [`07-sprints/SPRINT_INDEX.md`](07-sprints/SPRINT_INDEX.md).
-
-Sprint 46+ items previously documented (Workspace + RLS + Supreme Controller + Approval + Document intelligence) are now **post-Sprint-45 backlog** and are not counted in the 36 / 35 remaining figures above.
+Roadmap detail: [`07-sprints/ROADMAP_REMAINING_SPRINTS.md`](07-sprints/ROADMAP_REMAINING_SPRINTS.md). Sprint table: [`07-sprints/SPRINT_INDEX.md`](07-sprints/SPRINT_INDEX.md). Sprint 11 task contract: [`07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md`](07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md).
 
 ## Current blockers
 

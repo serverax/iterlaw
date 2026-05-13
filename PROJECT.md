@@ -24,13 +24,35 @@ Authoritative naming reference: [`docs/iterlaw/project/00-index/CANONICAL_NAMES.
 
 ## Current status (high level)
 
+### Sprint progress
+
+- **Total roadmap:** 57 sprints.
+- **Completed:** 10.
+- **Current sprint:** Sprint 11.
+- **Remaining:** 47.
+- **Remaining range:** Sprint 11 → Sprint 57.
+- **Sprint 10:** **PASS** — Docker staging verification passed.
+- **Sprint 11:** **READY TO START / UNBLOCKED.**
+- **Production:** **BLOCKED.**
+
+### Sprint 10 PASS scope (narrow on purpose)
+
+- Docker staging only.
+- Local `pgvector/pgvector:pg16` container (`iterlaw-staging-postgres` on `localhost:5433`, stopped + removed at script teardown).
+- No production DB touched.
+- No deployment performed.
+- Production remains **blocked** until the later production gates pass (operator-managed staging promotion, security review, backup drill, ingress TLS, pod-security baseline verifier, operator sign-off).
+
+### Per-sprint detail
+
 - **Sprints 1–9:** DONE.
 - **Sprint 10 — Live RAG DB wiring:** **PASS** (Docker staging scope).
   - Code-side migration verification: **PASS** (commits `21364f4`, `c17ffc2`).
-  - Real Docker staging DB replay: **PASS** (2026-05-13 via `scripts/operator/sprint10-docker-staging-replay.ps1`; container `iterlaw-staging-postgres` from `pgvector/pgvector:pg16`; report `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`).
+  - Real Docker staging DB replay: **PASS** (2026-05-13 via `scripts/operator/sprint10-docker-staging-replay.ps1`; report `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`).
   - Scope: local Docker container only. **Not** AKS staging, **not** production.
-- **Sprint 11 — Local LLM gateway + bounded synthesis:** **UNBLOCKED / READY TO START**. Phase 1 + Phase 2A mock-safe foundation landed; Phase 2B (live HTTP transport) and Phase 4 (pipeline wiring) **NOT STARTED**. No implementation is claimed complete.
-- **Production:** **BLOCKED**.
+- **Sprint 11 — Local LLM gateway + cited RAG answer path:** **READY TO START / UNBLOCKED.** Phase 1 + Phase 2A mock-safe foundation landed; Phase 2B (live HTTP transport) and Phase 4 (pipeline wiring) **NOT STARTED**. No implementation is claimed complete. Plan: [`docs/iterlaw/project/07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md`](docs/iterlaw/project/07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md).
+- **Sprints 12–57:** **PLANNED only.** Roadmap table further down.
+- **Production:** **BLOCKED.**
 - **External LLM in live answer path:** **FORBIDDEN** (transport policy denies provider hostnames at runtime).
 - **Offline-first legal DB model:** **ACCEPTED** ([`docs/iterlaw/project/10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](docs/iterlaw/project/10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md)).
 

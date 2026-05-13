@@ -30,12 +30,12 @@ Active product name: **IterLaw**. Do **not** use `RightsNow` in active material.
 
 ## Status snapshot
 
-- Sprint 10 code-side migration verification: **PASS**.
-- Sprint 10 real Docker staging DB replay: **PASS** (2026-05-13; Docker scope only — not AKS, not production).
-- Sprint 10 overall: **PASS**.
-- Sprint 11: **UNBLOCKED / READY TO START** (implementation not claimed; Phase 2B + Phase 4 NOT STARTED).
+- Total roadmap: **57 sprints**. Completed: **10**. Current: **Sprint 11**. Remaining: **47**. Range: **Sprint 11 → Sprint 57**.
+- Sprint 10: **PASS** — Docker staging verification (2026-05-13; Docker scope only — not AKS, not production).
+- Sprint 11: **READY TO START / UNBLOCKED** (implementation not claimed; Phase 2B + Phase 4 NOT STARTED).
+- Sprints 12–57: **PLANNED only**.
 - Production: **BLOCKED**.
 - External LLM in live answer path: **FORBIDDEN**.
 - Offline-first legal DB model: **ACCEPTED**.
 
-Full detail in the canonical file linked above. Evidence: `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md` + `reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md`.
+Full detail in the canonical file linked above. Evidence: `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md` + `reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md`. Sprint 11 task contract: `docs/iterlaw/project/07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md`.

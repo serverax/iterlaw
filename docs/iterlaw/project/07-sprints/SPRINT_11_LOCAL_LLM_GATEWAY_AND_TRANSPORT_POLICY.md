@@ -2,19 +2,22 @@
 
 ## Status
 
-**PLANNED / BLOCKED BY SPRINT 10 STAGING DB CLOSEOUT.**
+> **CLOSED — Sprint 11 PASS.** Sprint 10 Docker staging DB replay: **PASS** (2026-05-13). Sprint 11 Phase 2B (live local HTTP transport, commit `3681fab`) + Phase 4 (pipeline wiring of `runLocalDraftingStep` into `handleLegalRequest`, commit `120b9de`) are landed. Sprint 11 closeout QA: `docs/iterlaw/project/11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md`. The planning text below is preserved as the historical record. Sprint 11 does **not** unblock production.
 
-Sprint 11 must not be marked complete until **either**:
+**Status (historical, at planning):** PLANNED / BLOCKED BY SPRINT 10 STAGING DB CLOSEOUT.
+**Status (current):** **CLOSED / PASS** (Sprint 10 Docker staging gate met; Phase 2B + Phase 4 landed).
 
-- Sprint 10 staging DB verification is recorded as PASS, **or**
-- the Sprint 11 work is limited to mock-safe code / tests / docs that do not require staging DB access.
+Sprint 11 was originally not to be marked complete until **either**:
 
-> **Note on current progress:** the Sprint 11 mock-safe code surface (`apps/legal-orchestrator/src/legal/llm/`) and tests have already landed across two prior commits:
+- Sprint 10 staging DB verification was recorded as PASS, **or**
+- the Sprint 11 work was limited to mock-safe code / tests / docs that did not require staging DB access.
+
+> **Historical progress note (preserved as the at-the-time record):** the Sprint 11 mock-safe code surface (`apps/legal-orchestrator/src/legal/llm/`) and tests landed across two prior commits:
 >
 > - `b896764` — local LLM gateway contracts and routing guardrails (Phase 1).
 > - `b14fd2d` — local LLM audit and transport guardrails (Phase 2A).
 >
-> These are mock-safe by construction (gateway DISABLED by default; no live HTTP transport; no DB writes; no network in tests). They do not constitute Sprint 11 completion: Sprint 10 staging DB verification is still **PENDING**, the live HTTP transport is **NOT STARTED**, and the pipeline wiring (`handleLegalRequest` calling `runLocalDraftingStep`) is **NOT STARTED**.
+> These were mock-safe by construction (gateway DISABLED by default; no live HTTP transport; no DB writes; no network in tests). They did **not** constitute Sprint 11 completion **at the time of this document's authoring**. Subsequently, Sprint 10 Docker-staging DB replay landed PASS (2026-05-13), and Sprint 11 Phase 2B + Phase 4 landed (commits `3681fab` and `120b9de`), closing Sprint 11.
 
 ## Goal
 

@@ -1,14 +1,17 @@
 # Sprint 11 — Local LLM Gateway + Cited RAG Answer Path
 
-**Status:** READY TO START / UNBLOCKED.
+> **CLOSED — Sprint 11 PASS.** Phase 2B (live local HTTP transport, commit `3681fab`) and Phase 4 (pipeline wiring of `runLocalDraftingStep` into `handleLegalRequest`, commit `120b9de`) are landed. Sprint 11 closeout QA: `docs/iterlaw/project/11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md`. The "READY TO START / UNBLOCKED" header below reflects the state at the time this task contract was authored; it is preserved as the historical planning record.
+
+**Status (historical, at authoring):** READY TO START / UNBLOCKED.
+**Status (current):** **CLOSED / PASS** (Sprint 11 ended; Sprint 11 does **not** unblock production).
 **Date:** 2026-05-13.
 **Prior phase evidence:**
 - Phase 1 foundation (router + citation-bound prompt + output guard + disabled-by-default drafting helper): **PASS** (commit `b896764`).
 - Phase 2A audit + transport policy guardrails: **PASS** (commit `b14fd2d`).
-- Phase 2B (live HTTP transport): **NOT STARTED**.
-- Phase 4 (pipeline wiring): **NOT STARTED**.
+- Phase 2B (live HTTP transport): **PASS** (commit `3681fab`).
+- Phase 4 (pipeline wiring): **PASS** (commit `120b9de`).
 
-**Sprint 10 gate:** **PASS** in Docker staging scope ([`SPRINT_INDEX.md`](SPRINT_INDEX.md), `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`). Production remains **BLOCKED**.
+**Sprint 10 gate:** **PASS** in Docker staging scope ([`SPRINT_INDEX.md`](SPRINT_INDEX.md), `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`). Non-Docker staging promotion remains a separate operator decision. Production remains **BLOCKED** (separate gate set; live backup/restore/deployment NOT AUTHORISED).
 
 ---
 

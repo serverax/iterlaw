@@ -144,6 +144,7 @@ These adapters are **target architecture**. None are wired today. See `ROADMAP_R
 
 ## Status
 
-- First-beta scope (UK Employment) is partially implemented across Sprints 1–11.
+- First-beta scope (UK Employment) is partially implemented across Sprints 1–15 (plus Sprint 12A correction, Sprint 12B truth-and-answer-path reconciliation).
 - Multi-country / multi-domain platform scope is **target architecture** for Sprints 18–57.
-- Production: **BLOCKED**. Sprint 10 real staging DB verification: **PENDING**.
+- Sprint 10 Docker staging DB replay: **PASS** (2026-05-13). Non-Docker staging promotion remains a separate operator decision.
+- Production: **BLOCKED** (separate gate set; live backup/restore/deployment NOT AUTHORISED).

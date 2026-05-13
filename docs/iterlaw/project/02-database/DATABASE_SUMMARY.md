@@ -135,7 +135,7 @@ Retrieval is **country + module scoped** (see [`../03-rag/RAG_SUMMARY.md`](../03
 
 ## Status
 
-- Sprint 10 user-workspace + RLS migrations: **PASS** in repo + local Docker. **Real staging DB verification: PENDING.**
+- Sprint 10 user-workspace + RLS migrations: **PASS** in repo + Docker staging (2026-05-13 replay; report `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`). Non-Docker staging promotion remains a separate operator decision.
 - Sprint 11 added no migrations.
 - All "future / target" tables above: **NOT IMPLEMENTED.** They are documented to anchor the architecture, not to claim delivery.
-- Production: **BLOCKED.**
+- Production: **BLOCKED** (separate gate set; live backup/restore/deployment NOT AUTHORISED).

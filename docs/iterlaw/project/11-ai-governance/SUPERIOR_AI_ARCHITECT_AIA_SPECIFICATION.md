@@ -228,7 +228,7 @@ The pipeline must remain offline-first per [`../10-decisions/ADR_OFFLINE_FIRST_L
 
 The Superior AI Architect AIA does **not** override any of the following — every pipeline change must be consistent with them:
 
-- **Sprint 10 gate.** Production pipeline work cannot land until Sprint 10 real staging DB verification is recorded as PASS. Mock-safe code / tests / docs are permitted while this gate is `PENDING`.
+- **Sprint 10 gate.** Sprint 10 Docker staging DB replay: **PASS** (2026-05-13). Non-Docker staging promotion (AKS / real operator DB) remains a separate operator decision. Production deployment is still gated by its own gate set; it is **not** unblocked by the Sprint 10 Docker-staging PASS alone.
 - **Offline-first ADR.** [`../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md). The LLM is a fallback; the local DB / cache / section registry / deterministic facts / RAG always run first.
 - **Canonical namespace policy.** Only `iterlaw-ai`, `iterlaw-rag`, `iterlaw-api`, `iterlaw-monitoring`, `iterlaw-security`. No `iterlaw-prod`, no bare `iterlaw`.
 - **No-production-touch rule.** No `kubectl apply` / `kubectl delete` / `kubectl patch` / `kubectl edit` / `kubectl scale` against production. No `psql` against production. No production DB writes.
@@ -405,9 +405,9 @@ The Superior AI Architect AIA escalates to operator / legal review:
 ## Status
 
 - Specification: **draft / planning**. Not a code change. Not deployed.
-- Sprint 11 (local LLM gateway + transport policy) is the first delivery surface this spec governs.
-- Production: **BLOCKED**. Sprint 10 real staging DB verification: **PENDING**.
-- This spec does **not** mark Sprint 10 or Sprint 11 as complete.
+- Sprint 11 (local LLM gateway + transport policy + pipeline wiring) is the first delivery surface this spec governs. Sprint 11 is **PASS** at close (Phase 1 + Phase 2A + hardening + Phase 2B + Phase 4); it does not unblock production.
+- Sprint 10 Docker staging DB replay: **PASS** (2026-05-13). Non-Docker staging promotion remains a separate operator decision.
+- Production: **BLOCKED** (separate gate set; live backup/restore/deployment NOT AUTHORISED).
 
 ## Related
 

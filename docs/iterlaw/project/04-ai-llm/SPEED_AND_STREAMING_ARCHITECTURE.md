@@ -151,4 +151,4 @@ Sprint 33.
 
 ## Status
 
-Nothing in this doc is implemented. The Sprint 11 foundation (router, citation-bound prompt builder, output guard, audit + transport policy) is a prerequisite. Live HTTP transport is **NOT STARTED**.
+Nothing in this doc is implemented. The Sprint 11 foundation (router, citation-bound prompt builder, output guard, audit + transport policy) is a prerequisite and is **PASS** at Sprint 11 close (Phase 2B live local HTTP transport, commit `3681fab`, and Phase 4 pipeline wiring, commit `120b9de`, are landed). The speed/streaming optimisations described below remain target architecture for Sprints 26–34 — not started.

@@ -1,8 +1,11 @@
 # Sprint 11 — Implementation Checklist
 
-**Status:** PLANNED. **DO NOT START.** Blocker: Sprint 10 staging DB verification PENDING.
+> **CLOSED — Sprint 11 PASS.** This checklist was authored before Sprint 11 closed. The state header below is preserved as the historical planning record. Current state: Sprint 10 Docker staging gate met (2026-05-13); Sprint 11 Phase 2B + Phase 4 landed (commits `3681fab`, `120b9de`); Sprint 11 closeout QA at `docs/iterlaw/project/11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md`.
 
-Phases below are executed **only after** the staging sign-off log is committed. Each phase has its own commit; no phase merges out of order.
+**Status (historical, at authoring):** PLANNED. DO NOT START. Blocker: Sprint 10 staging DB verification PENDING.
+**Status (current):** **CLOSED / PASS** (Sprint 11 ended; Sprint 11 does not unblock production).
+
+Phases below were executed **only after** the staging sign-off log was committed. Each phase had its own commit; no phase merged out of order.
 
 ## Phase 1 — contracts / types only
 

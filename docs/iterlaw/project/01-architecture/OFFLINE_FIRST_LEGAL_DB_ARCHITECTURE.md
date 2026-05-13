@@ -109,9 +109,9 @@ This model is observed in the architecture, not yet measured in production. Spee
 
 ## Status
 
-- Sprint 10 ships the user-workspace + RLS migrations and the corpus tables; the offline-first tiered retrieval system is **target architecture** (Sprints 18–25, 26–34, 35–45).
-- Sprint 11 ships the local LLM gateway interface (default disabled) + audit + transport policy guardrails — the safety perimeter the offline-first model relies on.
-- Production: **BLOCKED**. Sprint 10 real staging DB verification: **PENDING**.
+- Sprint 10 ships the user-workspace + RLS migrations and the corpus tables. Docker staging DB replay: **PASS** (2026-05-13). The offline-first tiered retrieval system itself is **target architecture** (Sprints 18–25, 26–34, 35–45).
+- Sprint 11 shipped the local LLM gateway interface (Phase 1) + audit + transport policy guardrails (Phase 2A) + live local HTTP transport (Phase 2B, commit `3681fab`) + pipeline wiring of `runLocalDraftingStep` into `handleLegalRequest` (Phase 4, commit `120b9de`). **PASS** at close.
+- Production: **BLOCKED** (separate gate set; live backup/restore/deployment NOT AUTHORISED). Non-Docker staging promotion remains a separate operator decision.
 
 ## Related
 

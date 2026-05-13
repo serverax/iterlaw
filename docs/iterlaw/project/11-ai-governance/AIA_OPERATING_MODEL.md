@@ -332,7 +332,7 @@ A sprint is only PASS when:
 5. **Operator action listed:** clear list of what operator must do
 6. **No blocker remains:** all external blockers resolved or documented as pending
 
-Sprint 10 remains **PENDING OPERATOR** until staging DB verification is complete.
+Sprint 10 Docker staging DB replay: **PASS** (2026-05-13; see `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`). Non-Docker staging promotion (AKS / real operator DB) remains a separate operator decision and stays **PENDING OPERATOR**.
 
 ---
 

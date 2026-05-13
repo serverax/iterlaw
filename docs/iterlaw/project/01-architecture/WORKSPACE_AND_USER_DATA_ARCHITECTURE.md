@@ -123,10 +123,9 @@ Every state-changing operation on user data writes an audit row with `request_id
 
 ## Status
 
-- Sprint 10 user-workspace + RLS foundation: **PASS** in repo + local Docker.
-- Sprint 10 real staging DB verification: **PENDING**.
+- Sprint 10 user-workspace + RLS foundation: **PASS** in repo + Docker staging (2026-05-13 replay). Non-Docker staging promotion remains a separate operator decision.
 - Subscription / module engine tables: **NOT IMPLEMENTED**. Target — Sprints 19, 21, 46, 50.
-- Production: **BLOCKED**.
+- Production: **BLOCKED** (separate gate set; live backup/restore/deployment NOT AUTHORISED).
 
 ## Related
 

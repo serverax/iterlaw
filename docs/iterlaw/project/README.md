@@ -24,10 +24,14 @@ Architecture details: [`01-architecture/`](01-architecture/) (see `LEGAL_AI_CORE
 
 ## Current status (high level)
 
-- Sprints 1–9: completed (see [`07-sprints/SPRINT_INDEX.md`](07-sprints/SPRINT_INDEX.md)).
-- Sprint 10: repo + local Docker DB **PASS**. **Real staging DB verification: PENDING.** Production: **BLOCKED**.
-- Sprint 11: foundation + Phase 2A audit/transport guardrails **PASS**. Live HTTP transport: **NOT STARTED**. Pipeline wiring: **NOT STARTED**. Gateway: **DISABLED / MOCK-SAFE**.
-- Branch state: local-only ahead of `origin/master`; no push performed by AI agents.
+> Authoritative source: [`07-sprints/SPRINT_INDEX.md`](07-sprints/SPRINT_INDEX.md). Evidence-backed audit: [`ITERLAW_REAL_STATUS_AND_REMAINING_SPRINTS_REPORT.md`](ITERLAW_REAL_STATUS_AND_REMAINING_SPRINTS_REPORT.md).
+
+- Sprints 1–9: completed.
+- Sprint 10: **PASS** (Docker staging scope, 2026-05-13 replay; report `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`). Non-Docker staging promotion remains a separate operator decision. Production: **BLOCKED** (separate gate set).
+- Sprint 11: **PASS** (closed). Phase 1 + Phase 2A + hardening + Phase 2B (live local HTTP transport, commit `3681fab`) + Phase 4 (pipeline wiring, commit `120b9de`). Sprint 11 does **not** unblock production.
+- Sprints 12 / 12A / 12B / 13 / 14 / 15: PASS-for-scope (see SPRINT_INDEX for scope qualifiers). First live backup + live restore **NOT AUTHORISED**. Intelligence Layer disabled by default.
+- Sprint 16: **PLANNED start**. Sprints 17–57: **PLANNED**.
+- Overall project: **PARTIAL** (production readiness gates not all met).
 
 ## Canonical names + namespaces
 

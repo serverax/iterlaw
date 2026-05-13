@@ -113,7 +113,7 @@ Added 2026-05-13. Every sprint in this addendum is **PLANNED**. None are impleme
 - No sprint in this addendum is implemented today.
 - No sprint in this addendum is claimed complete.
 - All work after the first IterLaw UK Employment beta is gated on operator approval per sprint.
-- Production: **BLOCKED**. Sprint 10 real Docker staging DB replay: **PENDING** operator invocation of `scripts/operator/sprint10-docker-staging-replay.ps1`. Sprint 11: **BLOCKED**.
+- Production: **BLOCKED** (separate gate set; live backup/restore/deployment **NOT AUTHORISED**). Sprint 10 Docker staging DB replay: **PASS** (2026-05-13; see `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`); non-Docker staging promotion remains a separate operator decision. Sprint 11: **PASS** (closed; Phase 2B + Phase 4 wired; Sprint 11 does **not** unblock production).
 - Canonical Kubernetes namespaces preserved: `iterlaw-ai`, `iterlaw-rag`, `iterlaw-api`, `iterlaw-monitoring`, `iterlaw-security`. **Forbidden:** `iterlaw-prod`, bare `iterlaw`.
 - Naming: use **IterLaw** for the product. Do not introduce `RightsNow` into active material.
 

@@ -110,9 +110,9 @@
       "gate_name": "Live backup dry-run PASS",
       "status": "PARTIAL",
       "evidence_path": "docs/iterlaw/project/12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md",
-      "command": "scripts/backup/*-dry-run.ps1",
+      "command": "scripts/backup/iterlaw-db-backup.ps1",
       "last_verified_at": "2026-05-13",
-      "blocker": "Live backup execution NOT AUTHORISED. Sprint 12G authorisation pack landed at docs/iterlaw/operations/LIVE_BACKUP_RESTORE_AUTHORISATION_PACK.md + runbook + rollback plan + approval template + safety check script (scripts/operator/check-live-backup-restore-authorisation.ps1, exits non-zero without approval). Operator-supplied approval + redacted evidence required to flip to PASS."
+      "blocker": "Live backup execution NOT AUTHORISED. Sprint 12G + 12J pack in place: checklist (docs/iterlaw/operations/LIVE_BACKUP_RESTORE_EXECUTION_READINESS_CHECKLIST.md), authorisation pack, runbook, rollback plan, approval template, safety-check script (scripts/operator/check-live-backup-restore-authorisation.ps1 exit 1 without approval), evidence validator (scripts/operator/validate-live-backup-restore-evidence.ps1 — passes on Sprint 12G templates and Sprint 12J redacted examples). Operator-supplied approval + redacted evidence required to flip to PASS."
     },
     {
       "gate_id": "G13",
@@ -121,7 +121,7 @@
       "evidence_path": "reports/templates/ITERLAW_LIVE_RESTORE_EVIDENCE_TEMPLATE.md",
       "command": "scripts/backup/iterlaw-db-restore-verify.ps1",
       "last_verified_at": null,
-      "blocker": "Live restore NOT AUTHORISED. Sprint 12G authorisation pack ready; operator fills reports/templates/ITERLAW_LIVE_RESTORE_EVIDENCE_TEMPLATE.md against an isolated drill target to flip to PASS."
+      "blocker": "Live restore NOT AUTHORISED. Sprint 12J added a redaction-validating evidence-validator script + a redacted example, and the execution-readiness checklist. Operator fills reports/templates/ITERLAW_LIVE_RESTORE_EVIDENCE_TEMPLATE.md against an isolated drill target, runs validate-live-backup-restore-evidence.ps1, and flips the gate after reviewer sign-off."
     },
     {
       "gate_id": "G14",

@@ -10,3 +10,4 @@ export * from "./llmAudit.types";
 export * from "./llmAuditRedactor";
 export * from "./llmAuditSink";
 export * from "./localTransportPolicy";
+export * from "./httpOllamaTransport";

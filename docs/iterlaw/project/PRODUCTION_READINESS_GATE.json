@@ -83,7 +83,7 @@
       "evidence_path": "reports/ITERLAW_SPRINT_14_DOCKER_STAGING_MIGRATION_REPLAY.md",
       "command": "powershell -File scripts/operator/sprint14-docker-staging-migration-replay.ps1",
       "last_verified_at": null,
-      "blocker": "Sprint 14 deliverable; replay script ready but execution requires operator-provided Docker daemon + env vars."
+      "blocker": "Sprint 14 script is committed and safety-scanned (no kubectl, no production-host, refuses on missing env vars). Execution blocked in current environment: Docker Desktop daemon not running (`docker version` shows 'failed to connect to the docker API'). Operator runs the script with throwaway env vars to flip the gate to PASS."
     },
     {
       "gate_id": "G10",

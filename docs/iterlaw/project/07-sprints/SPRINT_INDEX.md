@@ -67,6 +67,15 @@ The full multi-country / multi-domain platform roadmap is in [`ROADMAP_REMAINING
 
 These are roadmap entries, not committed delivery. They land **after** first IterLaw beta (UK Employment) is shipped. The legacy Sprint 18 / 19 entries above remain valid until they are folded into the new numbering during a future planning sprint.
 
+### Sprints 26–57 status (PLANNED only — addendum 2026-05-13)
+
+Every sprint numbered 26 through 57 is **PLANNED**. None is implemented. None is claimed complete. This addendum re-affirms the PLANNED designation for the full Sprint 26–57 range and is the canonical statement used by the top-level [`../../ITERLAW_SPRINT_ROADMAP.md`](../../ITERLAW_SPRINT_ROADMAP.md) addendum and by [`../../../PROJECT.md`](../../../PROJECT.md).
+
+- **26–34** Speed-first retrieval infrastructure (HNSW + cache, Ollama runtime layer, structured fill-in-the-blank, retrieval-augmented verification, speculative prefill, two-stage cascade, knowledge graph, SSE streaming, graceful failure) — all **PLANNED**.
+- **35–45** WASM intelligence stack (runtime foundation, gateway/security, cache/retrieval router, classifier, source federation, LLM routing, external-AI federation interface, synthesis/validation, streaming experience, observability/cost, production hardening) — all **PLANNED**.
+- **46–51** Workspace, RLS, Supreme Controller, approval (subscription foundation, RLS isolation, case management, controller foundation, approval queue, quality/self-monitoring agents) — all **PLANNED**.
+- **52–57** Document intelligence stack (foundation, cited document model, DOCX/PDF, XLSX calculators, approval / solicitor review, full workspace UX) — all **PLANNED**.
+
 ## Offline-first legal DB model — mandatory roadmap constraint
 
 The offline-first legal DB model is now a locked architectural decision — see [`../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md`](../10-decisions/ADR_OFFLINE_FIRST_LEGAL_DB_MODEL.md) and [`../01-architecture/OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md`](../01-architecture/OFFLINE_FIRST_LEGAL_DB_ARCHITECTURE.md).

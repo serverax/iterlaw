@@ -52,6 +52,73 @@ Last updated: 2026-05-12.
 | 18 | **Multimodal Evidence Grounding Beta** | **Planned (future backlog)** | [`SPRINT_18_MULTIMODAL_EVIDENCE_GROUNDING_BETA_PLAN.md`](./SPRINT_18_MULTIMODAL_EVIDENCE_GROUNDING_BETA_PLAN.md). Local-only transcription + timestamp citation; DPIA gate; pilot capped at 5 advanced users. |
 | 19 | Production hardening + public launch | Planned | Real CI on every push, load test, paid SLO, on-call rota. |
 
+## Sprint roadmap addendum — Sprints 26–57 (PLANNED only)
+
+Added 2026-05-13. Every sprint in this addendum is **PLANNED**. None are implemented. None are claimed complete. The addendum is the canonical statement of Sprints 26–57; the per-track architecture contracts live in [`project/01-architecture/`](./project/01-architecture/) and the operational sprint table is [`project/07-sprints/SPRINT_INDEX.md`](./project/07-sprints/SPRINT_INDEX.md). Cross-reference: [`project/07-sprints/ROADMAP_REMAINING_SPRINTS.md`](./project/07-sprints/ROADMAP_REMAINING_SPRINTS.md).
+
+### Planned (26–34) — Speed-first retrieval infrastructure
+
+| # | Sprint | Status | Anchor |
+| --- | --- | --- | --- |
+| 26 | Speed-First Retrieval Infrastructure (HNSW + cache) | **PLANNED** | `project/04-ai-llm/SPEED_AND_STREAMING_ARCHITECTURE.md` |
+| 27 | Ollama Runtime Speed Layer (keep_alive, prefix reuse, flash attention) | **PLANNED** | `project/04-ai-llm/SPEED_AND_STREAMING_ARCHITECTURE.md` |
+| 28 | Structured Fill-in-the-Blank Answering | **PLANNED** | `project/04-ai-llm/SPEED_AND_STREAMING_ARCHITECTURE.md` |
+| 29 | Retrieval-Augmented Verification | **PLANNED** | `project/04-ai-llm/SPEED_AND_STREAMING_ARCHITECTURE.md` |
+| 30 | Speculative Prefill UI | **PLANNED** | `project/04-ai-llm/SPEED_AND_STREAMING_ARCHITECTURE.md` |
+| 31 | Two-Stage Local Model Cascade | **PLANNED** | `project/04-ai-llm/SPEED_AND_STREAMING_ARCHITECTURE.md` |
+| 32 | Deterministic Legal Knowledge Graph | **PLANNED** | `project/04-ai-llm/SPEED_AND_STREAMING_ARCHITECTURE.md` (§knowledge graph) |
+| 33 | ChatGPT-Style Streaming UX (SSE, openers, 3-part reveal) | **PLANNED** | `project/04-ai-llm/SPEED_AND_STREAMING_ARCHITECTURE.md` |
+| 34 | Graceful Failure + Escalation | **PLANNED** | `project/04-ai-llm/SPEED_AND_STREAMING_ARCHITECTURE.md`, `project/01-architecture/SUPREME_CONTROLLER_ARCHITECTURE.md` |
+
+### Planned (35–45) — WASM intelligence stack
+
+| # | Sprint | Status | Anchor |
+| --- | --- | --- | --- |
+| 35 | IterLaw WASM Runtime Foundation | **PLANNED** | `project/01-architecture/WASM_INTELLIGENCE_ARCHITECTURE.md` |
+| 36 | WASM Gateway + Security Layer (gatekeeper / pii_guard / rate_limit) | **PLANNED** | `project/01-architecture/WASM_INTELLIGENCE_ARCHITECTURE.md` |
+| 37 | WASM Cache + Retrieval Engine (cache_lookup / retrieval_router) | **PLANNED** | `project/01-architecture/WASM_INTELLIGENCE_ARCHITECTURE.md` |
+| 38 | WASM Intent + Complexity Classifier | **PLANNED** | `project/01-architecture/WASM_INTELLIGENCE_ARCHITECTURE.md` |
+| 39 | WASM Legal Source Federation | **PLANNED** | `project/01-architecture/WASM_INTELLIGENCE_ARCHITECTURE.md` |
+| 40 | WASM LLM Routing Layer | **PLANNED** | `project/01-architecture/WASM_INTELLIGENCE_ARCHITECTURE.md` |
+| 41 | WASM External AI Federation (interface only — no provider call) | **PLANNED** | `project/01-architecture/WASM_INTELLIGENCE_ARCHITECTURE.md` |
+| 42 | WASM Synthesis + Validation Engine | **PLANNED** | `project/01-architecture/WASM_INTELLIGENCE_ARCHITECTURE.md` |
+| 43 | Streaming Legal Adviser Experience (WASM streamer) | **PLANNED** | `project/01-architecture/WASM_INTELLIGENCE_ARCHITECTURE.md`, `project/04-ai-llm/SPEED_AND_STREAMING_ARCHITECTURE.md` |
+| 44 | WASM Observability + Cost Intelligence | **PLANNED** | `project/01-architecture/WASM_INTELLIGENCE_ARCHITECTURE.md` |
+| 45 | WASM Production Hardening | **PLANNED** | `project/01-architecture/WASM_INTELLIGENCE_ARCHITECTURE.md` |
+
+### Planned (46–51) — Workspace, RLS, Supreme Controller, approval
+
+| # | Sprint | Status | Anchor |
+| --- | --- | --- | --- |
+| 46 | User Workspace and Subscription Foundation | **PLANNED** | `project/01-architecture/WORKSPACE_AND_USER_DATA_ARCHITECTURE.md`, `project/01-architecture/MODULE_SUBSCRIPTION_ARCHITECTURE.md` |
+| 47 | PostgreSQL RLS User Isolation | **PLANNED** | `project/01-architecture/WORKSPACE_AND_USER_DATA_ARCHITECTURE.md`, `project/05-security/RLS_SECURITY_MODEL.md` |
+| 48 | Case Management Engine | **PLANNED** | `project/01-architecture/WORKSPACE_AND_USER_DATA_ARCHITECTURE.md` |
+| 49 | Supreme Controller Foundation | **PLANNED** | `project/01-architecture/SUPREME_CONTROLLER_ARCHITECTURE.md` |
+| 50 | Human Approval Queue | **PLANNED** | `project/01-architecture/SUPREME_CONTROLLER_ARCHITECTURE.md` (§human approval gate) |
+| 51 | Quality and Self-Monitoring Agents | **PLANNED** | `project/01-architecture/SUPREME_CONTROLLER_ARCHITECTURE.md` (§agent registry — quality_agent / security_agent) |
+
+### Planned (52–57) — Document intelligence stack
+
+| # | Sprint | Status | Anchor |
+| --- | --- | --- | --- |
+| 52 | Document Intelligence Foundation | **PLANNED** | `project/01-architecture/DOCUMENT_INTELLIGENCE_ARCHITECTURE.md` |
+| 53 | Cited Legal Document Model | **PLANNED** | `project/01-architecture/DOCUMENT_INTELLIGENCE_ARCHITECTURE.md` (§paragraph-level citation model) |
+| 54 | DOCX and PDF Rendering | **PLANNED** | `project/01-architecture/DOCUMENT_INTELLIGENCE_ARCHITECTURE.md` (§output formats) |
+| 55 | XLSX Legal Calculators | **PLANNED** | `project/01-architecture/DOCUMENT_INTELLIGENCE_ARCHITECTURE.md` (§output formats — XLSX) |
+| 56 | Document Approval and Solicitor Review | **PLANNED** | `project/01-architecture/DOCUMENT_INTELLIGENCE_ARCHITECTURE.md` (§citation failure handling), `project/01-architecture/SUPREME_CONTROLLER_ARCHITECTURE.md` |
+| 57 | Full Workspace UX | **PLANNED** | `project/01-architecture/WORKSPACE_AND_USER_DATA_ARCHITECTURE.md`, `project/01-architecture/DOCUMENT_INTELLIGENCE_ARCHITECTURE.md` |
+
+### Addendum guardrails
+
+- No sprint in this addendum is implemented today.
+- No sprint in this addendum is claimed complete.
+- All work after the first IterLaw UK Employment beta is gated on operator approval per sprint.
+- Production: **BLOCKED**. Sprint 10 real Docker staging DB replay: **PENDING** operator invocation of `scripts/operator/sprint10-docker-staging-replay.ps1`. Sprint 11: **BLOCKED**.
+- Canonical Kubernetes namespaces preserved: `iterlaw-ai`, `iterlaw-rag`, `iterlaw-api`, `iterlaw-monitoring`, `iterlaw-security`. **Forbidden:** `iterlaw-prod`, bare `iterlaw`.
+- Naming: use **IterLaw** for the product. Do not introduce `RightsNow` into active material.
+
+---
+
 ## Hard rules (apply to every sprint)
 
 1. No `git push` without explicit operator instruction.

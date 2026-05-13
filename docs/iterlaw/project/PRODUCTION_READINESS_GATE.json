@@ -85,7 +85,7 @@
       "evidence_path": "reports/ITERLAW_SPRINT_14_DOCKER_STAGING_MIGRATION_REPLAY.md",
       "command": "powershell -File scripts/operator/sprint14-docker-staging-migration-replay.ps1",
       "last_verified_at": null,
-      "blocker": "Sprint 14 script is committed and safety-scanned (no kubectl, no production-host, refuses on missing env vars). Execution blocked in current environment: Docker Desktop daemon not running (`docker version` shows 'failed to connect to the docker API'). Operator runs the script with throwaway env vars to flip the gate to PASS."
+      "blocker": "Sprint 14 script committed and safety-scanned (no kubectl, no production-host, refuses on missing env vars). Sprint 12F re-attempted execution; Docker Desktop daemon still not running on this workstation (`docker version` returns 'failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine'). Evidence: reports/ITERLAW_SPRINT_12F_OPERATOR_EVIDENCE_FLIPS.md."
     },
     {
       "gate_id": "G10",
@@ -94,7 +94,7 @@
       "evidence_path": "reports/ITERLAW_SPRINT_15_K3S_TRAEFIK_READONLY_VERIFICATION.md",
       "command": "powershell -File scripts/infra/verify-iterlaw-live-readonly.ps1",
       "last_verified_at": null,
-      "blocker": "Sprint 15 script committed at scripts/infra/verify-iterlaw-live-readonly.ps1. Script refuses on wrong master IP (forbidden: 138.201.253.245), refuses any mutating remote command, refuses on missing SSH env vars. Live run requires operator to export ITERLAW_LIVE_SSH_USER + ITERLAW_LIVE_SSH_HOST=138.201.253.56 and have an SSH agent/key already authorised on the master. Not run in this environment (no operator-issued SSH credential)."
+      "blocker": "Sprint 15 script committed at scripts/infra/verify-iterlaw-live-readonly.ps1; master pinned to 138.201.253.56 with 138.201.253.245 in deny list. Sprint 12F probe to root@138.201.253.56 was denied by Claude Code permission classifier ('Production Reads via remote shell requires explicit operator authorization'). Live run requires operator-authorised SSH agent/key on the workstation. Evidence: reports/ITERLAW_SPRINT_12F_OPERATOR_EVIDENCE_FLIPS.md."
     },
     {
       "gate_id": "G11",

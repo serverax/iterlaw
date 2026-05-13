@@ -16,7 +16,7 @@ This file is the **canonical project status**. The root `ITERLAW_PROJECT_STATUS.
 - Sprint 14: **PASS FOR INTELLIGENCE FOUNDATION / CODE-PREPARED ONLY** — not wired into the answer path.
 - Sprint 15: **PASS FOR FEATURE-FLAGGED LOCAL WIRING ONLY** — Intelligence Layer disabled by default.
 - Production: **BLOCKED**.
-- **Post–Cursor audit (fresh transcript, 2026-05-13):** root `npm run build` + `npm test` **PASS**; `apps/legal-orchestrator` `npm run typecheck` + `npm run build` + `npm test` **PASS**. **`npm audit --omit=dev`:** **2** production advisories remain (Next.js + PostCSS) — repo security verdict **PARTIAL** until upgraded under change control. Evidence: `reports/ITERLAW_POST_CURSOR_AUDIT_RECONCILIATION.md`.
+- **Post–Cursor audit (fresh transcript, 2026-05-13):** root `npm run build` + `npm test` **PASS**; `apps/legal-orchestrator` `npm run typecheck` + `npm run build` + `npm test` **PASS**. **`npm audit --omit=dev` (post Sprint 12D safe-fix attempts):** **2** production advisories remain (Next.js high; PostCSS moderate). Safe minor/patch fixes attempted in Sprint 12D (root `overrides: postcss ^8.5.10`, `apps/web` devDep bumped to `^8.5.14`). Lockfile resists transitive postcss replacement without operator-authorised lockfile regeneration or Next major upgrade (forbidden by Sprint 12D rules). Repo **security verdict: PARTIAL** until either Next 14 → 15/16 upgrade is approved under change control, or operator authorises lockfile regeneration. Evidence: `reports/ITERLAW_SPRINT_12D_SECURITY_ADVISORY_RECONCILIATION.md`. Production readiness: **NO** (advisories outstanding; live backup/restore/deployment not authorised; K3s/Traefik/live cluster NOT VERIFIED).
 
 ## Sprint 10 closeout — what passed and what is still scoped out
 

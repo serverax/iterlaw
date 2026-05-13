@@ -159,7 +159,7 @@ Definitions used as instructed (PASS, PARTIAL, FAIL, UNKNOWN, NOT STARTED).
 | High | Sprint 12B commit | Stage and commit the 12B truth-reconciliation + feature-flag work (working tree only; not committed) | Commit Sprint 12B (immediate operator action) |
 | High | Sprint 12C wider doc drift | Reconcile 14 files outside Sprint 12B scope (see §11) | Sprint 12C |
 | High | Sprint 16 | MVP polish + smoke test | Sprint 16 |
-| High | Security advisories | 2 production `npm audit --omit=dev` advisories (Next.js + PostCSS) — see `reports/ITERLAW_POST_CURSOR_AUDIT_RECONCILIATION.md` | Bundle into Sprint 16 or a dedicated Sprint 16A patch |
+| High | Security advisories | 2 production `npm audit --omit=dev` advisories (Next.js high; PostCSS moderate). Sprint 12D safe-fix attempts applied (root `overrides: postcss ^8.5.10`; `apps/web` devDep bumped to `^8.5.14`); transitive postcss inside `next/autoprefixer` still resolves to 8.4.31 because lockfile pins it. Fixing requires either Next 14 → 15/16 major upgrade (forbidden by Sprint 12D rules) or operator-authorised `package-lock.json` regeneration. See `reports/ITERLAW_SPRINT_12D_SECURITY_ADVISORY_RECONCILIATION.md`. | Operator-approved change-controlled upgrade (Next 14 → 15) or lockfile regeneration in a dedicated Sprint 12E |
 | Medium | First live backup + live restore | Operator-side; requires authorisation per checklist (default NO) | Operator decision; outside coding sprints |
 | Medium | Sprint 17 — Member / auth / subscription foundation | Per SPRINT_INDEX legacy entries | Sprint 17 |
 | Medium | Sprint 18 — Law Module Engine Foundation | Per roadmap | Sprint 18 |

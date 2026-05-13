@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "last_updated": "2026-05-13",
+  "production_readiness": "NO",
+  "production_readiness_reason": "One or more gates are not PASS. See gate list.",
+  "gates": [
+    {
+      "gate_id": "G01",
+      "gate_name": "Root typecheck PASS",
+      "status": "PASS",
+      "evidence_path": "reports/ITERLAW_SPRINT_12E_LOCKFILE_POSTCSS_RECONCILIATION.md",
+      "command": "npm run typecheck",
+      "last_verified_at": "2026-05-13",
+      "blocker": null
+    },
+    {
+      "gate_id": "G02",
+      "gate_name": "Root lint PASS",
+      "status": "PASS",
+      "evidence_path": "reports/ITERLAW_SPRINT_12E_LOCKFILE_POSTCSS_RECONCILIATION.md",
+      "command": "npm run lint",
+      "last_verified_at": "2026-05-13",
+      "blocker": null
+    },
+    {
+      "gate_id": "G03",
+      "gate_name": "Root build PASS",
+      "status": "PASS",
+      "evidence_path": "reports/ITERLAW_SPRINT_12E_LOCKFILE_POSTCSS_RECONCILIATION.md",
+      "command": "npm run build",
+      "last_verified_at": "2026-05-13",
+      "blocker": null
+    },
+    {
+      "gate_id": "G04",
+      "gate_name": "Root jest tests PASS",
+      "status": "PASS",
+      "evidence_path": "reports/ITERLAW_SPRINT_12E_LOCKFILE_POSTCSS_RECONCILIATION.md",
+      "command": "npm test",
+      "last_verified_at": "2026-05-13",
+      "blocker": null
+    },
+    {
+      "gate_id": "G05",
+      "gate_name": "legal-orchestrator typecheck PASS",
+      "status": "PASS",
+      "evidence_path": "reports/ITERLAW_SPRINT_12E_LOCKFILE_POSTCSS_RECONCILIATION.md",
+      "command": "cd apps/legal-orchestrator && npm run typecheck",
+      "last_verified_at": "2026-05-13",
+      "blocker": null
+    },
+    {
+      "gate_id": "G06",
+      "gate_name": "legal-orchestrator build PASS",
+      "status": "PASS",
+      "evidence_path": "reports/ITERLAW_SPRINT_12E_LOCKFILE_POSTCSS_RECONCILIATION.md",
+      "command": "cd apps/legal-orchestrator && npm run build",
+      "last_verified_at": "2026-05-13",
+      "blocker": null
+    },
+    {
+      "gate_id": "G07",
+      "gate_name": "legal-orchestrator vitest PASS",
+      "status": "PASS",
+      "evidence_path": "reports/ITERLAW_SPRINT_12E_LOCKFILE_POSTCSS_RECONCILIATION.md",
+      "command": "cd apps/legal-orchestrator && npm test",
+      "last_verified_at": "2026-05-13",
+      "blocker": null
+    },
+    {
+      "gate_id": "G08",
+      "gate_name": "npm audit --omit=dev has zero unresolved applicable production advisories",
+      "status": "PARTIAL",
+      "evidence_path": "reports/ITERLAW_SPRINT_12E_LOCKFILE_POSTCSS_RECONCILIATION.md",
+      "command": "npm audit --omit=dev",
+      "last_verified_at": "2026-05-13",
+      "blocker": "1 high Next.js advisory remains; PostCSS cleared Sprint 12E. Resolving Next.js requires change-controlled major upgrade to next@15.5.16+ or next@16.x."
+    },
+    {
+      "gate_id": "G09",
+      "gate_name": "Docker staging migration replay PASS",
+      "status": "NOT_VERIFIED",
+      "evidence_path": "reports/ITERLAW_SPRINT_14_DOCKER_STAGING_MIGRATION_REPLAY.md",
+      "command": "powershell -File scripts/operator/sprint14-docker-staging-migration-replay.ps1",
+      "last_verified_at": null,
+      "blocker": "Sprint 14 deliverable; replay script ready but execution requires operator-provided Docker daemon + env vars."
+    },
+    {
+      "gate_id": "G10",
+      "gate_name": "K3s read-only cluster verification PASS",
+      "status": "NOT_VERIFIED",
+      "evidence_path": "reports/ITERLAW_SPRINT_15_K3S_TRAEFIK_READONLY_VERIFICATION.md",
+      "command": "powershell -File scripts/infra/verify-iterlaw-live-readonly.ps1",
+      "last_verified_at": null,
+      "blocker": "Sprint 15 deliverable; SSH/kubectl access to master 138.201.253.56 required."
+    },
+    {
+      "gate_id": "G11",
+      "gate_name": "Traefik / live ingress verification PASS",
+      "status": "NOT_VERIFIED",
+      "evidence_path": "reports/ITERLAW_SPRINT_15_K3S_TRAEFIK_READONLY_VERIFICATION.md",
+      "command": "powershell -File scripts/infra/verify-iterlaw-live-readonly.ps1",
+      "last_verified_at": null,
+      "blocker": "Tied to G10."
+    },
+    {
+      "gate_id": "G12",
+      "gate_name": "Live backup dry-run PASS",
+      "status": "PARTIAL",
+      "evidence_path": "docs/iterlaw/project/12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md",
+      "command": "scripts/backup/*-dry-run.ps1",
+      "last_verified_at": "2026-05-13",
+      "blocker": "Live backup execution NOT AUTHORISED per Sprint 13 checklist (operator decision)."
+    },
+    {
+      "gate_id": "G13",
+      "gate_name": "Live restore verification PASS",
+      "status": "NOT_VERIFIED",
+      "evidence_path": null,
+      "command": "scripts/backup/restore-verify.ps1",
+      "last_verified_at": null,
+      "blocker": "Live restore NOT AUTHORISED."
+    },
+    {
+      "gate_id": "G14",
+      "gate_name": "External LLM legal-answer path blocked by default",
+      "status": "PASS",
+      "evidence_path": "reports/ITERLAW_SPRINT_12B_TRUTH_AND_ANSWER_PATH_RECONCILIATION.md",
+      "command": "grep -RIn \"isWebAiFallbackEnabled\\|localTransportPolicy\" apps",
+      "last_verified_at": "2026-05-13",
+      "blocker": null
+    },
+    {
+      "gate_id": "G15",
+      "gate_name": "Citation gates active",
+      "status": "PASS",
+      "evidence_path": "reports/ITERLAW_SPRINT_12B_TRUTH_AND_ANSWER_PATH_RECONCILIATION.md",
+      "command": "grep -RIn \"citation_required\\|zero_citation_answer_blocked\" apps",
+      "last_verified_at": "2026-05-13",
+      "blocker": null
+    },
+    {
+      "gate_id": "G16",
+      "gate_name": "No secret values committed to repo",
+      "status": "PASS",
+      "evidence_path": "reports/ITERLAW_SPRINT_12C_DOCUMENTATION_DRIFT_CLEANUP.md",
+      "command": "grep -RIn \"DATABASE_URL=.*://|password|token|secret|api_key|apikey\" docs apps reports",
+      "last_verified_at": "2026-05-13",
+      "blocker": null
+    },
+    {
+      "gate_id": "G17",
+      "gate_name": "No false production-ready / deployed / live-verified claim in active docs",
+      "status": "PASS",
+      "evidence_path": "reports/ITERLAW_SPRINT_12C_DOCUMENTATION_DRIFT_CLEANUP.md",
+      "command": "grep -RIn \"production ready|DEPLOYED|live verified|K3s.*verified|Traefik.*verified\" docs PROJECT.md",
+      "last_verified_at": "2026-05-13",
+      "blocker": null
+    }
+  ]
+}

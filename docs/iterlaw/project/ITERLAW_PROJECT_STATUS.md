@@ -15,7 +15,7 @@ This file is the **canonical project status**. The root `ITERLAW_PROJECT_STATUS.
 - Sprint 13: **PASS FOR OPERATOR-WORKSTATION READINESS ONLY**. First live backup + live restore **NOT AUTHORISED**.
 - Sprint 14: **PASS FOR INTELLIGENCE FOUNDATION / CODE-PREPARED ONLY** — not wired into the answer path.
 - Sprint 15: **PASS FOR FEATURE-FLAGGED LOCAL WIRING ONLY** — Intelligence Layer disabled by default.
-- Production: **BLOCKED**.
+- Production: **BLOCKED**. Single source of truth: [`PRODUCTION_READINESS_GATE.md`](PRODUCTION_READINESS_GATE.md) + [`PRODUCTION_READINESS_GATE.json`](PRODUCTION_READINESS_GATE.json). Verifier: `node scripts/verify-production-readiness-gate.mjs` (exits non-zero while any gate fails).
 - **Post-Sprint-12E security state (2026-05-13):** root `npm run typecheck` + `npm run lint` + `npm run build` + `npm test` **PASS**; `apps/legal-orchestrator` `npm run typecheck` + `npm run build` + `npm test` **PASS** (73 files / 912 tests). **`npm audit --omit=dev`:** **1** production advisory remains (Next.js high, range `<15.5.16`). PostCSS production advisory **CLEARED** via Sprint 12E operator-authorised lockfile regeneration + `overrides: { "postcss@<8.5.10": "8.5.14" }` + root `next: ^14.2.18` devDep pin to keep next hoisted for `eslint-config-next` resolution. Evidence: `reports/ITERLAW_SPRINT_12E_LOCKFILE_POSTCSS_RECONCILIATION.md`. Repo **security verdict: PARTIAL** until Next 14 → 15.5.16+ change-controlled upgrade. Production readiness: **NO** (Next.js advisory outstanding; live backup/restore/deployment NOT AUTHORISED; K3s/Traefik/live cluster NOT VERIFIED).
 
 ## Sprint 10 closeout — what passed and what is still scoped out

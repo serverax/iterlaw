@@ -136,25 +136,95 @@ describe("Sprint 15 — active mode safety guards", () => {
     expect(r.external_llm_used).toBe(false);
   });
 
-  it("Test 4: active mode source body contains no fetch/axios import", async () => {
-    // Static check on the pipeline source — the active path must not
-    // introduce any new network surface.
-    const { readFileSync } = await import("node:fs");
+  it("Test 4: runtime source under intelligence/pipeline/config has no external network surface", async () => {
+    // Sprint 12A: scan the runtime directories rather than a single
+    // hardcoded file. Test files are excluded so the test does not
+    // false-positive on its own forbidden-pattern literals. Comments
+    // in runtime source are scanned too — operators must not leave
+    // a literal forbidden token in runtime files even in a comment.
+    const { readdirSync, readFileSync, statSync } = await import("node:fs");
     const { join, dirname, resolve } = await import("node:path");
     const { fileURLToPath } = await import("node:url");
     const here = dirname(fileURLToPath(import.meta.url));
     const repoRoot = resolve(here, "..", "..", "..", "..");
-    const pipelineBody = readFileSync(
-      join(repoRoot, "apps", "legal-orchestrator", "src", "pipeline", "handleLegalRequest.ts"),
-      "utf8",
-    );
-    expect(pipelineBody).not.toMatch(/from\s+["']openai["']/);
-    expect(pipelineBody).not.toMatch(/from\s+["']@anthropic-ai\/sdk["']/);
-    expect(pipelineBody).not.toMatch(/from\s+["']@google\/generative-ai["']/);
-    // fetchImpl( aliased pattern is allowed (httpOllamaTransport uses it),
-    // but a literal `fetch(` would mean we made an unscoped network call.
-    expect(pipelineBody).not.toMatch(/\bfetch\s*\(/);
-    expect(pipelineBody).not.toMatch(/\baxios\s*\(/);
+
+    const RUNTIME_DIRS = [
+      join(repoRoot, "apps", "legal-orchestrator", "src", "intelligence"),
+      join(repoRoot, "apps", "legal-orchestrator", "src", "pipeline"),
+      join(repoRoot, "apps", "legal-orchestrator", "src", "config"),
+    ];
+
+    function listRuntimeFiles(dir: string): string[] {
+      const out: string[] = [];
+      const stack: string[] = [dir];
+      while (stack.length > 0) {
+        const d = stack.pop()!;
+        let entries: string[];
+        try {
+          entries = readdirSync(d);
+        } catch {
+          continue;
+        }
+        for (const name of entries) {
+          const p = join(d, name);
+          let isDir = false;
+          try {
+            isDir = statSync(p).isDirectory();
+          } catch {
+            continue;
+          }
+          if (isDir) {
+            // Exclude test directories outright.
+            if (name === "tests" || name === "__tests__" || name === "node_modules" || name === "dist") continue;
+            stack.push(p);
+            continue;
+          }
+          // Files: include only TS / JS source; exclude .test.* and .spec.* files.
+          if (!/\.(ts|tsx|js|mjs|cjs)$/.test(name)) continue;
+          if (/\.(test|spec)\.(ts|tsx|js|mjs|cjs)$/.test(name)) continue;
+          out.push(p);
+        }
+      }
+      return out;
+    }
+
+    // Forbidden patterns that would indicate an external-network or
+    // external-provider surface in runtime source.
+    const FORBIDDEN: { name: string; re: RegExp }[] = [
+      { name: "fetch(",          re: /\bfetch\s*\(/ },
+      { name: "axios(",          re: /\baxios\s*\(/ },
+      { name: "from 'axios'",    re: /from\s+["']axios["']/ },
+      { name: "require('axios')",re: /require\s*\(\s*["']axios["']\s*\)/ },
+      { name: "from 'openai'",   re: /from\s+["']openai["']/ },
+      { name: "from '@anthropic-ai/sdk'", re: /from\s+["']@anthropic-ai\/sdk["']/ },
+      { name: "from '@google/generative-ai'", re: /from\s+["']@google\/generative-ai["']/ },
+      { name: "from 'cohere-ai'", re: /from\s+["']cohere-ai["']/ },
+      { name: "from '@mistralai/...'", re: /from\s+["']@mistralai\// },
+      { name: "new OpenAI(",      re: /\bnew\s+OpenAI\s*\(/ },
+      { name: "new Anthropic(",   re: /\bnew\s+Anthropic\s*\(/ },
+    ];
+
+    const files: string[] = [];
+    for (const d of RUNTIME_DIRS) {
+      for (const f of listRuntimeFiles(d)) files.push(f);
+    }
+    expect(files.length, "runtime files must exist to scan").toBeGreaterThan(0);
+
+    const violations: string[] = [];
+    for (const f of files) {
+      let body: string;
+      try {
+        body = readFileSync(f, "utf8");
+      } catch {
+        continue;
+      }
+      for (const rule of FORBIDDEN) {
+        if (rule.re.test(body)) {
+          violations.push(`${rule.name} in ${f}`);
+        }
+      }
+    }
+    expect(violations, violations.join(" ; ")).toEqual([]);
   });
 
   it("Test 5: active mode falls back safely when intelligence gateway is called with empty chunks", async () => {

@@ -15,6 +15,7 @@ import { dirname, join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { execFileSync, spawnSync } from "node:child_process";
+import { resolveBashPath } from "./helpers/resolveBash";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, "..", "..", "..", "..");
@@ -52,10 +53,12 @@ function read(path: string): string {
   return readFileSync(path, "utf8");
 }
 
-function bashAvailable(): boolean {
-  const r = spawnSync("bash", ["--version"], { encoding: "utf8" });
-  return r.status === 0;
-}
+// Resolve bash once at module load. If the host has no working bash
+// (neither BASH_PATH, nor `bash` on PATH, nor a common Git Bash
+// install), this throws with a clear actionable error and the bash-
+// dependent tests fail loudly. We do NOT silently skip — that would
+// hide CI breakage on Windows.
+const BASH_PATH = resolveBashPath();
 
 // ------------------------------------------------------------------
 // File presence
@@ -329,22 +332,18 @@ describe("shell scripts — static safety scan", () => {
 });
 
 // ------------------------------------------------------------------
-// End-to-end dry-run via bash (best-effort; skip if bash absent)
+// End-to-end dry-run via bash. Sprint 12A: resolved at module load via
+// resolveBashPath(); if bash is unavailable the resolver throws with a
+// clear error. We do NOT silently skip these tests — that would hide
+// CI breakage on Windows.
 // ------------------------------------------------------------------
 
-const HAS_BASH = bashAvailable();
-
 describe("dry-run: backup script does not require a real DB", () => {
-  if (!HAS_BASH) {
-    it.skip("(bash not available — skipped)", () => {});
-    return;
-  }
-
   it("Test 8: dry-run produces a manifest without ITERLAW_BACKUP_DATABASE_URL", { timeout: 30000 }, () => {
     const dir = mkdtempSync(join(tmpdir(), "iterlaw-s12-"));
     try {
       const out = execFileSync(
-        "bash",
+        BASH_PATH,
         [
           PATHS.backupScript,
           "--dry-run",
@@ -366,7 +365,7 @@ describe("dry-run: backup script does not require a real DB", () => {
   it("Test 9: dry-run output contains no secret-like value (manifest body)", { timeout: 30000 }, () => {
     const dir = mkdtempSync(join(tmpdir(), "iterlaw-s12-"));
     try {
-      execFileSync("bash", [
+      execFileSync(BASH_PATH, [
         PATHS.backupScript,
         "--dry-run",
         "--output-dir",
@@ -394,16 +393,11 @@ describe("dry-run: backup script does not require a real DB", () => {
 });
 
 describe("dry-run: restore-verify script produces a redacted report", () => {
-  if (!HAS_BASH) {
-    it.skip("(bash not available — skipped)", () => {});
-    return;
-  }
-
   it("Test 10: report includes secret_redaction true + no DSN leaked", { timeout: 30000 }, () => {
     const dir = mkdtempSync(join(tmpdir(), "iterlaw-s12-"));
     try {
       // Make a manifest first.
-      execFileSync("bash", [
+      execFileSync(BASH_PATH, [
         PATHS.backupScript,
         "--dry-run",
         "--output-dir",
@@ -417,7 +411,7 @@ describe("dry-run: restore-verify script produces a redacted report", () => {
       const reportPath = join(dir, "restore-report.json");
 
       const out = execFileSync(
-        "bash",
+        BASH_PATH,
         [
           PATHS.restoreScript,
           "--dry-run",
@@ -450,7 +444,7 @@ describe("dry-run: restore-verify script produces a redacted report", () => {
   it("Test 11 (live-mode refusal): refuses when ITERLAW_RESTORE_DATABASE_URL is empty", { timeout: 30000 }, () => {
     const dir = mkdtempSync(join(tmpdir(), "iterlaw-s12-"));
     try {
-      execFileSync("bash", [
+      execFileSync(BASH_PATH, [
         PATHS.backupScript,
         "--dry-run",
         "--output-dir",
@@ -464,7 +458,7 @@ describe("dry-run: restore-verify script produces a redacted report", () => {
       const reportPath = join(dir, "restore-report.json");
 
       const r = spawnSync(
-        "bash",
+        BASH_PATH,
         [
           PATHS.restoreScript,
           "--no-dry-run",

@@ -37,9 +37,12 @@ const { validateRestoreTarget } = restoreTargetModule as {
   }) => { ok: boolean; errors: string[] };
 };
 
-function bashAvailable(): boolean {
-  return spawnSync("bash", ["--version"], { encoding: "utf8" }).status === 0;
-}
+// Sprint 12A: resolve bash via the helper so tests work on Windows
+// without bash on PATH (set BASH_PATH or install Git Bash). If the
+// helper fails to find bash it throws with a clear message — tests
+// then fail loudly instead of silently skipping.
+import { resolveBashPath } from "./helpers/resolveBash";
+const BASH_PATH = resolveBashPath();
 
 function runCheck(script: string): {
   status: number | null;
@@ -47,7 +50,7 @@ function runCheck(script: string): {
   stderr: string;
   json: Record<string, unknown> | null;
 } {
-  const r = spawnSync("bash", [script, "--check"], {
+  const r = spawnSync(BASH_PATH, [script, "--check"], {
     encoding: "utf8",
     // Intentionally strip backup env vars to prove --check does not
     // require them. We do not export anything we want to keep secret.
@@ -66,18 +69,13 @@ function runCheck(script: string): {
   return { status: r.status, stdout: r.stdout, stderr: r.stderr, json };
 }
 
-const HAS_BASH = bashAvailable();
-
 // ------------------------------------------------------------------
-// backup --check (Tests 1-6 from Task 9)
+// backup --check (Tests 1-6 from Task 9). Bash is resolved at module
+// load via resolveBashPath(); if unavailable, the resolver throws and
+// these tests fail loudly (Sprint 12A correction).
 // ------------------------------------------------------------------
 
 describe("Sprint 13 — backup --check toolchain probe", () => {
-  if (!HAS_BASH) {
-    it.skip("(bash not available — skipped)", () => {});
-    return;
-  }
-
   it("Test 1: backup --check exits 0", { timeout: 30000 }, () => {
     const r = runCheck(BACKUP_SCRIPT);
     expect(r.status).toBe(0);
@@ -122,11 +120,6 @@ describe("Sprint 13 — backup --check toolchain probe", () => {
 // ------------------------------------------------------------------
 
 describe("Sprint 13 — restore --check toolchain probe", () => {
-  if (!HAS_BASH) {
-    it.skip("(bash not available — skipped)", () => {});
-    return;
-  }
-
   it("Test 7: restore --check exits 0", { timeout: 30000 }, () => {
     const r = runCheck(RESTORE_SCRIPT);
     expect(r.status).toBe(0);

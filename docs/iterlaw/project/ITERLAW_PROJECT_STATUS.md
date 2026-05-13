@@ -43,7 +43,7 @@ QA evidence:
 - **Remaining:** **47**.
 - **Remaining range:** **Sprint 11 → Sprint 57.**
 - **Sprint 10:** **PASS** — Docker staging verification.
-- **Sprint 11:** **READY TO START / UNBLOCKED.**
+- **Sprint 11:** **PARTIAL** — Phase 1 + Phase 2A foundation **PASS**; Sprint 11 hardening tests **PASS** (56 vitest files / 733 tests; see `reports/ITERLAW_SPRINT_11_LOCAL_LLM_RAG_GATEWAY_QA_2026-05-13.md`); Phase 2B (live HTTP transport) + Phase 4 (pipeline wiring) **NOT STARTED** and out of scope per the locked Sprint 11 task contract.
 - **Sprints 12–57:** **PLANNED.**
 - **Production:** **BLOCKED.**
 

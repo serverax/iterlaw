@@ -32,7 +32,7 @@ Authoritative naming reference: [`docs/iterlaw/project/00-index/CANONICAL_NAMES.
 - **Remaining:** 47.
 - **Remaining range:** Sprint 11 → Sprint 57.
 - **Sprint 10:** **PASS** — Docker staging verification passed.
-- **Sprint 11:** **READY TO START / UNBLOCKED.**
+- **Sprint 11:** **PARTIAL** — hardening tests landed; Phase 2B + Phase 4 out of scope.
 - **Production:** **BLOCKED.**
 
 ### Sprint 10 PASS scope (narrow on purpose)
@@ -50,7 +50,7 @@ Authoritative naming reference: [`docs/iterlaw/project/00-index/CANONICAL_NAMES.
   - Code-side migration verification: **PASS** (commits `21364f4`, `c17ffc2`).
   - Real Docker staging DB replay: **PASS** (2026-05-13 via `scripts/operator/sprint10-docker-staging-replay.ps1`; report `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`).
   - Scope: local Docker container only. **Not** AKS staging, **not** production.
-- **Sprint 11 — Local LLM gateway + cited RAG answer path:** **READY TO START / UNBLOCKED.** Phase 1 + Phase 2A mock-safe foundation landed; Phase 2B (live HTTP transport) and Phase 4 (pipeline wiring) **NOT STARTED**. No implementation is claimed complete. Plan: [`docs/iterlaw/project/07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md`](docs/iterlaw/project/07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md).
+- **Sprint 11 — Local LLM gateway + cited RAG answer path:** **PARTIAL**. Phase 1 + Phase 2A mock-safe foundation **PASS**; Sprint 11 hardening tests **PASS** (commit `c102f51`, 25 new tests, total 56 files / 733 tests; see `reports/ITERLAW_SPRINT_11_LOCAL_LLM_RAG_GATEWAY_QA_2026-05-13.md`). Phase 2B (live HTTP transport) and Phase 4 (pipeline wiring) **NOT STARTED** and out of scope. Plan: [`docs/iterlaw/project/07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md`](docs/iterlaw/project/07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md).
 - **Sprints 12–57:** **PLANNED only.** Roadmap table further down.
 - **Production:** **BLOCKED.**
 - **External LLM in live answer path:** **FORBIDDEN** (transport policy denies provider hostnames at runtime).

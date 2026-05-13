@@ -20,6 +20,26 @@
 -- adapters cannot query. The file is retained only for column-
 -- inventory reference; the verifier rejects any attempt to wire
 -- it into a real apply pipeline.
+--
+-- ---------------------------------------------------------------------
+-- Compatibility shim (added 2026-05-13)
+-- ---------------------------------------------------------------------
+-- A clean Docker staging replay tool that applies every `.sql` file
+-- in numeric order will run this file even though the warning above
+-- forbids it. Until the replay tool learns to skip draft files, this
+-- migration must remain idempotent on top of the 001-chain so the
+-- replay does not break the chain.
+--
+-- The "Compatibility ALTER block" below adds the columns the 001-
+-- chain shape does not have but that this file's CREATE INDEX
+-- statements reference. The ALTER statements are:
+--   - ADD COLUMN IF NOT EXISTS (idempotent).
+--   - Without NOT NULL (existing rows from 010_* seed must not fail).
+--   - Without DEFAULT changes to existing rows.
+--   - Never DROP, RENAME, TRUNCATE, or destructive ALTER.
+-- On a fresh database (no 001-chain), the CREATE TABLE statements
+-- above already declared these columns; the ALTER statements become
+-- no-ops.
 -- =====================================================================
 -- (original header retained below)
 -- =====================================================================
@@ -168,6 +188,31 @@ CREATE TABLE IF NOT EXISTS answer_verification_log (
   verifier_notes JSONB NOT NULL DEFAULT '{}',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- =====================================================================
+-- Compatibility ALTER block — must precede every CREATE INDEX below.
+-- =====================================================================
+-- These columns are declared by the CREATE TABLE statements above on
+-- a fresh database. On a DB that already ran the 001-chain, the
+-- CREATE TABLE statements above are no-ops (tables exist with the
+-- canonical 001-chain column shape), and the columns referenced by
+-- the CREATE INDEX statements below would not exist — making the
+-- index creation fail (the historical defect this shim fixes).
+--
+-- Every statement here is additive and idempotent:
+--   - ADD COLUMN IF NOT EXISTS (no-op if the column already exists).
+--   - No NOT NULL (existing rows must not fail to satisfy a
+--     constraint after the column is added).
+--   - No DROP, no DELETE, no TRUNCATE, no destructive ALTER.
+-- =====================================================================
+
+ALTER TABLE legal_documents ADD COLUMN IF NOT EXISTS legal_area      TEXT;
+ALTER TABLE legal_documents ADD COLUMN IF NOT EXISTS jurisdiction    TEXT;
+ALTER TABLE legal_documents ADD COLUMN IF NOT EXISTS effective_from  DATE;
+ALTER TABLE legal_documents ADD COLUMN IF NOT EXISTS effective_to    DATE;
+ALTER TABLE legal_documents ADD COLUMN IF NOT EXISTS status          TEXT;
+
+ALTER TABLE legal_cases     ADD COLUMN IF NOT EXISTS judgment_date   DATE;
 
 CREATE INDEX IF NOT EXISTS idx_legal_documents_source_id ON legal_documents(source_id);
 CREATE INDEX IF NOT EXISTS idx_legal_documents_legal_area ON legal_documents(legal_area);

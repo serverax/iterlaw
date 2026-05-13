@@ -2,6 +2,8 @@
 
 Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/ITERLAW_SPRINT_ROADMAP.md`. Project status: [`../ITERLAW_PROJECT_STATUS.md`](../ITERLAW_PROJECT_STATUS.md).
 
+> Latest evidence-backed audit of real status vs. claims: [`../ITERLAW_REAL_STATUS_AND_REMAINING_SPRINTS_REPORT.md`](../ITERLAW_REAL_STATUS_AND_REMAINING_SPRINTS_REPORT.md) (2026-05-13; verdict PARTIAL; lists what is real vs documented-only vs not started).
+
 ## Current verified gate state
 
 - Sprint 10 code-side migration verification: **PASS**.

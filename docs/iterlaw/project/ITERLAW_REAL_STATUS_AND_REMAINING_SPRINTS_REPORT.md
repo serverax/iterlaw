@@ -159,7 +159,7 @@ Definitions used as instructed (PASS, PARTIAL, FAIL, UNKNOWN, NOT STARTED).
 | High | Sprint 12B commit | Stage and commit the 12B truth-reconciliation + feature-flag work (working tree only; not committed) | Commit Sprint 12B (immediate operator action) |
 | High | Sprint 12C wider doc drift | Reconcile 14 files outside Sprint 12B scope (see §11) | Sprint 12C |
 | High | Sprint 16 | MVP polish + smoke test | Sprint 16 |
-| High | Security advisories | Sprint 12E **resolved PostCSS** via lockfile regeneration + `overrides: { "postcss@<8.5.10": "8.5.14" }` + root `next` devDep pin. Production audit now shows **1** remaining advisory (Next.js high, range `<15.5.16`). Tests + build + typecheck + lint all PASS. Fixing Next.js requires change-controlled major upgrade (14 → 15.5.16+ or 16). See `reports/ITERLAW_SPRINT_12E_LOCKFILE_POSTCSS_RECONCILIATION.md`. | Change-controlled Next 14 → 15.5.16+ upgrade |
+| Closed in Sprint 17 | Security advisories | Sprint 12E cleared PostCSS. Sprint 17 cleared Next.js by upgrading 14.2.35 → 15.5.18. `npm audit --omit=dev` now shows **0 production vulnerabilities**. Tests + build + typecheck + lint all PASS. See `reports/ITERLAW_SPRINT_17_NEXT_SECURITY_UPGRADE.md`. G08 PASS. | — |
 | Medium | First live backup + live restore | Operator-side; requires authorisation per checklist (default NO) | Operator decision; outside coding sprints |
 | Medium | Sprint 17 — Member / auth / subscription foundation | Per SPRINT_INDEX legacy entries | Sprint 17 |
 | Medium | Sprint 18 — Law Module Engine Foundation | Per roadmap | Sprint 18 |

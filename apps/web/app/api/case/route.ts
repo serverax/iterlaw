@@ -67,7 +67,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 }
 
 export async function GET(): Promise<NextResponse> {
-  const sid = cookies().get(ANON_COOKIE)?.value ?? null;
+  const sid = (await cookies()).get(ANON_COOKIE)?.value ?? null;
   if (!sid) {
     return NextResponse.json({ error: "no_session" }, { status: 404 });
   }

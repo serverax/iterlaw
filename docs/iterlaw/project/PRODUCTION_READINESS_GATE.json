@@ -72,11 +72,11 @@
     {
       "gate_id": "G08",
       "gate_name": "npm audit --omit=dev has zero unresolved applicable production advisories",
-      "status": "PARTIAL",
-      "evidence_path": "reports/ITERLAW_SPRINT_12E_LOCKFILE_POSTCSS_RECONCILIATION.md",
+      "status": "PASS",
+      "evidence_path": "reports/ITERLAW_SPRINT_17_NEXT_SECURITY_UPGRADE.md",
       "command": "npm audit --omit=dev",
       "last_verified_at": "2026-05-13",
-      "blocker": "1 high Next.js advisory remains; PostCSS cleared Sprint 12E. Resolving Next.js requires change-controlled major upgrade to next@15.5.16+ or next@16.x."
+      "blocker": null
     },
     {
       "gate_id": "G09",

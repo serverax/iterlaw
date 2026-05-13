@@ -34,8 +34,8 @@ const clientBodySchema = z
 
 const ANON_COOKIE = "iterlaw_anon_sid";
 
-function identitySlice(): { request_id: string; user_id: string; workspace_id: string } {
-  const sid = cookies().get(ANON_COOKIE)?.value;
+async function identitySlice(): Promise<{ request_id: string; user_id: string; workspace_id: string }> {
+  const sid = (await cookies()).get(ANON_COOKIE)?.value;
   const userId = sid ? `anon:${sid}` : `anon:${crypto.randomUUID()}`;
   return {
     request_id: crypto.randomUUID(),
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
   }
 
-  const identity = identitySlice();
+  const identity = await identitySlice();
   const body = { ...identity, ...parsed.data };
 
   const result = await forwardToOrchestrator({

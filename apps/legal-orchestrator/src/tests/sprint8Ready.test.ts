@@ -46,6 +46,12 @@ describe("Sprint 8 — /ready envelope", () => {
         citation_required: true,
         zero_citation_answer_blocked: true,
       },
+      intelligence_layer: {
+        configured: false,
+        mode: "off",
+        external_network_enabled: false,
+        external_llm_enabled: false,
+      },
     });
   });
 

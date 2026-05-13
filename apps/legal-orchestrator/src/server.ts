@@ -14,6 +14,7 @@ import {
 } from "./synthesis/synthesisHealth.js";
 import type { SynthesisHealthPort } from "./synthesis/synthesisHealth.js";
 import { describeLocalLlmGateway } from "./legal/llm/localLlmGateway.js";
+import { getIntelligenceLayerConfig } from "./config/featureFlags.js";
 
 type RagReadySlice = {
   configured: boolean;
@@ -97,6 +98,15 @@ export function createApp(opts: CreateAppOptions = {}) {
         citation_required: true,
         zero_citation_answer_blocked: true,
       },
+      intelligence_layer: (() => {
+        const cfg = getIntelligenceLayerConfig();
+        return {
+          configured: cfg.enabled,
+          mode: cfg.mode,
+          external_network_enabled: false,
+          external_llm_enabled: false,
+        };
+      })(),
     });
   });
 

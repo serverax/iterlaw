@@ -17,6 +17,13 @@ import { runLocalDraftingStep } from "../legal/llm/runLocalDraftingStep.js";
 import type { OllamaTransport } from "../legal/llm/llm.types.js";
 import type { LlmGatewayStatus, RetrievedLegalChunkForSynthesis, BoundedSynthesisCitation } from "../legal/llm/llmGateway.types.js";
 import type { LocalLlmAuditSink } from "../legal/llm/llmAuditSink.js";
+import { getIntelligenceLayerConfig } from "../config/featureFlags.js";
+import { runIntelligenceGateway } from "../intelligence/intelligenceGateway.js";
+import type {
+  IntelligenceResult,
+  RetrievalCandidate as IntelligenceRetrievalCandidate,
+  RetrievalSource as IntelligenceRetrievalSource,
+} from "../intelligence/intelligence.types.js";
 
 interface RagPort {
   search(input: { legal_pack: string; query: string; topic: string; jurisdiction: string; limit: number }): Promise<RagChunk[]>;
@@ -30,6 +37,50 @@ const emptyRag: RagPort = {
     return [];
   },
 };
+
+const INTELLIGENCE_KNOWN_SOURCES: IntelligenceRetrievalSource[] = [
+  "statutory_source",
+  "govuk_guidance",
+  "acas_guidance",
+  "tribunal_case",
+  "project_memory",
+  "sprint_report",
+  "approved_output",
+  "architecture_decision",
+  "user_uploaded_document",
+  "draft_ai_output",
+];
+
+function normaliseIntelligenceSource(raw: string | undefined): IntelligenceRetrievalSource {
+  if (raw && (INTELLIGENCE_KNOWN_SOURCES as string[]).includes(raw)) {
+    return raw as IntelligenceRetrievalSource;
+  }
+  if (raw === "legislation" || raw === "statute") return "statutory_source";
+  if (raw === "guidance") return "govuk_guidance";
+  if (raw === "acas") return "acas_guidance";
+  if (raw === "case" || raw === "case_law") return "tribunal_case";
+  return "approved_output";
+}
+
+function ragChunkToIntelligenceCandidate(c: RagChunk, rank: number): IntelligenceRetrievalCandidate {
+  return {
+    candidate_id: c.chunk_id,
+    source_type: normaliseIntelligenceSource(c.source_type),
+    source_id: c.document_id ?? c.chunk_id,
+    source_title: c.title ?? null,
+    source_url: c.url ?? null,
+    text: c.chunk_text ?? "",
+    effective_from: null,
+    effective_to: null,
+    last_verified_at: null,
+    superseded_by: null,
+    qa_status: "approved",
+    authority_level: c.authority_level ?? null,
+    keyword_rank: rank,
+    vector_rank: rank,
+    reason_codes: ["sprint15_shadow_mapping_from_rag_chunk"],
+  };
+}
 
 function retrievedLegalChunkToRagChunk(c: RetrievedLegalChunk, score = 0): RagChunk {
   return {
@@ -189,6 +240,45 @@ export async function handleLegalRequest(
     chunks = r.chunks.map((c) => retrievedLegalChunkToRagChunk(c));
     retrievalNotes = r.retrieval_notes ?? [];
   }
+
+  // -------------------------------------------------------------------
+  // Sprint 15 — Intelligence Layer wiring (feature-flagged, fail-closed).
+  // Disabled by default. In shadow mode the gateway is invoked for
+  // telemetry only; the legacy answer path is unchanged. In active
+  // mode the gateway is invoked and its result is discarded for now
+  // (intentional PARTIAL ACTIVE WIRING) — until active mode is fully
+  // proven, this is a no-op on the response shape too. Any error in
+  // the intelligence layer is caught and ignored to keep the legacy
+  // path bulletproof.
+  // -------------------------------------------------------------------
+  let intelligenceShadowResult: IntelligenceResult | null = null;
+  const intelConfig = getIntelligenceLayerConfig();
+  if (intelConfig.enabled && (intelConfig.mode === "shadow" || intelConfig.mode === "active")) {
+    try {
+      const cands = chunks.map((c, i) => ragChunkToIntelligenceCandidate(c, i + 1));
+      intelligenceShadowResult = runIntelligenceGateway({
+        request: {
+          workspace_id: input.workspace_id ?? "",
+          project_id: legalPack,
+          user_id: input.user_id ?? "",
+          question: input.question ?? "",
+          legal_mode: true,
+          latest_event_at: null,
+        },
+        keyword_ranked: cands,
+        vector_ranked: cands,
+        request_id: input.request_id,
+      });
+    } catch {
+      // Hard guard — never let the intelligence layer affect the
+      // legacy answer path. Even a thrown exception must collapse to
+      // "no shadow telemetry captured this turn".
+      intelligenceShadowResult = null;
+    }
+  }
+  // The shadow / partial-active result is intentionally NOT placed on
+  // the response. Existing /api/legal/ask shape is preserved exactly.
+  void intelligenceShadowResult;
 
   // Build the prompt so the verification layer can audit it. The
   // orchestrator does NOT select or call a model — model selection

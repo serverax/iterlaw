@@ -75,6 +75,41 @@ CREATE TABLE IF NOT EXISTS public.legal_cases (
 );
 
 -- ---------------------------------------------------------------------
+-- Compatibility ALTER block (added 2026-05-13) — must precede every
+-- CREATE INDEX below.
+-- ---------------------------------------------------------------------
+-- These columns are declared by the CREATE TABLE statement above on a
+-- fresh database. On a DB that already created public.legal_cases via
+-- 100_iterlaw_core_rag_foundation.sql (e.g. a Docker staging replay
+-- that applied every .sql file in numeric order), the CREATE TABLE
+-- above is a silent no-op — the table exists with the 100-draft shape
+-- (which uses `judgment_date` instead of `decision_date`, lacks
+-- `source_id`, `source_provider`, `metadata`, `case_name`, `summary`,
+-- `full_text`, `url`, `jurisdiction`, `updated_at`). Without this
+-- shim, 102's CREATE INDEX statements that reference those columns
+-- would fail (e.g. ERROR: column "decision_date" does not exist).
+--
+-- Every statement here is additive and idempotent:
+--   - ADD COLUMN IF NOT EXISTS (no-op if the column already exists).
+--   - No NOT NULL on existing tables (existing rows must not fail
+--     to satisfy a constraint after the column is added).
+--   - DEFAULTs are allowed only where they are safe on Postgres
+--     11+ (ADD COLUMN ... DEFAULT does not rewrite existing rows).
+--   - No DROP, no DELETE, no TRUNCATE, no destructive ALTER.
+-- ---------------------------------------------------------------------
+
+ALTER TABLE public.legal_cases ADD COLUMN IF NOT EXISTS source_id        UUID;
+ALTER TABLE public.legal_cases ADD COLUMN IF NOT EXISTS case_name        TEXT;
+ALTER TABLE public.legal_cases ADD COLUMN IF NOT EXISTS jurisdiction     TEXT;
+ALTER TABLE public.legal_cases ADD COLUMN IF NOT EXISTS decision_date    DATE;
+ALTER TABLE public.legal_cases ADD COLUMN IF NOT EXISTS url              TEXT;
+ALTER TABLE public.legal_cases ADD COLUMN IF NOT EXISTS source_provider  TEXT;
+ALTER TABLE public.legal_cases ADD COLUMN IF NOT EXISTS summary          TEXT;
+ALTER TABLE public.legal_cases ADD COLUMN IF NOT EXISTS full_text        TEXT;
+ALTER TABLE public.legal_cases ADD COLUMN IF NOT EXISTS metadata         JSONB DEFAULT '{}'::jsonb;
+ALTER TABLE public.legal_cases ADD COLUMN IF NOT EXISTS updated_at       TIMESTAMPTZ DEFAULT now();
+
+-- ---------------------------------------------------------------------
 -- Indexes.
 -- ---------------------------------------------------------------------
 CREATE INDEX IF NOT EXISTS idx_legal_cases_neutral_citation

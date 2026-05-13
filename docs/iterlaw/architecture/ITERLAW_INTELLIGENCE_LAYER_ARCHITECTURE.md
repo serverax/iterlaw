@@ -140,3 +140,19 @@ Every Intelligence Gateway invocation should emit a single
 The trace is intentionally large for offline analysis. The redacted
 audit envelope that ships in `/api/legal/ask` responses will be a
 strict subset; the full trace stays in the orchestrator's audit log.
+
+## 8. Sprint 15 wiring status
+
+| Item | State |
+| --- | --- |
+| Feature flag config | **landed** (`apps/legal-orchestrator/src/config/featureFlags.ts`) |
+| Default mode | **off** — Intelligence Layer disabled in every deployment that does not explicitly set both env vars |
+| Shadow-mode invocation | **landed** in `handleLegalRequest` — gateway runs, result discarded, response unchanged |
+| Active-mode invocation | **PARTIAL** in `handleLegalRequest` — gateway runs, result discarded, response unchanged (functionally identical to shadow until a later sprint authorises richer wiring) |
+| `/ready` field | **added** — `intelligence_layer: {configured, mode, external_network_enabled: false, external_llm_enabled: false}` |
+| Sprint 15 tests | 26 new tests across 4 files; full suite **72 files / 907 tests PASS** |
+| Public response impact | **none** — Intelligence Layer never adds fields to `/api/legal/ask` responses |
+| Production default | **disabled** |
+
+The wiring contract is governed by
+`docs/iterlaw/project/15-intelligence-layer-wiring/ADR_SPRINT_15_INTELLIGENCE_LAYER_FEATURE_FLAGGED_WIRING.md`.

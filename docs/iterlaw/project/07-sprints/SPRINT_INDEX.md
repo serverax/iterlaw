@@ -124,61 +124,6 @@ Summary:
 
 `reports/ITERLAW_QA_REPORT_SPRINT_10_DB_IMPLEMENTATION.md` is the latest Sprint 10 evidence artefact at the time of writing. Always check `reports/` for newer reports before claiming a status.
 
-## Planned Platform Architecture Track — Sprints 26–57
-
-**Track status:** PLANNED / NOT STARTED. **No** sprint in this track has begun. **No** implementation is claimed. **No** deployment is performed. Production readiness is **NOT** claimed.
-
-Authoritative plan: [`./ITERLAW_PLATFORM_MODULE_WORKSPACE_WASM_DOCUMENT_SPRINT_PLAN.md`](./ITERLAW_PLATFORM_MODULE_WORKSPACE_WASM_DOCUMENT_SPRINT_PLAN.md).
-
-Architectural invariants (carry through every sprint in this track):
-
-- `citation_required = true` for legal answers — preserved.
-- `zero_citation_answer_blocked = true` for legal answers — preserved.
-- Trusted-source-only legal answers — preserved.
-- `legal_review_queue` — preserved.
-- No uncited legal answer shown as final.
-- No low-confidence legal answer shown as final.
-- No external LLM in the orchestrator request path.
-- Private data uses PostgreSQL RLS.
-- WASM handles orchestration, routing, retrieval, policy, validation, and streaming; heavy LLM inference remains outside WASM.
-
-| Sprint | Title | Status |
-| --- | --- | --- |
-| 26 | Speed-First Retrieval Infrastructure | PLANNED / NOT STARTED |
-| 27 | Ollama Runtime Speed Layer | PLANNED / NOT STARTED |
-| 28 | Structured Fill-in-the-Blank Answering | PLANNED / NOT STARTED |
-| 29 | Retrieval-Augmented Verification | PLANNED / NOT STARTED |
-| 30 | Speculative Prefill UI | PLANNED / NOT STARTED |
-| 31 | Two-Stage Local Model Cascade | PLANNED / NOT STARTED |
-| 32 | Deterministic Legal Knowledge Graph | PLANNED / NOT STARTED |
-| 33 | ChatGPT-Style Streaming UX | PLANNED / NOT STARTED |
-| 34 | Graceful Failure and Escalation | PLANNED / NOT STARTED |
-| 35 | IterLaw WASM Runtime Foundation | PLANNED / NOT STARTED |
-| 36 | WASM Gateway and Security Layer | PLANNED / NOT STARTED |
-| 37 | WASM Cache and Retrieval Engine | PLANNED / NOT STARTED |
-| 38 | WASM Intent and Complexity Classifier | PLANNED / NOT STARTED |
-| 39 | WASM Legal Source Federation | PLANNED / NOT STARTED |
-| 40 | WASM LLM Routing Layer | PLANNED / NOT STARTED |
-| 41 | WASM External AI Federation | PLANNED / NOT STARTED |
-| 42 | WASM Synthesis and Validation Engine | PLANNED / NOT STARTED |
-| 43 | Streaming Legal Adviser Experience | PLANNED / NOT STARTED |
-| 44 | WASM Observability and Cost Intelligence | PLANNED / NOT STARTED |
-| 45 | WASM Production Hardening | PLANNED / NOT STARTED |
-| 46 | User Workspace and Subscription Foundation | PLANNED / NOT STARTED |
-| 47 | PostgreSQL RLS User Isolation | PLANNED / NOT STARTED |
-| 48 | Case Management Engine | PLANNED / NOT STARTED |
-| 49 | Supreme Controller Foundation | PLANNED / NOT STARTED |
-| 50 | Human Approval Queue | PLANNED / NOT STARTED |
-| 51 | Quality and Self-Monitoring Agents | PLANNED / NOT STARTED |
-| 52 | Document Intelligence Foundation | PLANNED / NOT STARTED |
-| 53 | Cited Legal Document Model | PLANNED / NOT STARTED |
-| 54 | DOCX and PDF Rendering | PLANNED / NOT STARTED |
-| 55 | XLSX Legal Calculators | PLANNED / NOT STARTED |
-| 56 | Document Approval and Solicitor Review | PLANNED / NOT STARTED |
-| 57 | Full Workspace UX | PLANNED / NOT STARTED |
-
-No sprint in this track is marked PASS, DONE, IMPLEMENTED, DEPLOYED, or PRODUCTION READY.
-
 ## IterLaw AI Agent Operating Model / Agent Factory Track (IA)
 
 **Track status:** NOT STARTED. This is a planning + governance track. **No IA sprint has begun.** No agents are running. No LangGraph / CrewAI / Dify / n8n / Haystack / OpenHands runtime has been installed. No K3s, firewall, SSH, or production change has been made for this track. Production readiness is **NOT** claimed.

@@ -12,6 +12,17 @@ This file is the **canonical project status**. The root `ITERLAW_PROJECT_STATUS.
 - Sprint 11: **BLOCKED**.
 - Production: **BLOCKED**.
 
+## Sprint 10 migration replay blocker fixed in code
+
+- Migration 102 compatibility issue fixed by commit `c17ffc2`.
+- Static / code verification passes (typecheck / build / 55 files / 708 tests).
+- Full test suite passes.
+- Sprint 10 remains **PARTIAL** until real dev / staging DB replay passes.
+- Sprint 11 remains **BLOCKED**.
+- Production remains **BLOCKED**.
+
+QA evidence: [`../../../reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md`](../../../reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md).
+
 ## Current delivery status
 
 - **Completed:** Sprints 1–9.

@@ -30,9 +30,12 @@ Active product name: **IterLaw**. Do **not** use `RightsNow` in active material.
 
 ## Status snapshot
 
-- Sprint 10 real staging DB verification: **PENDING**.
+- Sprint 10 code-side migration verification: **PASS**.
+- Sprint 10 real staging DB verification: **PENDING** (operator action; required after commit `c17ffc2`).
+- Sprint 10 overall: **PARTIAL**.
+- Sprint 11: **BLOCKED**.
 - Production: **BLOCKED**.
 - External LLM in live answer path: **FORBIDDEN**.
 - Offline-first legal DB model: **ACCEPTED**.
 
-Full detail in the canonical file linked above.
+Full detail in the canonical file linked above. Latest QA evidence: `reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md`.

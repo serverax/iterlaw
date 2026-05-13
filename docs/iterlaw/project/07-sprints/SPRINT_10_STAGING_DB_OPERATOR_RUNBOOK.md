@@ -616,6 +616,52 @@ When (and only when) §13 is `PASS`:
 
 ---
 
+## Required replay after migration 102 compatibility fix
+
+Commit `c17ffc2 fix(iterlaw): make legal cases migration compatible with legacy schema` added an additive, idempotent ALTER block to `102_add_legal_cases_table.sql`. The previous Docker staging replay failed at `idx_legal_cases_decision_date`. The operator must re-run the full chain after the fix and capture evidence below.
+
+### Replay scope
+
+Replay the full forward chain in numeric order:
+
+```
+000 → 001 → 002 → 003 → 004 → 005 → 006 → 007 → 008 → 009 → 010
+→ 100 → 101 → 102 → 104 → 105 → 106
+```
+
+(103 is reserved; do not create.)
+
+### Required evidence
+
+- DB target confirmation showing **dev / staging**, not production (re-run §3 of this runbook).
+- Migration chain applied in numeric order with `ON_ERROR_STOP=1`.
+- Confirmation that 102 completes without `decision_date` / `source_provider` / `source_id` / `metadata` index failure.
+- Schema check that `public.legal_cases` includes:
+  - `judgment_date`
+  - `decision_date`
+  - `source_id`
+  - `source_provider`
+  - `metadata`
+  - `case_name`
+  - `jurisdiction`
+  - `url`
+  - `summary`
+  - `full_text`
+  - `updated_at`
+- Index check that the following exist on `public.legal_cases`:
+  - `idx_legal_cases_neutral_citation`
+  - `idx_legal_cases_court`
+  - `idx_legal_cases_decision_date`
+  - `idx_legal_cases_source_provider`
+  - `idx_legal_cases_source_id`
+  - `idx_legal_cases_document_id`
+  - `idx_legal_cases_metadata_gin`
+  - `idx_legal_cases_judgment_date` (from 100's earlier index — coexists)
+- Final replay status `PASS` / `FAIL` captured in `reports/ITERLAW_SPRINT_10_STAGING_APPLY_<YYYY-MM-DD>.log`.
+- The §13 sign-off block from `../09-operations/SPRINT_10_STAGING_DB_OPERATOR_CHECKLIST.md` filled in.
+
+A `PASS` here is the gate that moves Sprint 10 from PARTIAL → PASS and unblocks Sprint 11 Phase 2B.
+
 ## Related
 
 - Long-form authoritative checklist: [`../09-operations/SPRINT_10_STAGING_DB_OPERATOR_CHECKLIST.md`](../09-operations/SPRINT_10_STAGING_DB_OPERATOR_CHECKLIST.md)

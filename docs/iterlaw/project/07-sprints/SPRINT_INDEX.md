@@ -10,6 +10,14 @@ Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/IT
 - Sprint 11: **BLOCKED**.
 - Production: **BLOCKED**.
 
+### Sprint 10 migration replay blocker fixed in code
+
+- Migration 102 compatibility issue fixed by commit `c17ffc2`.
+- Static / code verification passes (typecheck / build / 55 files / 708 tests).
+- Sprint 10 remains **PARTIAL** until real dev / staging DB replay passes.
+- Sprint 11 remains **BLOCKED**. Production remains **BLOCKED**.
+- QA evidence: `reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md`.
+
 ## Sprint count
 
 - **Total roadmap target:** Sprint 45.

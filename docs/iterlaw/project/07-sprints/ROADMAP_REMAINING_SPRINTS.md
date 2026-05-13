@@ -26,11 +26,20 @@ Sprint 46+ entries listed lower in this document (Workspace + RLS + Supreme Cont
 ## Current state (do not move without evidence)
 
 - Sprint 10 repo + local Docker DB: **PASS**.
-- Sprint 10 real staging DB verification: **PENDING**.
+- Sprint 10 real staging DB verification: **PENDING** (post-fix re-run required after commit `c17ffc2`; static / code-side verification PASS in `reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md`).
 - Sprint 11 Phase 1 (foundation) + Phase 2A (audit / transport guardrails): **PASS** (mock-safe).
 - Sprint 11 live HTTP transport: **NOT STARTED**.
 - Sprint 11 pipeline wiring: **NOT STARTED**.
 - Production: **BLOCKED**.
+
+## Sprint 10 migration replay blocker fixed in code
+
+- Migration 102 compatibility issue fixed by commit `c17ffc2`.
+- Static / code verification passes (typecheck / build / 55 files / 708 tests).
+- Full test suite passes.
+- Sprint 10 remains **PARTIAL** until real dev / staging DB replay passes.
+- Sprint 11 remains **BLOCKED**.
+- Production remains **BLOCKED**.
 
 Authoritative architecture docs are referenced beside each sprint.
 

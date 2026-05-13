@@ -230,6 +230,34 @@ Production deploy authorised:          NO  (production remains BLOCKED until any
 Operator signature:                    <signed off>
 ```
 
+## 12B. Required replay after migration 102 compatibility fix
+
+Commit `c17ffc2 fix(iterlaw): make legal cases migration compatible with legacy schema` added an additive, idempotent ALTER block to `102_add_legal_cases_table.sql`. The previous Docker staging replay failed at `idx_legal_cases_decision_date`. After this fix the chain replays cleanly in static / code analysis, but the operator **must** re-run the live dev / staging replay to confirm.
+
+### Replay scope
+
+Apply in numeric order against a confirmed **dev / staging** DB:
+
+```
+000 → 001 → 002 → 003 → 004 → 005 → 006 → 007 → 008 → 009 → 010
+→ 100 → 101 → 102 → 104 → 105 → 106
+```
+
+(103 is reserved; do not create.)
+
+### Required post-replay evidence
+
+Capture into `reports/ITERLAW_SPRINT_10_STAGING_APPLY_<YYYY-MM-DD>.log`:
+
+- DB target confirmation showing **dev / staging**, not production.
+- Migration chain applied in numeric order with `psql -v ON_ERROR_STOP=1`.
+- Confirmation that 102 completes without `decision_date` / `source_provider` / `source_id` / `metadata` index failure.
+- Schema check that `public.legal_cases` includes: `judgment_date`, `decision_date`, `source_id`, `source_provider`, `metadata`, `case_name`, `jurisdiction`, `url`, `summary`, `full_text`, `updated_at`.
+- Index check confirms the existence of: `idx_legal_cases_neutral_citation`, `idx_legal_cases_court`, `idx_legal_cases_decision_date`, `idx_legal_cases_source_provider`, `idx_legal_cases_source_id`, `idx_legal_cases_document_id`, `idx_legal_cases_metadata_gin`, `idx_legal_cases_judgment_date`.
+- Final replay status `PASS` / `FAIL` recorded.
+
+Only a `PASS` here moves Sprint 10 from PARTIAL → PASS and unblocks Sprint 11 Phase 2B.
+
 ## 13. After successful sign-off
 
 When the sign-off above is `PASS / PARTIAL` (PARTIAL only acceptable when the verifier returns documented WARN, e.g. one of the Sprint-12 backup CIDR items):

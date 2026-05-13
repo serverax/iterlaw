@@ -49,6 +49,15 @@ const { validateRestoreTarget, isProductionHost, isProductionLabel } = restoreTa
   isProductionLabel: (l: string) => boolean;
 };
 
+/** Paths passed as argv to Git Bash must be POSIX (`/c/Users/...`), not `C:\...`. */
+function pathForBashArgv(p: string): string {
+  if (process.platform !== "win32") return p;
+  const forward = p.replace(/\\/g, "/");
+  const m = /^([a-zA-Z]):(\/.*)$/.exec(forward);
+  if (m) return `/${m[1].toLowerCase()}${m[2]}`;
+  return forward;
+}
+
 function read(path: string): string {
   return readFileSync(path, "utf8");
 }
@@ -345,10 +354,10 @@ describe("dry-run: backup script does not require a real DB", () => {
       const out = execFileSync(
         BASH_PATH,
         [
-          PATHS.backupScript,
+          pathForBashArgv(PATHS.backupScript),
           "--dry-run",
           "--output-dir",
-          dir,
+          pathForBashArgv(dir),
           "--label",
           "sprint12-test",
         ],
@@ -366,10 +375,10 @@ describe("dry-run: backup script does not require a real DB", () => {
     const dir = mkdtempSync(join(tmpdir(), "iterlaw-s12-"));
     try {
       execFileSync(BASH_PATH, [
-        PATHS.backupScript,
+        pathForBashArgv(PATHS.backupScript),
         "--dry-run",
         "--output-dir",
-        dir,
+        pathForBashArgv(dir),
         "--label",
         "sprint12-test",
       ]);
@@ -398,10 +407,10 @@ describe("dry-run: restore-verify script produces a redacted report", () => {
     try {
       // Make a manifest first.
       execFileSync(BASH_PATH, [
-        PATHS.backupScript,
+        pathForBashArgv(PATHS.backupScript),
         "--dry-run",
         "--output-dir",
-        dir,
+        pathForBashArgv(dir),
         "--label",
         "sprint12-test",
       ]);
@@ -413,12 +422,12 @@ describe("dry-run: restore-verify script produces a redacted report", () => {
       const out = execFileSync(
         BASH_PATH,
         [
-          PATHS.restoreScript,
+          pathForBashArgv(PATHS.restoreScript),
           "--dry-run",
           "--backup-manifest",
-          manifestPath,
+          pathForBashArgv(manifestPath),
           "--report-out",
-          reportPath,
+          pathForBashArgv(reportPath),
         ],
         { encoding: "utf8" },
       );
@@ -445,10 +454,10 @@ describe("dry-run: restore-verify script produces a redacted report", () => {
     const dir = mkdtempSync(join(tmpdir(), "iterlaw-s12-"));
     try {
       execFileSync(BASH_PATH, [
-        PATHS.backupScript,
+        pathForBashArgv(PATHS.backupScript),
         "--dry-run",
         "--output-dir",
-        dir,
+        pathForBashArgv(dir),
         "--label",
         "sprint12-test",
       ]);
@@ -460,12 +469,12 @@ describe("dry-run: restore-verify script produces a redacted report", () => {
       const r = spawnSync(
         BASH_PATH,
         [
-          PATHS.restoreScript,
+          pathForBashArgv(PATHS.restoreScript),
           "--no-dry-run",
           "--backup-manifest",
-          manifestPath,
+          pathForBashArgv(manifestPath),
           "--report-out",
-          reportPath,
+          pathForBashArgv(reportPath),
         ],
         { encoding: "utf8", env: { ...process.env, ITERLAW_RESTORE_DATABASE_URL: "" } },
       );

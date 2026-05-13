@@ -13,6 +13,10 @@ const customJestConfig = {
     '<rootDir>/.next/',
     '<rootDir>/node_modules/',
     '<rootDir>/apps/web/.next/',
+    // Vitest-only workspaces: root `npm test` (Jest) must not collect these suites.
+    '<rootDir>/apps/legal-orchestrator/',
+    '<rootDir>/apps/synthesis-worker/',
+    '<rootDir>/apps/ai-orchestrator/',
   ],
   modulePathIgnorePatterns: ['<rootDir>/apps/web/.next/standalone/'],
   collectCoverageFrom: [

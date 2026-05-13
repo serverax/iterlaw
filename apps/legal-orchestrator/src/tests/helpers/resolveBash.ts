@@ -35,8 +35,13 @@ function isExecutableFile(p: string): boolean {
 }
 
 function probeBash(candidate: string): boolean {
-  const r = spawnSync(candidate, ["--version"], { encoding: "utf8" });
+  const r = spawnSync(candidate, ["--version"], {
+    encoding: "utf8",
+    timeout: 4000,
+    windowsHide: true,
+  });
   if (r.error) return false;
+  if (r.signal === "SIGTERM") return false;
   if (r.status !== 0) return false;
   return /GNU bash|version/.test(r.stdout ?? "");
 }
@@ -66,23 +71,36 @@ export function resolveBash(): BashResolution {
     return { path: trimmed, source: "env_BASH_PATH" };
   }
 
-  // 2. `bash` on PATH.
+  // 2. On Windows, try known Git Bash installs before a generic `bash` on
+  //    PATH — Store stubs / WSL shims can hang or mis-resolve under Vitest.
+  if (process.platform === "win32") {
+    for (const candidate of COMMON_WINDOWS_BASH_PATHS) {
+      if (existsSync(candidate) && isExecutableFile(candidate) && probeBash(candidate)) {
+        return { path: candidate, source: "common_windows_path" };
+      }
+    }
+  }
+
+  // 3. `bash` on PATH.
   if (probeBash("bash")) {
     return { path: "bash", source: "path_lookup" };
   }
 
-  // 3. Common Git Bash locations on Windows.
-  for (const candidate of COMMON_WINDOWS_BASH_PATHS) {
-    if (existsSync(candidate) && isExecutableFile(candidate) && probeBash(candidate)) {
-      return { path: candidate, source: "common_windows_path" };
-    }
+  // 4. Non-Windows: same Git paths are irrelevant; on Windows they were tried in step 2.
+  if (process.platform !== "win32") {
+    throw new Error(
+      "Could not locate a working bash binary. Tried: " +
+        `(1) BASH_PATH env var (was empty/unset), ` +
+        `(2) "bash" on PATH (not found or not a working GNU bash). ` +
+        "Fix: install bash or set BASH_PATH to your bash binary.",
+    );
   }
 
   throw new Error(
     "Could not locate a working bash binary. Tried: " +
       `(1) BASH_PATH env var (was empty/unset), ` +
-      `(2) "bash" on PATH (not found or not a working GNU bash), ` +
-      `(3) common Git Bash locations: ${COMMON_WINDOWS_BASH_PATHS.join(" ; ")}. ` +
+      `(2) common Git Bash locations: ${COMMON_WINDOWS_BASH_PATHS.join(" ; ")}, ` +
+      `(3) "bash" on PATH (not found or not a working GNU bash). ` +
       "Fix: install Git for Windows (gitforwindows.org) OR set BASH_PATH to your bash binary in this shell.",
   );
 }

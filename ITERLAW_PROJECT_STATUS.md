@@ -32,7 +32,8 @@ Active product name: **IterLaw**. Do **not** use `RightsNow` in active material.
 
 - Total roadmap: **57 sprints**. Completed: **10**. Current: **Sprint 11**. Remaining: **47**. Range: **Sprint 11 → Sprint 57**.
 - Sprint 10: **PASS** — Docker staging verification (2026-05-13; Docker scope only — not AKS, not production).
-- Sprint 11: **PARTIAL** — Phase 1 + Phase 2A + hardening tests PASS (56 files / 733 tests); Phase 2B + Phase 4 NOT STARTED and out of scope per the locked task contract.
+- Sprint 11: **PASS** — Phase 1 + Phase 2A + hardening + Phase 2B (commit `3681fab`) + Phase 4 (commit `120b9de`); full suite 58 files / 763 tests PASS.
+- Sprint 12: **READY TO START** (backup go-live).
 - Sprints 12–57: **PLANNED only**.
 - Production: **BLOCKED**.
 - External LLM in live answer path: **FORBIDDEN**.

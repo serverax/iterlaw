@@ -11,7 +11,8 @@ This file mirrors the canonical project status. The single source of truth lives
 - Sprint 10 code-side migration verification: **PASS**.
 - Sprint 10 real Docker staging DB replay: **PASS** (2026-05-13 via [`scripts/operator/sprint10-docker-staging-replay.ps1`](../../scripts/operator/sprint10-docker-staging-replay.ps1); container `iterlaw-staging-postgres` from `pgvector/pgvector:pg16`; report `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`). Docker scope only — **not** AKS, **not** production.
 - Sprint 10 overall: **PASS**.
-- Sprint 11: **PARTIAL** — Phase 1 + Phase 2A foundation **PASS**; Sprint 11 hardening tests **PASS** (commit `c102f51`; QA report `../../reports/ITERLAW_SPRINT_11_LOCAL_LLM_RAG_GATEWAY_QA_2026-05-13.md`); Phase 2B (live HTTP transport) + Phase 4 (pipeline wiring) **NOT STARTED**, pending ADR + operator approval. Closeout ADR: [`project/11-ai-governance/ADR_SPRINT_11_LOCAL_LLM_TRANSPORT_AND_PIPELINE_WIRING.md`](project/11-ai-governance/ADR_SPRINT_11_LOCAL_LLM_TRANSPORT_AND_PIPELINE_WIRING.md). Implementation plan: [`project/07-sprints/SPRINT_11_CLOSEOUT_IMPLEMENTATION_PLAN.md`](project/07-sprints/SPRINT_11_CLOSEOUT_IMPLEMENTATION_PLAN.md).
+- Sprint 11: **PASS** — Phase 1 + Phase 2A + hardening + Phase 2B (commit `3681fab`) + Phase 4 (commit `120b9de`). Full suite **58 files / 763 tests PASS**. Closeout QA report: [`project/11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md`](project/11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md).
+- Sprint 12: **READY TO START** (backup go-live).
 - Production: **BLOCKED**.
 
 ---

@@ -14,6 +14,8 @@ This file mirrors the canonical project status. The single source of truth lives
 - Sprint 11: **PASS** — Phase 1 + Phase 2A + hardening + Phase 2B (commit `3681fab`) + Phase 4 (commit `120b9de`). Full suite **58 files / 763 tests PASS**. Closeout QA report: [`project/11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md`](project/11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md).
 - Sprint 12: **PASS FOR DRY-RUN FOUNDATION ONLY** — Track B operator-side backup + restore-verify scripts, manifest + sha256 + isolated-target validation, 39 new tests (commits `a750f88` → `fdafca3`). Full suite **59 files / 802 tests PASS**. Live backup + live restore **NOT EXECUTED**. Closeout QA report: [`project/12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md`](project/12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md).
 - Sprint 13: **PASS FOR OPERATOR-WORKSTATION READINESS ONLY** — `--check` toolchain probes on both backup scripts, operator toolchain doc, first-live-backup authorisation checklist with default NO, 25 new tests. Full suite **61 files / 827 tests PASS**. First live backup + live restore **NOT AUTHORISED**. Closeout QA report: [`project/13-backup-mvp-polish/SPRINT_13_BACKUP_MVP_POLISH_QA_REPORT.md`](project/13-backup-mvp-polish/SPRINT_13_BACKUP_MVP_POLISH_QA_REPORT.md).
+- Sprint 14: **PASS FOR INTELLIGENCE FOUNDATION / CODE-PREPARED ONLY** — 11 intelligence modules + 54 tests + 6 architecture docs (commits `5470757`, `427e8ff`, `b53fa9a`).
+- Sprint 15: **PASS FOR FEATURE-FLAGGED LOCAL WIRING ONLY** — feature flag config + shadow-mode wiring + `/ready` additive field + 26 new tests; full suite **72 files / 907 tests PASS**. Intelligence Layer disabled by default; first live backup + live restore remain **NOT AUTHORISED**.
 - Production: **BLOCKED**.
 
 ---
@@ -33,15 +35,17 @@ This file mirrors the canonical project status. The single source of truth lives
 ## Sprint count
 
 - **Total roadmap:** **57 sprints**.
-- **Completed:** **13** (Sprints 1–11 PASS; Sprint 12 PASS-for-dry-run-foundation; Sprint 13 PASS-for-operator-workstation-readiness).
-- **Current sprint:** **Sprint 14** (planned start).
-- **Remaining:** **44**.
-- **Remaining range:** **Sprint 14 → Sprint 57.**
+- **Completed:** **15** (Sprints 1–11 PASS; Sprint 12 PASS-for-dry-run-foundation; Sprint 13 PASS-for-operator-workstation-readiness; Sprint 14 PASS-for-intelligence-foundation; Sprint 15 PASS-for-feature-flagged-local-wiring).
+- **Current sprint:** **Sprint 16** (planned start).
+- **Remaining:** **42**.
+- **Remaining range:** **Sprint 16 → Sprint 57.**
 - **Sprint 10:** **PASS** — Docker staging verification.
 - **Sprint 11:** **PASS** — Phase 1 + Phase 2A + hardening + Phase 2B + Phase 4.
 - **Sprint 12:** **PASS FOR DRY-RUN FOUNDATION ONLY** — Track B operator-side scripts; live not executed.
 - **Sprint 13:** **PASS FOR OPERATOR-WORKSTATION READINESS ONLY** — `--check` probes + operator toolchain doc + first-live-backup authorisation checklist (default NO).
-- **Sprints 14–57:** **PLANNED.**
+- **Sprint 14:** **PASS FOR INTELLIGENCE FOUNDATION / CODE-PREPARED ONLY** — 11 modules + 54 tests + 6 architecture docs; not wired.
+- **Sprint 15:** **PASS FOR FEATURE-FLAGGED LOCAL WIRING ONLY** — flag default off; shadow-mode wiring; `/ready` additive field; 26 new tests.
+- **Sprints 16–57:** **PLANNED.**
 - **Production:** **BLOCKED.**
 
 Roadmap detail: [`ITERLAW_SPRINT_ROADMAP.md`](ITERLAW_SPRINT_ROADMAP.md). Authoritative sprint table: [`project/07-sprints/SPRINT_INDEX.md`](project/07-sprints/SPRINT_INDEX.md). Sprint 11 task contract: [`project/07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md`](project/07-sprints/SPRINT_11_LOCAL_LLM_RAG_GATEWAY_TASKS.md). Remaining-sprint detail: [`project/07-sprints/ROADMAP_REMAINING_SPRINTS.md`](project/07-sprints/ROADMAP_REMAINING_SPRINTS.md).

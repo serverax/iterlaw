@@ -27,14 +27,16 @@ Authoritative naming reference: [`docs/iterlaw/project/00-index/CANONICAL_NAMES.
 ### Sprint progress
 
 - **Total roadmap:** 57 sprints.
-- **Completed:** 13 (Sprints 1–11 PASS; Sprint 12 PASS-for-dry-run-foundation; Sprint 13 PASS-for-operator-workstation-readiness).
-- **Current sprint:** Sprint 14 (planned start).
-- **Remaining:** 44.
-- **Remaining range:** Sprint 14 → Sprint 57.
+- **Completed:** 15 (Sprints 1–11 PASS; Sprint 12 PASS-for-dry-run-foundation; Sprint 13 PASS-for-operator-workstation-readiness; Sprint 14 PASS-for-intelligence-foundation; Sprint 15 PASS-for-feature-flagged-local-wiring).
+- **Current sprint:** Sprint 16 (planned start).
+- **Remaining:** 42.
+- **Remaining range:** Sprint 16 → Sprint 57.
 - **Sprint 10:** **PASS** — Docker staging verification passed.
 - **Sprint 11:** **PASS** — Phase 1 + Phase 2A + hardening + Phase 2B + Phase 4. Full suite 58 files / 763 tests PASS.
 - **Sprint 12:** **PASS FOR DRY-RUN FOUNDATION ONLY** — Track B operator-side backup + restore-verify scripts, manifest + sha256 + isolated-target validators, runbook, 39 new tests; full suite **59 files / 802 tests PASS**. Live backup + live restore **NOT EXECUTED**.
 - **Sprint 13:** **PASS FOR OPERATOR-WORKSTATION READINESS ONLY** — `--check` toolchain probes for both backup scripts, operator toolchain doc (Windows/Linux/macOS), first-live-backup authorisation checklist (default NO), 25 new tests; full suite **61 files / 827 tests PASS**. First live backup remains **NOT AUTHORISED**; live restore remains **NOT AUTHORISED**.
+- **Sprint 14:** **PASS FOR INTELLIGENCE FOUNDATION / CODE-PREPARED ONLY** — 11 pure-function intelligence modules + 7 test files (54 tests) + 6 architecture docs (commits `5470757`, `427e8ff`, `b53fa9a`). Not wired into the answer path by this sprint.
+- **Sprint 15:** **PASS FOR FEATURE-FLAGGED LOCAL WIRING ONLY** — feature flag config + shadow-mode wiring of `runIntelligenceGateway` in `handleLegalRequest` (intentional PARTIAL ACTIVE wiring; gateway result discarded) + `/ready` additive field + 26 new tests; full suite **72 files / 907 tests PASS**. Intelligence Layer disabled by default.
 - **Production:** **BLOCKED.**
 
 ### Sprint 10 PASS scope (narrow on purpose)
@@ -74,9 +76,11 @@ DONE — see [`docs/iterlaw/ITERLAW_SPRINT_ROADMAP.md`](docs/iterlaw/ITERLAW_SPR
 - **10** Live RAG DB wiring — **PASS** (Docker staging scope; report `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`).
 - **11** Local LLM gateway + bounded synthesis — **PASS** (Phase 1 + Phase 2A + hardening + Phase 2B + Phase 4; commits `3681fab` + `120b9de` + `00f03f9`).
 - **12** Backup go-live — **PASS FOR DRY-RUN FOUNDATION ONLY** (Track B operator-side scripts + 39 tests; live backup + live restore NOT EXECUTED; commits `a750f88` → `fdafca3`).
-- **13** Backup MVP polish + operator readiness — **PASS FOR OPERATOR-WORKSTATION READINESS ONLY** (`--check` toolchain probes, operator doc, first-live-backup authorisation checklist with default NO, 25 new tests; commits `45a10e3` → this commit).
+- **13** Backup MVP polish + operator readiness — **PASS FOR OPERATOR-WORKSTATION READINESS ONLY** (`--check` toolchain probes, operator doc, first-live-backup authorisation checklist with default NO, 25 new tests; commits `45a10e3` → `f72ae26`).
+- **14** Intelligence Layer foundation — **PASS FOR INTELLIGENCE FOUNDATION / CODE-PREPARED ONLY** (11 pure-function modules, 7 test files, 6 architecture docs; commits `5470757`, `427e8ff`, `b53fa9a`).
+- **15** Intelligence Layer feature-flagged wiring — **PASS FOR FEATURE-FLAGGED LOCAL WIRING ONLY** (feature flag config, shadow-mode wiring with intentional PARTIAL ACTIVE wiring, `/ready` additive field, 26 new tests; commits Sprint 15 sequence).
 
-### Planned (14–17)
+### Planned (16–17)
 - **14** Member / auth / subscription foundation — **PLANNED**.
 - **15** Admin / legal-review UI — **PLANNED**.
 - **16** Live evolution + safe optimisation — **PLANNED** ([`docs/iterlaw/SPRINT_16_LIVE_EVOLUTION_AND_SAFE_OPTIMISATION_PLAN.md`](docs/iterlaw/SPRINT_16_LIVE_EVOLUTION_AND_SAFE_OPTIMISATION_PLAN.md)).

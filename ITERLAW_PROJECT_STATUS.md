@@ -30,12 +30,14 @@ Active product name: **IterLaw**. Do **not** use `RightsNow` in active material.
 
 ## Status snapshot
 
-- Total roadmap: **57 sprints**. Completed: **13** (Sprints 1–11 PASS; Sprint 12 PASS-for-dry-run-foundation; Sprint 13 PASS-for-operator-workstation-readiness). Current: **Sprint 14** (planned start). Remaining: **44**. Range: **Sprint 14 → Sprint 57**.
+- Total roadmap: **57 sprints**. Completed: **15** (Sprints 1–11 PASS; Sprint 12 PASS-for-dry-run-foundation; Sprint 13 PASS-for-operator-workstation-readiness; Sprint 14 PASS-for-intelligence-foundation; Sprint 15 PASS-for-feature-flagged-local-wiring). Current: **Sprint 16** (planned start). Remaining: **42**. Range: **Sprint 16 → Sprint 57**.
 - Sprint 10: **PASS** — Docker staging verification (2026-05-13; Docker scope only — not AKS, not production).
 - Sprint 11: **PASS** — Phase 1 + Phase 2A + hardening + Phase 2B (commit `3681fab`) + Phase 4 (commit `120b9de`); full suite 58 files / 763 tests PASS.
 - Sprint 12: **PASS FOR DRY-RUN FOUNDATION ONLY** — Track B operator-side backup scripts + 39 tests (commits `a750f88` → `fdafca3`); full suite **59 files / 802 tests PASS**. Live backup + live restore **NOT EXECUTED**.
 - Sprint 13: **PASS FOR OPERATOR-WORKSTATION READINESS ONLY** — `--check` probes + operator toolchain doc + first-live-backup checklist (default NO) + 25 new tests; full suite **61 files / 827 tests PASS**. First live backup + live restore **NOT AUTHORISED**.
-- Sprints 14–57: **PLANNED only**.
+- Sprint 14: **PASS FOR INTELLIGENCE FOUNDATION / CODE-PREPARED ONLY** — 11 intelligence modules + 54 tests + 6 architecture docs (commits `5470757`, `427e8ff`, `b53fa9a`). Not wired into answer path by this sprint.
+- Sprint 15: **PASS FOR FEATURE-FLAGGED LOCAL WIRING ONLY** — feature flag config + shadow-mode wiring + `/ready` additive field + 26 new tests; full suite **72 files / 907 tests PASS**. Intelligence Layer disabled by default.
+- Sprints 16–57: **PLANNED only**.
 - Production: **BLOCKED**.
 - External LLM in live answer path: **FORBIDDEN**.
 - Offline-first legal DB model: **ACCEPTED**.

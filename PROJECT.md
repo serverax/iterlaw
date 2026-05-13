@@ -36,8 +36,9 @@ Authoritative naming reference: [`docs/iterlaw/project/00-index/CANONICAL_NAMES.
 - **Sprint 12:** **PASS FOR DRY-RUN FOUNDATION ONLY** — Track B operator-side backup + restore-verify scripts, manifest + sha256 + isolated-target validators, runbook, 39 new tests; full suite **59 files / 802 tests PASS**. Live backup + live restore **NOT EXECUTED**.
 - **Sprint 13:** **PASS FOR OPERATOR-WORKSTATION READINESS ONLY** — `--check` toolchain probes for both backup scripts, operator toolchain doc (Windows/Linux/macOS), first-live-backup authorisation checklist (default NO), 25 new tests; full suite **61 files / 827 tests PASS**. First live backup remains **NOT AUTHORISED**; live restore remains **NOT AUTHORISED**.
 - **Sprint 14:** **PASS FOR INTELLIGENCE FOUNDATION / CODE-PREPARED ONLY** — 11 pure-function intelligence modules + 7 test files (54 tests) + 6 architecture docs (commits `5470757`, `427e8ff`, `b53fa9a`). Not wired into the answer path by this sprint.
-- **Sprint 15:** **PASS FOR FEATURE-FLAGGED LOCAL WIRING ONLY** — feature flag config + shadow-mode wiring of `runIntelligenceGateway` in `handleLegalRequest` (intentional PARTIAL ACTIVE wiring; gateway result discarded) + `/ready` additive field + 26 new tests; full suite **72 files / 907 tests PASS**. Intelligence Layer disabled by default.
+- **Sprint 15:** **PASS FOR FEATURE-FLAGGED LOCAL WIRING ONLY** — feature flag config + shadow-mode wiring of `runIntelligenceGateway` in `handleLegalRequest` (intentional PARTIAL ACTIVE wiring; gateway result discarded) + `/ready` additive field + 26 new tests; full suite **72 files / 907 tests PASS** at Sprint 15 close; **73 files / 912 tests PASS** after Sprint 12A reconciliation. Intelligence Layer disabled by default.
 - **Production:** **BLOCKED.**
+- **Dependency security (`npm audit --omit=dev`):** **PARTIAL** — **2** production advisories (Next.js + PostCSS) remain until a planned major Next upgrade; see `reports/ITERLAW_POST_CURSOR_AUDIT_RECONCILIATION.md`.
 
 ### Sprint 10 PASS scope (narrow on purpose)
 

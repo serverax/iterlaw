@@ -7,9 +7,11 @@ const mockPost = axios.post as jest.MockedFunction<typeof axios.post>;
 
 describe('askClaudeSonnet', () => {
   const prevKey = process.env.ANTHROPIC_API_KEY;
+  const prevFlag = process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED;
 
   beforeEach(() => {
     process.env.ANTHROPIC_API_KEY = 'test-anthropic-key';
+    process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED = 'true';
     mockPost.mockReset();
   });
 
@@ -19,6 +21,19 @@ describe('askClaudeSonnet', () => {
     } else {
       process.env.ANTHROPIC_API_KEY = prevKey;
     }
+    if (prevFlag === undefined) {
+      delete process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED;
+    } else {
+      process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED = prevFlag;
+    }
+  });
+
+  it('refuses by default when ITERLAW_WEB_AI_FALLBACK_ENABLED is unset', async () => {
+    delete process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED;
+    await expect(askClaudeSonnet('q', { jurisdiction: 'england_wales' })).rejects.toThrow(
+      /IterLaw web AI fallback is disabled by default/
+    );
+    expect(mockPost).not.toHaveBeenCalled();
   });
 
   it('throws when ANTHROPIC_API_KEY is missing', async () => {

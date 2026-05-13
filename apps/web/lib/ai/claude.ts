@@ -1,6 +1,7 @@
 /* eslint-disable no-console -- Claude client trace logs */
 import axios from 'axios';
 import { COST_PER_COMPLEX_CALL_GBP, logAiCall } from './costs';
+import { isWebAiFallbackEnabled, WEB_AI_FALLBACK_DISABLED_MESSAGE } from './featureFlag';
 import { normaliseAiResponse, parseJsonObject } from './json';
 import { CLAUDE_SYSTEM_PROMPT } from './prompts';
 import type { AIContext, AIResponse } from './types';
@@ -14,7 +15,14 @@ function getClaudeModel(): string {
   return process.env.CLAUDE_MODEL?.trim() || 'claude-sonnet-4-20250514';
 }
 
+// IterLaw legal-answer path must not call external LLM providers by default.
+// Sprint 12B gate: refuse before any network call unless
+// ITERLAW_WEB_AI_FALLBACK_ENABLED is explicitly set.
 export async function askClaudeSonnet(question: string, context: AIContext): Promise<AIResponse> {
+  if (!isWebAiFallbackEnabled()) {
+    throw new Error(WEB_AI_FALLBACK_DISABLED_MESSAGE);
+  }
+
   console.log('[CLAUDE] Querying Claude Sonnet...');
 
   const key = process.env.ANTHROPIC_API_KEY;

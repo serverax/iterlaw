@@ -19,7 +19,7 @@ Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/IT
 
 - Migration 100 compatibility shim landed in commit `21364f4`.
 - Migration 102 compatibility shim landed in commit `c17ffc2`.
-- Static / code verification: typecheck PASS, build PASS, vitest **55 files / 708 tests PASS**.
+- Static / code verification at Sprint 10 replay (2026-05-13): typecheck PASS, build PASS, vitest **55 files / 708 tests PASS** (historical snapshot). **Current** legal-orchestrator Vitest (post Sprint 12A + post–Cursor audit verification): **73 files / 912 tests PASS** — see `reports/ITERLAW_POST_CURSOR_AUDIT_RECONCILIATION.md`.
 - Real Docker staging DB replay executed by `scripts/operator/sprint10-docker-staging-replay.ps1` on 2026-05-13: all migrations applied, extensions verified, key tables present, RLS enabled where expected, policies present, smoke counts captured, orchestrator `/ready` returned `rag.configured=true`, `rag.mode=postgres`, `rag.database=configured`, `legal_safety.citation_required=true`, `legal_safety.zero_citation_answer_blocked=true`. No DSN / password leaked in `/ready` or in any committed artefact.
 - QA evidence: `reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md` + `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`.
 

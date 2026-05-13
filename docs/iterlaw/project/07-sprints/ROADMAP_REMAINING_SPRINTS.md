@@ -4,42 +4,51 @@ Forward-looking architecture roadmap. These are **planned future sprints**, not 
 
 ## Remaining sprint count
 
-**Roadmap target:** Sprint 45.
+**Roadmap target:** Sprint 45 (Sprints 46–57 remain as post-Sprint-45 backlog and are not in the active remaining count).
 
-**Completed:**
+**Completed (per [`SPRINT_INDEX.md`](./SPRINT_INDEX.md), reconciled 2026-05-13):**
 
-- Sprints 1–9.
+- **Sprints 1–9** — DONE.
+- **Sprint 10** — PASS (Docker staging scope; report [`../../../reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`](../../../reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md)). Non-Docker staging promotion remains a separate operator decision.
+- **Sprint 11** — PASS (Phase 1 + Phase 2A + hardening + Phase 2B + Phase 4; full suite 58 files / 763 tests PASS at close).
+- **Sprint 12** — PASS FOR DRY-RUN FOUNDATION ONLY (Track B operator-side scripts; live backup + live restore **NOT EXECUTED**).
+- **Sprint 12A** — PASS (audit-reconciliation; SPRINT_INDEX truth fix, header corrections, Windows-bash test resolver).
+- **Sprint 13** — PASS FOR OPERATOR-WORKSTATION READINESS ONLY (`--check` toolchain probes + operator toolchain doc + first-live-backup authorisation checklist default NO; first live backup + live restore **NOT AUTHORISED**).
+- **Sprint 14** — PASS FOR INTELLIGENCE FOUNDATION / CODE-PREPARED ONLY (11 pure-function modules + 54 tests + 6 architecture docs; not wired into the answer path).
+- **Sprint 15** — PASS FOR FEATURE-FLAGGED LOCAL WIRING ONLY (feature flag config + shadow-mode wiring + `/ready` additive field + 26 new tests; Intelligence Layer disabled by default).
 
 **Current:**
 
-- Sprint 10 is pending staging DB verification.
+- **Sprint 16** — PLANNED start (no commitments past this line).
 
-**Remaining:**
+**Remaining (active roadmap, ending at Sprint 45):**
 
-- **36 sprints remaining including Sprint 10.**
-- **35 sprints remaining after Sprint 10 passes.**
+- **30 sprints remaining (Sprint 16 → Sprint 45).**
+- Sprint 46+ entries listed lower in this document (Workspace + RLS + Supreme Controller + Approval + Document intelligence) are **post-Sprint-45 backlog** and are not counted in the 30 above.
 
-**Do not mark Sprint 10 as complete.**
+**Authoritative status source:** [`SPRINT_INDEX.md`](./SPRINT_INDEX.md). If this section disagrees with `SPRINT_INDEX.md`, `SPRINT_INDEX.md` wins; reopen the reconciliation procedure.
 
-Sprint 46+ entries listed lower in this document (Workspace + RLS + Supreme Controller + Approval + Document intelligence) are now **post-Sprint-45 backlog** and are not counted in the 36 / 35 above.
+## Current state (reconciled 2026-05-13)
 
-## Current state (do not move without evidence)
+- Sprint 10 repo + local Docker DB verification: **PASS**.
+- Sprint 10 real Docker staging DB replay: **PASS** (2026-05-13 via [`scripts/operator/sprint10-docker-staging-replay.ps1`](../../../scripts/operator/sprint10-docker-staging-replay.ps1); report [`../../../reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`](../../../reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md)). Scope: local Docker container only.
+- Sprint 11 Phase 1 + Phase 2A + hardening: **PASS** (mock-safe foundation).
+- Sprint 11 Phase 2B (live local HTTP transport, commit `3681fab`): **PASS**.
+- Sprint 11 Phase 4 (pipeline wiring of `runLocalDraftingStep` into `handleLegalRequest`, commit `120b9de`): **PASS**.
+- Sprint 11 overall: **PASS** at close (58 files / 763 tests PASS). Sprint 11 is **NOT** a production-unblock sprint.
+- Sprints 12 / 12A / 13 / 14 / 15: PASS scoped as above. Live backup + live restore remain **NOT AUTHORISED**.
+- Production: **BLOCKED** (separate gates).
 
-- Sprint 10 repo + local Docker DB: **PASS**.
-- Sprint 10 real staging DB verification: **PENDING** (post-fix re-run required after commit `c17ffc2`; static / code-side verification PASS in `reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md`).
-- Sprint 11 Phase 1 (foundation) + Phase 2A (audit / transport guardrails): **PASS** (mock-safe).
-- Sprint 11 live HTTP transport: **NOT STARTED**.
-- Sprint 11 pipeline wiring: **NOT STARTED**.
-- Production: **BLOCKED**.
+## Sprint 10 + Sprint 11 closeout — what was delivered
 
-## Sprint 10 migration replay blocker fixed in code
-
-- Migration 102 compatibility issue fixed by commit `c17ffc2`.
-- Static / code verification passes (typecheck / build / 55 files / 708 tests).
-- Full test suite passes.
-- Sprint 10 remains **PARTIAL** until real dev / staging DB replay passes.
-- Sprint 11 remains **BLOCKED**.
-- Production remains **BLOCKED**.
+- Migration 100 compatibility shim landed in commit `21364f4`.
+- Migration 102 compatibility shim landed in commit `c17ffc2`.
+- Sprint 10 Docker staging replay executed 2026-05-13; report archived under `reports/`.
+- Sprint 11 Phase 2B live local HTTP transport landed in commit `3681fab`; Phase 4 pipeline wiring landed in commit `120b9de`.
+- Test suite at Sprint 11 close: 58 files / 763 tests PASS. (Later Sprint 12 / 13 / 14 / 15 grew the suite to 72 files / 907 tests at Sprint 15 close; reconciled 73 files / 912 tests in Sprint 12A.)
+- Sprint 10 is **PASS** (Docker staging scope); promotion past Docker staging remains a separate operator decision.
+- Sprint 11 is **PASS** (closed); does not unblock production.
+- Production remains **BLOCKED** (independent gate set).
 
 Authoritative architecture docs are referenced beside each sprint.
 
@@ -116,8 +125,8 @@ The two blocks below describe earlier-documented Sprint 46–57 entries. They ar
 
 - Sprints 18–57 are **target architecture**, not committed delivery.
 - Each entry has at least one anchor doc in this project tree describing the contract.
-- First beta = **IterLaw UK Employment**. The team continues current delivery through Sprints 12–17 (legacy entries in `SPRINT_INDEX.md`) before opening Sprint 18.
-- Production: **BLOCKED**. Sprint 10 real staging DB verification: **PENDING**.
+- First beta = **IterLaw UK Employment**. The team continues current delivery through Sprints 16–17 before opening Sprint 18.
+- Production: **BLOCKED** (independent gate set). Sprint 10 Docker staging DB verification: **PASS** (Docker scope only; non-Docker staging promotion remains a separate operator decision).
 
 ## Risk fence
 

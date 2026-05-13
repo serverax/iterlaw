@@ -7,9 +7,11 @@ const mockPost = axios.post as jest.MockedFunction<typeof axios.post>;
 
 describe('geminiGenerateText', () => {
   const prevKey = process.env.GOOGLE_AI_API_KEY;
+  const prevFlag = process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED;
 
   beforeEach(() => {
     process.env.GOOGLE_AI_API_KEY = 'test-google-key';
+    process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED = 'true';
     mockPost.mockReset();
   });
 
@@ -19,6 +21,24 @@ describe('geminiGenerateText', () => {
     } else {
       process.env.GOOGLE_AI_API_KEY = prevKey;
     }
+    if (prevFlag === undefined) {
+      delete process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED;
+    } else {
+      process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED = prevFlag;
+    }
+  });
+
+  it('refuses by default when ITERLAW_WEB_AI_FALLBACK_ENABLED is unset', async () => {
+    delete process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED;
+    await expect(
+      geminiGenerateText({
+        systemPrompt: 's',
+        userPrompt: 'u',
+        maxOutputTokens: 10,
+        timeoutMs: 5000,
+      })
+    ).rejects.toThrow(/IterLaw web AI fallback is disabled by default/);
+    expect(mockPost).not.toHaveBeenCalled();
   });
 
   it('throws when GOOGLE_AI_API_KEY is missing', async () => {
@@ -76,9 +96,11 @@ describe('geminiGenerateText', () => {
 
 describe('askGeminiFlash', () => {
   const prevKey = process.env.GOOGLE_AI_API_KEY;
+  const prevFlag = process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED;
 
   beforeEach(() => {
     process.env.GOOGLE_AI_API_KEY = 'test-google-key';
+    process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED = 'true';
     mockPost.mockReset();
   });
 
@@ -87,6 +109,11 @@ describe('askGeminiFlash', () => {
       delete process.env.GOOGLE_AI_API_KEY;
     } else {
       process.env.GOOGLE_AI_API_KEY = prevKey;
+    }
+    if (prevFlag === undefined) {
+      delete process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED;
+    } else {
+      process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED = prevFlag;
     }
   });
 

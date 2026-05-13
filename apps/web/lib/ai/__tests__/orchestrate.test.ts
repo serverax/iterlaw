@@ -19,10 +19,29 @@ const mockedGemini = askGeminiFlash as jest.MockedFunction<typeof askGeminiFlash
 const mockedClaude = askClaudeSonnet as jest.MockedFunction<typeof askClaudeSonnet>;
 
 describe('callAIFallback', () => {
+  const prevFlag = process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED;
+
   beforeEach(() => {
     mockedClassify.mockReset();
     mockedGemini.mockReset();
     mockedClaude.mockReset();
+    process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED = 'true';
+  });
+
+  afterEach(() => {
+    if (prevFlag === undefined) {
+      delete process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED;
+    } else {
+      process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED = prevFlag;
+    }
+  });
+
+  it('returns null by default (web AI fallback disabled, no provider invoked)', async () => {
+    delete process.env.ITERLAW_WEB_AI_FALLBACK_ENABLED;
+    await expect(callAIFallback('q', { jurisdiction: 'england_wales' })).resolves.toBeNull();
+    expect(mockedClassify).not.toHaveBeenCalled();
+    expect(mockedGemini).not.toHaveBeenCalled();
+    expect(mockedClaude).not.toHaveBeenCalled();
   });
 
   it('returns null for ESCALATE', async () => {

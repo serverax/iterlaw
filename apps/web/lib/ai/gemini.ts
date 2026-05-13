@@ -1,6 +1,7 @@
 /* eslint-disable no-console -- Gemini client trace logs */
 import axios from 'axios';
 import { COST_PER_SIMPLE_CALL_GBP, logAiCall } from './costs';
+import { isWebAiFallbackEnabled, WEB_AI_FALLBACK_DISABLED_MESSAGE } from './featureFlag';
 import { normaliseAiResponse, parseJsonObject } from './json';
 import { GEMINI_SYSTEM_PROMPT } from './prompts';
 import type { AIContext, AIResponse } from './types';
@@ -14,6 +15,9 @@ function getSimpleTimeoutMs(): number {
   return Number.isFinite(raw) ? Math.max(1000, raw) : 6000;
 }
 
+// IterLaw legal-answer path must not call external LLM providers by default.
+// Sprint 12B gate: refuse before any network call unless
+// ITERLAW_WEB_AI_FALLBACK_ENABLED is explicitly set.
 export async function geminiGenerateText(options: {
   systemPrompt: string;
   userPrompt: string;
@@ -21,6 +25,10 @@ export async function geminiGenerateText(options: {
   timeoutMs: number;
   responseMimeType?: 'application/json' | 'text/plain';
 }): Promise<{ text: string; promptTokens?: number; completionTokens?: number }> {
+  if (!isWebAiFallbackEnabled()) {
+    throw new Error(WEB_AI_FALLBACK_DISABLED_MESSAGE);
+  }
+
   const key = process.env.GOOGLE_AI_API_KEY;
   if (!key) {
     throw new Error('GOOGLE_AI_API_KEY is not set');

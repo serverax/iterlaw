@@ -8,8 +8,23 @@ Implementation files:
 - `apps/legal-orchestrator/src/lawModuleEngine/legalModuleRegistry.ts` — pure read-only registry; `requireActiveModule(...)` is the helper the answer path uses.
 - `apps/legal-orchestrator/src/lawModuleEngine/ukEmploymentModule.ts` — UK Employment (active).
 - `apps/legal-orchestrator/src/lawModuleEngine/plannedModules.ts` — UK Housing, Immigration, Benefits, Debt, Consumer, Family, Business/Contract, Tax — all PLANNED.
+- `apps/legal-orchestrator/src/lawModuleEngine/legalModuleRouting.ts` — Sprint 18A routing adapter. Used by `handleLegalRequest` when the feature flag is ON.
 - `apps/legal-orchestrator/src/lawModuleEngine/index.ts` — public surface.
-- `apps/legal-orchestrator/src/tests/legalModuleRegistry.test.ts` — 12 tests.
+- `apps/legal-orchestrator/src/tests/legalModuleRegistry.test.ts` — 12 registry tests.
+- `apps/legal-orchestrator/src/tests/legalModuleRoutingFlag.test.ts` — 11 routing/flag tests.
+
+## Sprint 18A wiring (feature flag, default OFF)
+
+- Env var: `ITERLAW_LAW_MODULE_ROUTING_ENABLED` (default OFF).
+- When OFF: behaviour is unchanged. `handleLegalRequest` does not invoke the registry; existing tests pass without modification.
+- When ON: `routeLegalRequestToModule({})` resolves the active module (default scope = UK_ENGLAND_WALES + employment). The decision trace records:
+  - `law_module_routing:enter`
+  - `law_module_routing:lookup_by_id:<id>` or `law_module_routing:lookup_by_scope:<jurisdiction>:<area>`
+  - `law_module_routing:active:<moduleId>` (success) or `law_module_routing:refused:<kind>` (failure)
+  - `law_module_routing:citation_required:true`
+  - `law_module_routing:zero_citation_answer_blocked:true`
+- Result is shadow-only: it is NOT placed on the public response. Existing `/api/legal/ask` shape is preserved exactly.
+- Errors collapse to "no routing trace this turn"; the answer path is never broken by the routing layer.
 
 Naming note: the existing `apps/legal-orchestrator/src/modules/` directory hosts the **per-request module pipeline** (rule engine, citation verifier, deadline checker, PII redactor, etc.). The Sprint 18 **registry/engine** is a different layer and is placed under `src/lawModuleEngine/` to avoid clobbering. The two layers compose as follows: the registry tells the answer path which `(jurisdiction, law area)` is active; the pipeline runs the per-request safety steps inside that module.
 

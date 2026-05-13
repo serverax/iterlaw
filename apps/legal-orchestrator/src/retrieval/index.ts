@@ -31,3 +31,8 @@ export { buildContextPack } from "./contextPackBuilder";
 export type { ContextPack, ContextPackEntry } from "./contextPackBuilder";
 export { planAndExecuteMultiTier } from "./retrievalPlanner";
 export type { PlannerRequest, PlannerDependencies } from "./retrievalPlanner";
+export { runMultiTierRetrievalGateway } from "./multiTierRetrievalGateway";
+export type {
+  MultiTierRetrievalGatewayInput,
+  MultiTierRetrievalGatewayResult,
+} from "./multiTierRetrievalGateway";

@@ -36,8 +36,14 @@ import { runLocalDraftingStep } from "../legal/llm/runLocalDraftingStep.js";
 import type { OllamaTransport } from "../legal/llm/llm.types.js";
 import type { LlmGatewayStatus, RetrievedLegalChunkForSynthesis, BoundedSynthesisCitation } from "../legal/llm/llmGateway.types.js";
 import type { LocalLlmAuditSink } from "../legal/llm/llmAuditSink.js";
-import { getIntelligenceLayerConfig } from "../config/featureFlags.js";
+import {
+  getIntelligenceLayerConfig,
+  getLawModuleRoutingConfig,
+  getMultiTierRetrievalConfig,
+} from "../config/featureFlags.js";
 import { runIntelligenceGateway } from "../intelligence/intelligenceGateway.js";
+import { routeLegalRequestToModule } from "../lawModuleEngine/legalModuleRouting.js";
+import { runMultiTierRetrievalGateway } from "../retrieval/multiTierRetrievalGateway.js";
 import type {
   IntelligenceResult,
   RetrievalCandidate as IntelligenceRetrievalCandidate,
@@ -298,6 +304,51 @@ export async function handleLegalRequest(
   // The shadow / partial-active result is intentionally NOT placed on
   // the response. Existing /api/legal/ask shape is preserved exactly.
   void intelligenceShadowResult;
+
+  // -------------------------------------------------------------------
+  // Sprint 18A — Law module routing (feature-flagged, default OFF).
+  // When ITERLAW_LAW_MODULE_ROUTING_ENABLED=true the registry is consulted
+  // to confirm the active legal module. UK Employment is the only active
+  // module; planned modules return an inactive_module refusal. The result
+  // is recorded only as telemetry and does NOT change the public response
+  // shape. Any error collapses to "no routing trace this turn".
+  // -------------------------------------------------------------------
+  const lawModuleRoutingConfig = getLawModuleRoutingConfig();
+  let lawModuleRoutingTrace: ReadonlyArray<string> | null = null;
+  if (lawModuleRoutingConfig.enabled) {
+    try {
+      const decision = routeLegalRequestToModule({
+        // Default scope (UK_ENGLAND_WALES + employment). The existing
+        // LegalRequest type does not carry an explicit moduleId yet; this
+        // sprint deliberately uses scope-default to avoid changing the
+        // public request shape.
+      });
+      lawModuleRoutingTrace = decision.decisionTrace;
+    } catch {
+      lawModuleRoutingTrace = null;
+    }
+  }
+  void lawModuleRoutingTrace;
+
+  // -------------------------------------------------------------------
+  // Sprint 19A — Multi-tier retrieval gateway (feature-flagged, default OFF).
+  // Shadow telemetry only: with no injected adapters the gateway returns an
+  // empty result and records the decision trace. Behaviour is unchanged.
+  // -------------------------------------------------------------------
+  const multiTierConfig = getMultiTierRetrievalConfig();
+  let multiTierShadowTrace: ReadonlyArray<string> | null = null;
+  if (multiTierConfig.enabled) {
+    try {
+      const gatewayResult = await runMultiTierRetrievalGateway({
+        question: input.question ?? "",
+        queryType: "legal_question",
+      });
+      multiTierShadowTrace = gatewayResult.decisionTrace;
+    } catch {
+      multiTierShadowTrace = null;
+    }
+  }
+  void multiTierShadowTrace;
 
   // Build the prompt so the verification layer can audit it. The
   // orchestrator does NOT select or call a model — model selection

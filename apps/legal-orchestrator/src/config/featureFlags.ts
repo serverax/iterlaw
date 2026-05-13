@@ -71,3 +71,43 @@ export const INTELLIGENCE_LAYER_FLAGS = {
   ITERLAW_INTELLIGENCE_LAYER_MODE:
     "One of off | shadow | active. Default off. Active mode does not bypass any existing legal safety gate.",
 } as const;
+
+// Sprint 18A — Law Module Routing feature flag.
+// Reads ONE environment variable:
+//   ITERLAW_LAW_MODULE_ROUTING_ENABLED (boolean string: "true"/"1"/"yes"/"on")
+// Default OFF. Fails closed.
+
+export interface LawModuleRoutingConfig {
+  enabled: boolean;
+  source: "env";
+}
+
+export function getLawModuleRoutingConfig(): LawModuleRoutingConfig {
+  const raw = readEnv("ITERLAW_LAW_MODULE_ROUTING_ENABLED");
+  return { enabled: parseBool(raw), source: "env" };
+}
+
+export const LAW_MODULE_ROUTING_FLAGS = {
+  ITERLAW_LAW_MODULE_ROUTING_ENABLED:
+    "Boolean string. Default false. When true, handleLegalRequest consults the law-module registry to confirm the active legal module and records the routing decision in trace. The active module remains UK Employment. Planned modules are refused. No external LLM, no network, no DB.",
+} as const;
+
+// Sprint 19A — Multi-tier retrieval feature flag.
+// Reads ONE environment variable:
+//   ITERLAW_MULTI_TIER_RETRIEVAL_ENABLED (boolean string)
+// Default OFF. Fails closed.
+
+export interface MultiTierRetrievalConfig {
+  enabled: boolean;
+  source: "env";
+}
+
+export function getMultiTierRetrievalConfig(): MultiTierRetrievalConfig {
+  const raw = readEnv("ITERLAW_MULTI_TIER_RETRIEVAL_ENABLED");
+  return { enabled: parseBool(raw), source: "env" };
+}
+
+export const MULTI_TIER_RETRIEVAL_FLAGS = {
+  ITERLAW_MULTI_TIER_RETRIEVAL_ENABLED:
+    "Boolean string. Default false. When true, handleLegalRequest runs the multi-tier retrieval gateway in shadow mode for telemetry only; gateway result is recorded in trace but does not change the public response shape. No external LLM, no network, no DB.",
+} as const;

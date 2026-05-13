@@ -145,6 +145,25 @@ DONE — see [`docs/iterlaw/ITERLAW_SPRINT_ROADMAP.md`](docs/iterlaw/ITERLAW_SPR
 
 ---
 
+## IterLaw Final Platform Architecture
+
+> Status: PLANNED. The items below describe the **target** final platform architecture across Sprints 26–57. They are **not** implemented. They are **not** deployed. They are **not** production ready.
+
+- **IterLaw is one modular legal AI platform.** A single app surfaces many legal modules.
+- **Countries contain legal modules.** Each country (UK first) hosts the legal modules it offers (Employment first, then Immigration, Housing, Benefits, Family, Debt, Consumer, Business, Tax).
+- **Legal modules have isolated RAG, rules, prompts, templates, calculators, and specialist agents.** No cross-module retrieval or generation on the answer path.
+- **Users subscribe to country / module / plan combinations.** Subscription is the gate for module access.
+- **Each paid module creates one workspace.** A workspace is the per-user, per-module home for cases, documents, deadlines, and question history.
+- **Each workspace contains cases, documents, deadlines, and question history.** All scoped to the user and the module.
+- **All private data must use PostgreSQL RLS.** Tenant isolation is enforced at the database, not only at the application.
+- **WASM handles orchestration, routing, retrieval, policy, validation, and streaming.** Deterministic, sandboxed, auditable.
+- **Heavy LLM inference remains outside WASM.** Local LLM runtime hosts the inference; WASM owns the surrounding control plane.
+- **All legal answers and documents require citations.** `citation_required = true`, `zero_citation_answer_blocked = true`. No uncited legal claim is rendered as final.
+- **Low-confidence answers / documents go to human approval.** The human approval queue (`legal_review_queue`) is preserved and authoritative.
+- **All new roadmap features are PLANNED, not implemented.** Detail: [`docs/iterlaw/project/07-sprints/ITERLAW_PLATFORM_MODULE_WORKSPACE_WASM_DOCUMENT_SPRINT_PLAN.md`](docs/iterlaw/project/07-sprints/ITERLAW_PLATFORM_MODULE_WORKSPACE_WASM_DOCUMENT_SPRINT_PLAN.md).
+
+---
+
 ## Architecture anchor documents
 
 | Topic | Doc |

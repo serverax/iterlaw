@@ -41,12 +41,14 @@ import {
   getLawModuleRoutingConfig,
   getMultiTierRetrievalConfig,
   getApprovedAnswerFastPathConfig,
+  getEntitlementGateConfig,
 } from "../config/featureFlags.js";
 import { runIntelligenceGateway } from "../intelligence/intelligenceGateway.js";
 import { routeLegalRequestToModule } from "../lawModuleEngine/legalModuleRouting.js";
 import { runMultiTierRetrievalGateway } from "../retrieval/multiTierRetrievalGateway.js";
 import { runApprovedAnswerFastPathGateway } from "../retrieval/approvedAnswerFastPathGateway.js";
 import { runHardenedCitationGate } from "../citations/citationGateAdapter.js";
+import { runEntitlementGate } from "../entitlements/entitlementGateAdapter.js";
 import type {
   IntelligenceResult,
   RetrievalCandidate as IntelligenceRetrievalCandidate,
@@ -307,6 +309,28 @@ export async function handleLegalRequest(
   // The shadow / partial-active result is intentionally NOT placed on
   // the response. Existing /api/legal/ask shape is preserved exactly.
   void intelligenceShadowResult;
+
+  // -------------------------------------------------------------------
+  // Sprint 30 — Entitlement gate (feature-flagged, default OFF).
+  // Runs AHEAD of the Sprint 18A law-module routing block. Without an
+  // injected loader the gate records `entitlement_gate:no_loader` and
+  // returns; the legacy answer path is unchanged.
+  // -------------------------------------------------------------------
+  const entitlementGateConfig = getEntitlementGateConfig();
+  let entitlementGateTrace: ReadonlyArray<string> | null = null;
+  if (entitlementGateConfig.enabled) {
+    try {
+      const entitlementDecision = await runEntitlementGate({
+        workspaceId: input.workspace_id ?? "ws-default",
+        moduleId: "uk_employment",
+        nowIsoDate: new Date().toISOString().slice(0, 10),
+      });
+      entitlementGateTrace = entitlementDecision.decisionTrace;
+    } catch {
+      entitlementGateTrace = null;
+    }
+  }
+  void entitlementGateTrace;
 
   // -------------------------------------------------------------------
   // Sprint 18A — Law module routing (feature-flagged, default OFF).

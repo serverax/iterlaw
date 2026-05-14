@@ -54,4 +54,22 @@ The function takes `nowIsoDate` as input rather than calling `new Date()` — th
 ## Next steps
 
 - Sprint 22.x — DB schema for per-tenant entitlement, migration, and a loader that the orchestrator can call.
-- Sprint 22.y — Wire `checkEntitlement` into `handleLegalRequest` behind a feature flag (default OFF).
+- Sprint 22.y — Wire `checkEntitlement` into `handleLegalRequest` behind a feature flag (default OFF). **DONE** in Sprint 30.
+
+## Sprint 30 — wired into `handleLegalRequest`
+
+`runEntitlementGate(input)` (the orchestrator-shape adapter at `apps/legal-orchestrator/src/entitlements/entitlementGateAdapter.ts`) is invoked behind `ITERLAW_ENTITLEMENT_GATE_ENABLED` (default OFF). Placed **ahead** of the Sprint 18A law-module-routing block.
+
+Without an injected `loader` the gate records `entitlement_gate:no_loader` and returns — the legacy answer path is unchanged. With a loader, the gate runs `checkEntitlement` from Sprint 22 and surfaces the structured decision trace.
+
+10 vitest cases at `apps/legal-orchestrator/src/tests/entitlementGateAdapter.test.ts` prove:
+
+- Flag default OFF; parses canonical truthy / falsy strings.
+- No loader → `no_loader_configured`.
+- Active UK Employment entitlement → allowed.
+- Planned-module entitlement → `module_not_active`.
+- Workspace with no entitlement → `no_entitlement_for_module`.
+- Expired entitlement → `entitlement_expired`.
+- Inactive entitlement → refused.
+- Allow path records `entitlement:ok` in the trace.
+- Loader throw → swallowed; `loader_error` reported.

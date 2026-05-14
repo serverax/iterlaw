@@ -44,3 +44,7 @@ Test coverage:
 ## Architecture cross-reference
 
 [`docs/iterlaw/architecture/ITERLAW_ENTITLEMENT_AND_SUBSCRIPTION_MODEL.md`](../../architecture/ITERLAW_ENTITLEMENT_AND_SUBSCRIPTION_MODEL.md).
+
+## Sprint 30 follow-up
+
+Sprint 30 wires the entitlement gate into `handleLegalRequest` behind `ITERLAW_ENTITLEMENT_GATE_ENABLED` (default OFF). See `docs/iterlaw/architecture/ITERLAW_ENTITLEMENT_AND_SUBSCRIPTION_MODEL.md` "Sprint 30 — wired into handleLegalRequest" and `reports/ITERLAW_SPRINT_30_ENTITLEMENT_GATE_WIRING.md`. Adapter at `apps/legal-orchestrator/src/entitlements/entitlementGateAdapter.ts`. 10 vitest cases at `apps/legal-orchestrator/src/tests/entitlementGateAdapter.test.ts`.

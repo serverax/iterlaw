@@ -70,3 +70,7 @@ Sprint 29 adds `runHardenedCitationGate(input)` (the orchestrator-shape adapter 
 - Trust score in `(0, minTrust)` → `needs_review`.
 - camelCase citation shape (`chunkId` / `quoteText`) is accepted as an alias.
 - Decision trace begins with `citation_gate:entered`.
+
+## Sprint 34 — evidence-attached golden fixtures
+
+`apps/legal-orchestrator/src/tests/fixtures/legalGoldenEvidenceFixtures.ts` adds 10 evidence-attached fixtures covering supported / missing / stale / weak evidence shapes. `apps/legal-orchestrator/src/tests/legalGoldenEvidenceHarness.test.ts` runs each through `buildEvidencePack` and confirms the overall pack status matches the fixture's declared `expected_outcome`. The fixtures act as a deterministic regression-tracking harness for citation-gate behaviour — any future change that mis-classifies missing / stale / weak evidence will fail the harness.

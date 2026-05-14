@@ -40,5 +40,27 @@ Runs a fixed list of UK Employment law scenarios against an injected `LegalGolde
 
 ## Next steps
 
-- Sprint 25.x — Add evidence-attached fixtures (citations + retrieved candidates) so the oracle has the inputs it needs to produce an `answered` outcome.
+- Sprint 25.x — Add evidence-attached fixtures (citations + retrieved candidates) so the oracle has the inputs it needs to produce an `answered` outcome. **DONE** in Sprint 34.
 - Sprint 25.y — Run the harness against the real orchestrator answer path (the oracle becomes `handleLegalRequest` itself) under a CI gate.
+
+## Sprint 34 — evidence-attached fixtures
+
+`apps/legal-orchestrator/src/tests/fixtures/legalGoldenEvidenceFixtures.ts` adds 10 fixtures, each pairing a UK Employment scenario with:
+
+- `answerText` — synthetic candidate answer.
+- `citations` — chunk ids referenced by the answer.
+- `retrievedCandidates` — the chunks that back those citations.
+- `evidence_status` — `supported | missing | stale | weak`.
+- `expected_outcome` — `pass | block | needs_review`.
+- Optional `trustScores` and `historicalMode` flags.
+
+`apps/legal-orchestrator/src/tests/legalGoldenEvidenceHarness.test.ts` (8 vitest cases) runs every fixture through Sprint 24's `buildEvidencePack` and asserts the actual `overallStatus` matches the fixture's `expected_outcome`. The test set additionally enforces:
+
+- Fixture catalogue has ≥ 10 entries.
+- Every fixture has both `evidence_status` and `expected_outcome`.
+- `missing` evidence always expects `block`.
+- `stale` evidence expects `block` unless `historicalMode: true` (then `needs_review`).
+- `weak` evidence expects `needs_review`.
+- `pass` expectation requires `supported` evidence (no unsupported answer can `pass`).
+
+Together with the Sprint 24 evidence-pack builder, this means a regression in the citation gate will fail a deterministic harness test — no LLM, no DB, no network.

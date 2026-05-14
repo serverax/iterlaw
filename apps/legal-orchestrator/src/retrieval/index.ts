@@ -81,3 +81,12 @@ export type {
   PgvectorAdapterOptions,
   QuestionToEmbedding,
 } from "./pgvectorSearchAdapter";
+
+// Sprint 39 — Approved-answer Tier-0 store
+export { buildApprovedAnswerKey, InMemoryApprovedAnswerStore } from "./approvedAnswerStore";
+export type {
+  ApprovedAnswerStore,
+  ApprovedAnswerStoreKeyInput,
+  ApprovedAnswerStorePutOutcome,
+  InMemoryApprovedAnswerStoreOptions,
+} from "./approvedAnswerStore";

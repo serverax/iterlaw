@@ -164,6 +164,26 @@ export const PGVECTOR_GATEWAY_FLAGS = {
     "Boolean string. Default false. When true, runMultiTierRetrievalGateway uses the Sprint 32 pgvector adapter for vectorSearch (when a client + embedder are supplied). Without the deps the gateway records a `pgvector_gateway:no_dependencies` trace and falls back to no vector search.",
 } as const;
 
+// Sprint 40 — Citation gate active-mode feature flag.
+export type CitationGateMode = "shadow" | "active";
+
+export interface CitationGateActiveModeConfig {
+  enabled: boolean;
+  mode: CitationGateMode;
+  source: "env";
+}
+
+export function getCitationGateActiveModeConfig(): CitationGateActiveModeConfig {
+  const enabledRaw = readEnv("ITERLAW_CITATION_GATE_ACTIVE_MODE_ENABLED");
+  const enabled = parseBool(enabledRaw);
+  return { enabled, mode: enabled ? "active" : "shadow", source: "env" };
+}
+
+export const CITATION_GATE_ACTIVE_MODE_FLAGS = {
+  ITERLAW_CITATION_GATE_ACTIVE_MODE_ENABLED:
+    "Boolean string. Default false. When false, the hardened citation gate (Sprint 24/29) runs in shadow telemetry mode and the legacy verifier stays authoritative. When true, the hardened gate produces an authoritative allow / blocked / downgraded decision; the orchestrator caller is expected to honour it. Entitlement gate (Sprint 30) is not bypassed.",
+} as const;
+
 // Sprint 30 — Entitlement gate feature flag.
 export interface EntitlementGateConfig {
   enabled: boolean;

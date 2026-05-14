@@ -64,3 +64,10 @@ export type {
   ApprovedAnswerFastPathInput,
   ApprovedAnswerFastPathOutcome,
 } from "./approvedAnswerFastPath";
+
+// Sprint 27 — Approved-answer fast path gateway (wiring adapter)
+export { runApprovedAnswerFastPathGateway } from "./approvedAnswerFastPathGateway";
+export type {
+  ApprovedAnswerFastPathGatewayInput,
+  ApprovedAnswerFastPathGatewayResult,
+} from "./approvedAnswerFastPathGateway";

@@ -131,3 +131,35 @@ export const RERANKER_FLAGS = {
   ITERLAW_RERANKER_ENABLED:
     "Boolean string. Default false. When true, the multi-tier retrieval pipeline reorders its final candidates using the deterministic reranker (apps/legal-orchestrator/src/retrieval/reranker.ts). No external reranker model, no LLM, no network.",
 } as const;
+
+// Sprint 27 — Approved-answer fast path feature flag.
+export interface ApprovedAnswerFastPathConfig {
+  enabled: boolean;
+  source: "env";
+}
+
+export function getApprovedAnswerFastPathConfig(): ApprovedAnswerFastPathConfig {
+  const raw = readEnv("ITERLAW_APPROVED_ANSWER_FAST_PATH_ENABLED");
+  return { enabled: parseBool(raw), source: "env" };
+}
+
+export const APPROVED_ANSWER_FAST_PATH_FLAGS = {
+  ITERLAW_APPROVED_ANSWER_FAST_PATH_ENABLED:
+    "Boolean string. Default false. When true, handleLegalRequest checks the approved-answer fast path (Sprint 26) in shadow mode and records the trace. The legacy answer path is byte-identical when no fast-path hit is found and unchanged in this sprint even on a hit.",
+} as const;
+
+// Sprint 30 — Entitlement gate feature flag.
+export interface EntitlementGateConfig {
+  enabled: boolean;
+  source: "env";
+}
+
+export function getEntitlementGateConfig(): EntitlementGateConfig {
+  const raw = readEnv("ITERLAW_ENTITLEMENT_GATE_ENABLED");
+  return { enabled: parseBool(raw), source: "env" };
+}
+
+export const ENTITLEMENT_GATE_FLAGS = {
+  ITERLAW_ENTITLEMENT_GATE_ENABLED:
+    "Boolean string. Default false. When true, handleLegalRequest consults the entitlement gate ahead of law-module routing and records the trace. With no entitlements supplied the legacy answer path is unchanged.",
+} as const;

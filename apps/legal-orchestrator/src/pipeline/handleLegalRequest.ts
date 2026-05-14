@@ -40,10 +40,12 @@ import {
   getIntelligenceLayerConfig,
   getLawModuleRoutingConfig,
   getMultiTierRetrievalConfig,
+  getApprovedAnswerFastPathConfig,
 } from "../config/featureFlags.js";
 import { runIntelligenceGateway } from "../intelligence/intelligenceGateway.js";
 import { routeLegalRequestToModule } from "../lawModuleEngine/legalModuleRouting.js";
 import { runMultiTierRetrievalGateway } from "../retrieval/multiTierRetrievalGateway.js";
+import { runApprovedAnswerFastPathGateway } from "../retrieval/approvedAnswerFastPathGateway.js";
 import type {
   IntelligenceResult,
   RetrievalCandidate as IntelligenceRetrievalCandidate,
@@ -349,6 +351,33 @@ export async function handleLegalRequest(
     }
   }
   void multiTierShadowTrace;
+
+  // -------------------------------------------------------------------
+  // Sprint 27 — Approved-answer fast path (feature-flagged, default OFF).
+  // Shadow telemetry only: without an injected `lookup` the gateway records
+  // `no_lookup_configured` and returns. Even on a hit, the legacy answer
+  // path is not bypassed in this sprint — citation gates remain authoritative.
+  // -------------------------------------------------------------------
+  const approvedFastPathConfig = getApprovedAnswerFastPathConfig();
+  let approvedFastPathShadowTrace: ReadonlyArray<string> | null = null;
+  if (approvedFastPathConfig.enabled) {
+    try {
+      const fpResult = await runApprovedAnswerFastPathGateway({
+        workspaceId: input.workspace_id ?? "ws-default",
+        projectId: input.case_id ?? "case-default",
+        moduleId: "uk_employment",
+        jurisdiction: "UK_ENGLAND_WALES",
+        lawArea: "employment",
+        question: input.question ?? "",
+        contextSourceHash: "ctx:default",
+        nowIsoDate: new Date().toISOString().slice(0, 10),
+      });
+      approvedFastPathShadowTrace = fpResult.decisionTrace;
+    } catch {
+      approvedFastPathShadowTrace = null;
+    }
+  }
+  void approvedFastPathShadowTrace;
 
   // Build the prompt so the verification layer can audit it. The
   // orchestrator does NOT select or call a model — model selection

@@ -42,3 +42,23 @@ This preserves IterLaw's citation gate: a cached answer with zero citations or a
 ## Bench harness scenario
 
 `scripts/bench/iterlaw-retrieval-benchmark.mjs` now includes a fourth scenario `scenario:fast_path_mock` that runs the fast path against an in-memory lookup returning a valid approved entry. The scenario is purely informational; no production-speed comparison is asserted.
+
+## Sprint 27 — wiring into handleLegalRequest
+
+Sprint 27 wires the Sprint 26 fast path behind `ITERLAW_APPROVED_ANSWER_FAST_PATH_ENABLED` (default OFF). With the flag ON, `handleLegalRequest` calls `runApprovedAnswerFastPathGateway` in **shadow** mode — the decision trace is captured for telemetry but the legacy answer path and every citation gate remain authoritative. Even on a fast-path hit the public response shape is unchanged in this sprint. A future sprint can choose to return early on a verified hit under a tightened set of conditions; that decision is out of scope here.
+
+The gateway (`apps/legal-orchestrator/src/retrieval/approvedAnswerFastPathGateway.ts`):
+
+- Wraps `runApprovedAnswerFastPath` (Sprint 26).
+- Returns `{ hit, outcome, decisionTrace }` with stable `fast_path_gateway:*` codes.
+- Swallows lookup exceptions and converts them to a structured `cache_miss` trace.
+- Never invokes any LLM. Never opens a network socket. The underlying lookup is dependency-injected.
+
+Test coverage (`apps/legal-orchestrator/src/tests/approvedAnswerFastPathGateway.test.ts`, 9 vitest cases):
+
+- Flag default OFF; parses canonical truthy / falsy strings.
+- No-lookup → `no_lookup_configured` in trace.
+- Valid approved entry → `hit: true` + `fast_path:hit` in trace.
+- Stale / failed-QA / uncited entries all return `hit: false`.
+- Decision trace begins with `fast_path_gateway:entered`.
+- Lookup exception → swallowed.

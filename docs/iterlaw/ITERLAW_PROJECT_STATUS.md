@@ -37,9 +37,9 @@ This file mirrors the canonical project status. The single source of truth lives
 ## Sprint count (refreshed 2026-05-14)
 
 - **Total numbered roadmap:** **57 sprints**.
-- **Numbered sprints delivered with reports + commits:** **20** (Sprints 1–20).
-- **Numbered sprints remaining:** **37** (Sprints 21–57).
-- **Operational / correction / wiring sprints delivered alongside (not in the 57 count):** **11** (12A, 12B, 12C, 12D, 12E, 12F, 12G, 12H, 12J, 18A, 19A).
+- **Numbered sprints delivered with reports + commits:** **26** (Sprints 1–26).
+- **Numbered sprints remaining:** **31** (Sprints 27–57).
+- **Operational / correction / wiring sprints delivered alongside (not in the 57 count):** **15** (12A, 12B, 12C, 12D, 12E, 12F, 12G, 12H, 12J, 12K, 12L, 18A, 19A, 19B, 20A).
 - **Legacy line preserved for archive:** "Completed: 15 / Remaining: 42 / Current: Sprint 16 planned start" was correct as of 2026-05-13 morning; the 12F→12G and 12H→12J bundles advanced this.
 - **Sprint 10:** **PASS** — Docker staging verification.
 - **Sprint 11:** **PASS** — Phase 1 + Phase 2A + hardening + Phase 2B + Phase 4.

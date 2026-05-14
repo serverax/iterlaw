@@ -4,7 +4,11 @@
 
 Last updated: 2026-05-14.
 
-> **Rebaseline note (2026-05-14, HEAD `b7af17f`).** Two 5-sprint bundles delivered since the "Current status" section below was last fully refreshed: bundle 12F / 17 / 18 / 19 / 12G (PARTIAL — Sprint 12F operator-environment-blocked; Sprints 17 / 18 / 19 / 12G PASS) and bundle 12H / 18A / 19A / 20 / 12J (PARTIAL — Sprint 12H operator-environment-blocked; Sprints 18A / 19A / 20 / 12J PASS). Numbered roadmap progression: Sprints 1–20 delivered with reports + commits; Sprints 21–57 remain PLANNED (**37 numbered sprints remaining**). Production readiness: **NO** (12 / 17 gates PASS; G09 / G10 / G11 NOT_VERIFIED, G12 PARTIAL, G13 NOT_VERIFIED — all operator-environment dependencies). Full evidence: [`reports/ITERLAW_REBASELINE_AFTER_12H_BUNDLE_AND_REMAINING_SPRINTS.md`](reports/ITERLAW_REBASELINE_AFTER_12H_BUNDLE_AND_REMAINING_SPRINTS.md). Next 10-sprint bundle plan: [`docs/iterlaw/project/07-sprints/NEXT_10_SPRINT_BUNDLE_AFTER_12H_PLAN.md`](docs/iterlaw/project/07-sprints/NEXT_10_SPRINT_BUNDLE_AFTER_12H_PLAN.md). Local / code testing readiness: **YES**. Production / live testing readiness: **NO**.
+> **Rebaseline note (2026-05-14, HEAD `b7af17f`).** Two 5-sprint bundles delivered since the "Current status" section below was last fully refreshed: bundle 12F / 17 / 18 / 19 / 12G (PARTIAL — Sprint 12F operator-environment-blocked; Sprints 17 / 18 / 19 / 12G PASS) and bundle 12H / 18A / 19A / 20 / 12J (PARTIAL — Sprint 12H operator-environment-blocked; Sprints 18A / 19A / 20 / 12J PASS).
+>
+> **Bundle 12K / 20A / 19B / 21 / 12L / 22 / 23 / 24 / 25 / 26 — executed 2026-05-14 (PARTIAL).** Sprint 12K PARTIAL (operator-environment blocker repeats); Sprints 20A, 19B, 21, 12L, 22, 23, 24, 25, 26 all PASS. Numbered roadmap progression: Sprints 1–26 delivered with reports + commits; Sprints 27–57 remain PLANNED (**31 numbered sprints remaining**). Production readiness: **NO** (12 / 17 gates PASS; G09 / G10 / G11 NOT_VERIFIED, G12 PARTIAL, G13 NOT_VERIFIED — all operator-environment dependencies). Local / code testing readiness: **YES**. Production / live testing readiness: **NO**.
+>
+> Full evidence: [`reports/ITERLAW_NEXT_10_SPRINT_BUNDLE_12K_20A_19B_21_12L_22_23_24_25_26_SUMMARY.md`](reports/ITERLAW_NEXT_10_SPRINT_BUNDLE_12K_20A_19B_21_12L_22_23_24_25_26_SUMMARY.md).
 
 ---
 
@@ -29,9 +33,9 @@ Authoritative naming reference: [`docs/iterlaw/project/00-index/CANONICAL_NAMES.
 ### Sprint progress (refreshed 2026-05-14)
 
 - **Total numbered roadmap:** 57 sprints.
-- **Numbered sprints delivered with reports + commits:** **20** (Sprints 1–20).
-- **Numbered sprints remaining:** **37** (Sprints 21–57).
-- **Operational / correction / wiring sprints delivered alongside (not in the 57 count):** **11** — 12A, 12B, 12C, 12D, 12E, 12F, 12G, 12H, 12J, 18A, 19A.
+- **Numbered sprints delivered with reports + commits:** **26** (Sprints 1–26).
+- **Numbered sprints remaining:** **31** (Sprints 27–57).
+- **Operational / correction / wiring sprints delivered alongside (not in the 57 count):** **13** — 12A, 12B, 12C, 12D, 12E, 12F, 12G, 12H, 12J, 12K, 12L, 18A, 19A, 19B, 20A (note: 19B and 20A are wiring/foundation extensions of numbered sprints, included here for the audit trail).
 - **Most recent two completed bundles:** 12F / 17 / 18 / 19 / 12G (summary `2821511`) and 12H / 18A / 19A / 20 / 12J (summary `b7af17f`). See `reports/ITERLAW_NEXT_5_SPRINT_BUNDLE_12F_17_18_19_12G_SUMMARY.md` and `reports/ITERLAW_NEXT_5_SPRINT_BUNDLE_12H_18A_19A_20_12J_SUMMARY.md`.
 - **Production-readiness gates:** 17 total; **12 PASS**; 5 not PASS (G09 / G10 / G11 NOT_VERIFIED, G12 PARTIAL, G13 NOT_VERIFIED). Verifier: `node scripts/verify-production-readiness-gate.mjs` (exits 1 today).
 - **Legacy sprint-count line (kept for archive):** as of 2026-05-13 morning the project recorded "Completed: 15, Remaining: 42, Current: Sprint 16 planned start". The two bundles above completed Sprints 16, 17, 18, 19, 20.

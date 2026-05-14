@@ -1,6 +1,13 @@
 # IterLaw Real Status and Remaining Sprints Report
 
-> **Rebaseline note (2026-05-14, HEAD `b7af17f`).** This document's body below is the 2026-05-13 evidence-backed audit. Since that audit two 5-sprint bundles were delivered: **12F / 17 / 18 / 19 / 12G** (summary commit `2821511`) and **12H / 18A / 19A / 20 / 12J** (summary commit `b7af17f`). Numbered roadmap status as of 2026-05-14: **Sprints 1–20 delivered**, **Sprints 21–57 remain** (37 numbered sprints). Production readiness: **NO** (12 / 17 gates PASS; G09 / G10 / G11 NOT_VERIFIED, G12 PARTIAL, G13 NOT_VERIFIED). `npm audit --omit=dev`: **0 production vulnerabilities** (cleared by Sprint 17 Next.js 14→15 upgrade and Sprint 12E PostCSS lockfile override). Local / code testing readiness: **YES**. Production / live testing readiness: **NO**. Full evidence: [`../../../reports/ITERLAW_REBASELINE_AFTER_12H_BUNDLE_AND_REMAINING_SPRINTS.md`](../../../reports/ITERLAW_REBASELINE_AFTER_12H_BUNDLE_AND_REMAINING_SPRINTS.md). Next 10-sprint bundle plan: [`07-sprints/NEXT_10_SPRINT_BUNDLE_AFTER_12H_PLAN.md`](07-sprints/NEXT_10_SPRINT_BUNDLE_AFTER_12H_PLAN.md). The 2026-05-13 body below is retained for historical evidence — its specific HEAD reference (`d49ffeb`) is superseded by the current HEAD `b7af17f`.
+> **Rebaseline note (2026-05-14, post-bundle 12K → 26).** Three 5-sprint and one 10-sprint bundle delivered between this document's body and today:
+> 1. Bundle **12F / 17 / 18 / 19 / 12G** (summary commit `2821511`).
+> 2. Bundle **12H / 18A / 19A / 20 / 12J** (summary commit `b7af17f`).
+> 3. Bundle **12K / 20A / 19B / 21 / 12L / 22 / 23 / 24 / 25 / 26** — executed 2026-05-14. **9 of 10 PASS, 1 PARTIAL (Sprint 12K — operator-environment-blocked).**
+>
+> Numbered roadmap status: **Sprints 1–26 delivered**, **Sprints 27–57 remain** (31 numbered sprints). Production readiness: **NO** (12 / 17 gates PASS; G09 / G10 / G11 NOT_VERIFIED, G12 PARTIAL, G13 NOT_VERIFIED). `npm audit --omit=dev`: **0 production vulnerabilities**. Local / code testing readiness: **YES**. Production / live testing readiness: **NO**.
+>
+> Full evidence: [`../../../reports/ITERLAW_NEXT_10_SPRINT_BUNDLE_12K_20A_19B_21_12L_22_23_24_25_26_SUMMARY.md`](../../../reports/ITERLAW_NEXT_10_SPRINT_BUNDLE_12K_20A_19B_21_12L_22_23_24_25_26_SUMMARY.md). The 2026-05-13 body below is retained for historical evidence — its specific HEAD reference (`d49ffeb`) is superseded by the current HEAD.
 
 ## 1. Executive Summary
 

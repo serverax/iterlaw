@@ -90,3 +90,11 @@ export type {
   ApprovedAnswerStorePutOutcome,
   InMemoryApprovedAnswerStoreOptions,
 } from "./approvedAnswerStore";
+
+// Sprint 41 — Local embedder for vectorSearch bridge
+export { computeLocalEmbedding, createLocalEmbedderForVectorSearch } from "./localEmbedder";
+export type {
+  LocalEmbedderTransport,
+  LocalEmbedderOptions,
+  LocalEmbedderOutcome,
+} from "./localEmbedder";

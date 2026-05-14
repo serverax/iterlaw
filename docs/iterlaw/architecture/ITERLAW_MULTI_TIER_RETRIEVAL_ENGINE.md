@@ -90,3 +90,15 @@ Safety contract (verified by `apps/legal-orchestrator/src/tests/postgresRetrieva
 - `vectorSearch` always returns empty (FTS-only in this sprint).
 
 The benchmark harness (`scripts/bench/iterlaw-retrieval-benchmark.mjs`) gains an opt-in fourth scenario behind `ITERLAW_BENCH_USE_LOCAL_POSTGRES=true` that uses these adapters against an optional local `DATABASE_URL`. The bench never prints the connection string; with `DATABASE_URL` unset it records an empty result honestly and exits 0.
+
+## Sprint 32 — real pgvector vectorSearch adapter
+
+`apps/legal-orchestrator/src/retrieval/pgvectorSearchAdapter.ts` adds:
+
+- `createPgvectorSearch({ client, hardLimit? })` — returns `(embedding, options) => RetrievalCandidate[]`. Mock-safe: with no client returns []; with a client that throws returns []. Never reads or prints `DATABASE_URL`.
+- `createPgvectorSearchFromEmbedder(client, embedder)` — bridges `(question, opts)` → embed → pgvector search → candidate mapping. Surfaces the existing `VectorSearch` shape so the planner can consume it.
+- `PgvectorClient` interface — `searchByEmbedding(embedding, options)`; the operator's actual `pg` / `pgvector` integration owns connection management. The adapter never touches `process.env`.
+
+11 vitest cases at `apps/legal-orchestrator/src/tests/pgvectorSearchAdapter.test.ts` verify: no-client returns [], empty embedding short-circuits without IO, row → candidate mapping with ascending `vector_rank`, hard-limit caps results, client exceptions swallowed, forwarded options, embedder failure handled.
+
+The pgvector adapter is **not** wired into `runMultiTierRetrievalGateway` by default. A future sprint can wire it when an operator supplies a real client + embedder.

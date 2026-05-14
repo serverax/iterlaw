@@ -72,3 +72,7 @@ A production-quality benchmark requires:
 - A baseline-comparison report showing the harness ran against the new tier-aware planner AND the existing single-tier path with the same query set.
 
 The Sprint 19B opt-in adds the first half of the first bullet only. The other items remain operator decisions.
+
+## Sprint 32 — pgvector adapter availability
+
+Sprint 32 ships `createPgvectorSearchFromEmbedder(...)` (see `pgvectorSearchAdapter.ts`). The bench harness does NOT enable it by default — the adapter needs both a real `PgvectorClient` (operator-managed connection) and an embedder. Wiring is left to a future operator-controlled sprint. Mock-only bench scenarios are unchanged.

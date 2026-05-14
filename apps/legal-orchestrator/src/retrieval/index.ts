@@ -71,3 +71,13 @@ export type {
   ApprovedAnswerFastPathGatewayInput,
   ApprovedAnswerFastPathGatewayResult,
 } from "./approvedAnswerFastPathGateway";
+
+// Sprint 32 — pgvector VectorSearch adapter
+export { createPgvectorSearch, createPgvectorSearchFromEmbedder } from "./pgvectorSearchAdapter";
+export type {
+  PgvectorClient,
+  PgvectorRow,
+  PgvectorSearchOptions,
+  PgvectorAdapterOptions,
+  QuestionToEmbedding,
+} from "./pgvectorSearchAdapter";

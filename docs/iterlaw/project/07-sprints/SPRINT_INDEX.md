@@ -27,12 +27,12 @@ Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/IT
 - Real Docker staging DB replay executed by `scripts/operator/sprint10-docker-staging-replay.ps1` on 2026-05-13: all migrations applied, extensions verified, key tables present, RLS enabled where expected, policies present, smoke counts captured, orchestrator `/ready` returned `rag.configured=true`, `rag.mode=postgres`, `rag.database=configured`, `legal_safety.citation_required=true`, `legal_safety.zero_citation_answer_blocked=true`. No DSN / password leaked in `/ready` or in any committed artefact.
 - QA evidence: `reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md` + `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`.
 
-## Sprint count (refreshed 2026-05-14, post-bundle 12M → 34)
+## Sprint count (refreshed 2026-05-14, post-bundle 12P → 42)
 
 - **Total numbered roadmap:** **57 sprints**.
-- **Numbered sprints delivered with reports + commits:** **34** (Sprints 1–34).
-- **Numbered sprints remaining:** **23** (Sprints 35–57).
-- **Operational / correction / wiring sprints delivered alongside (not in the 57 count):** **17** — 12A, 12B, 12C, 12D, 12E, 12F, 12G, 12H, 12J, 12K, 12L, 12M, 12N, 18A, 19A, 19B, 20A.
+- **Numbered sprints delivered with reports + commits:** **42** (Sprints 1–42).
+- **Numbered sprints remaining:** **15** (Sprints 43–57).
+- **Operational / correction / wiring sprints delivered alongside (not in the 57 count):** **19** — 12A, 12B, 12C, 12D, 12E, 12F, 12G, 12H, 12J, 12K, 12L, 12M, 12N, 12P, 12Q, 18A, 19A, 19B, 20A.
 - **Production-readiness gates:** 17 total; **12 PASS**, 5 not PASS (G09 / G10 / G11 NOT_VERIFIED, G12 PARTIAL, G13 NOT_VERIFIED).
 - **Legacy line preserved for archive:** "Completed: 15 / Remaining: 42 / Current: Sprint 16 (planned start)" was correct as of 2026-05-13 morning. The 12F→12G and 12H→12J bundles advanced this.
 - Sprint 10: **PASS** — Docker staging verification passed (`reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`).

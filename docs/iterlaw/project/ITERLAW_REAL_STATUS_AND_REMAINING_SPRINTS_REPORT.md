@@ -1,14 +1,17 @@
 # IterLaw Real Status and Remaining Sprints Report
 
-> **Rebaseline note (2026-05-14, post-bundle 12M → 34).** Four major bundles delivered between this document's body and today:
+> **Rebaseline note (2026-05-14, post-bundle 12P → 42).** Five major bundles delivered between this document's body and today:
 > 1. Bundle **12F / 17 / 18 / 19 / 12G** (summary commit `2821511`).
 > 2. Bundle **12H / 18A / 19A / 20 / 12J** (summary commit `b7af17f`).
 > 3. Bundle **12K / 20A / 19B / 21 / 12L / 22 / 23 / 24 / 25 / 26** — 2026-05-14 (9 PASS, 1 PARTIAL).
-> 4. Bundle **12M / 27 / 28 / 29 / 30 / 31 / 32 / 12N / 33 / 34** — 2026-05-14 (8 PASS, 2 PARTIAL: 12M operator-environment-blocked; 31 empty cited-rates seed by design).
+> 4. Bundle **12M / 27 / 28 / 29 / 30 / 31 / 32 / 12N / 33 / 34** — 2026-05-14 (8 PASS, 2 PARTIAL).
+> 5. Bundle **12P / 35 / 36 / 37 / 38 / 12Q / 39 / 40 / 41 / 42** — 2026-05-14 (7 PASS, 3 PARTIAL: 12P **host-truth unresolved** — verifier still pinned to 138.201.253.56 with no SSH probe; 12Q no authorised live execution; 37 empty cited-rates seed).
 >
-> Numbered roadmap status: **Sprints 1–34 delivered**, **Sprints 35–57 remain** (23 numbered sprints). Production readiness: **NO** (12 / 17 gates PASS; G09 / G10 / G11 NOT_VERIFIED, G12 PARTIAL, G13 NOT_VERIFIED). `npm audit --omit=dev`: **0 production vulnerabilities**. Local / code testing readiness: **YES**. Production / live testing readiness: **NO**.
+> Numbered roadmap status: **Sprints 1–42 delivered**, **Sprints 43–57 remain** (15 numbered sprints). Production readiness: **NO** (12 / 17 gates PASS; G09 / G10 / G11 NOT_VERIFIED, G12 PARTIAL, G13 NOT_VERIFIED). `npm audit --omit=dev`: **0 production vulnerabilities**. Local / code testing readiness: **YES**. Production / live testing readiness: **NO**.
 >
-> Full evidence: [`../../../reports/ITERLAW_NEXT_10_SPRINT_BUNDLE_12M_27_28_29_30_31_32_12N_33_34_SUMMARY.md`](../../../reports/ITERLAW_NEXT_10_SPRINT_BUNDLE_12M_27_28_29_30_31_32_12N_33_34_SUMMARY.md). The 2026-05-13 body below is retained for historical evidence — its specific HEAD reference is superseded by the current HEAD.
+> Host-truth blocker (Sprint 12P): repo pins IterLaw to `138.201.253.56`, current OrdinoxAI K3s master note says `148.251.247.56`. Requires a dedicated reconciliation sprint before SSH/live-gate flips.
+>
+> Full evidence: [`../../../reports/ITERLAW_NEXT_10_SPRINT_BUNDLE_12P_35_36_37_38_12Q_39_40_41_42_SUMMARY.md`](../../../reports/ITERLAW_NEXT_10_SPRINT_BUNDLE_12P_35_36_37_38_12Q_39_40_41_42_SUMMARY.md). The 2026-05-13 body below is retained for historical evidence — its specific HEAD reference is superseded by the current HEAD.
 
 ## 1. Executive Summary
 

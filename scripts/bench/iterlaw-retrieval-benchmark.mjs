@@ -1,18 +1,28 @@
 #!/usr/bin/env node
-// Sprint 19A — Multi-tier retrieval benchmark harness (mock data only).
+// Sprint 19A + Sprint 19B — Multi-tier retrieval benchmark harness.
+//
+// Default mode: mock data only.
+//
+// Local-Postgres mode (Sprint 19B): set ITERLAW_BENCH_USE_LOCAL_POSTGRES=true
+// to add a scenario that exercises the Postgres adapters against the optional
+// `DATABASE_URL` connection. The scenario short-circuits to an empty result
+// when DATABASE_URL is unset or the `pg` driver is unavailable — never throws,
+// never prints DATABASE_URL.
 //
 // Safety:
-//   - No network call. No DB call. No external LLM.
-//   - Uses synthetic mock candidates and synchronous lookup functions.
+//   - No production DB. The local-Postgres scenario is opt-in and refuses to
+//     log the connection string.
+//   - No external LLM. No network call beyond the local Postgres host the
+//     operator chose.
+//   - Mock scenarios remain pure functions.
 //   - Does NOT claim production speed improvement.
-//   - Writes an optional report to reports/logs/ when --write-report is passed.
 //
 // Usage:
 //   node scripts/bench/iterlaw-retrieval-benchmark.mjs
 //   node scripts/bench/iterlaw-retrieval-benchmark.mjs --write-report
+//   $env:ITERLAW_BENCH_USE_LOCAL_POSTGRES = "true"; node scripts/bench/iterlaw-retrieval-benchmark.mjs
 //
-// The harness exercises the planner against three mock scenarios and emits
-// metrics. Exit 0 when all scenarios complete. Exit 1 only on harness error.
+// Exit 0 when all scenarios complete. Exit 1 only on harness error.
 
 import { readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -104,6 +114,58 @@ const scenarios = [
     },
   },
 ];
+
+// --- Optional local-Postgres scenario (Sprint 19B) --------------------------
+
+const useLocalPostgres = (process.env.ITERLAW_BENCH_USE_LOCAL_POSTGRES ?? "").toLowerCase() === "true";
+if (useLocalPostgres) {
+  const DIST_ADAPTERS_PATH = join(
+    REPO_ROOT,
+    "apps",
+    "legal-orchestrator",
+    "dist",
+    "retrieval",
+    "postgresRetrievalAdapters.js",
+  );
+  const DIST_PG_RETRIEVAL_PATH = join(
+    REPO_ROOT,
+    "apps",
+    "legal-orchestrator",
+    "dist",
+    "rag",
+    "postgresRetrieval.js",
+  );
+  if (existsSync(DIST_ADAPTERS_PATH) && existsSync(DIST_PG_RETRIEVAL_PATH)) {
+    try {
+      const adapters = await import("file://" + DIST_ADAPTERS_PATH);
+      const pgRetrievalMod = await import("file://" + DIST_PG_RETRIEVAL_PATH);
+      const PostgresRetrievalCtor = pgRetrievalMod.PostgresRetrieval;
+      if (typeof PostgresRetrievalCtor === "function") {
+        const port = new PostgresRetrievalCtor();
+        const { fullTextSearch, vectorSearch } = adapters.createPostgresRetrievalAdapters(port, {
+          legalPack: "uk-employment",
+          hardLimit: 5,
+        });
+        scenarios.push({
+          label: "scenario:local_postgres_full_text_plus_empty_vector",
+          request: { question: "redundancy pay calculation", queryType: "legal_question" },
+          deps: { fullTextSearch, vectorSearch },
+        });
+        console.log(
+          "[BENCH] local-Postgres scenario enabled (DATABASE_URL " +
+            (process.env.DATABASE_URL ? "present" : "absent") +
+            ")",
+        );
+      }
+    } catch (err) {
+      console.error("[BENCH] local-Postgres scenario init failed; continuing mock-only.");
+    }
+  } else {
+    console.error(
+      "[BENCH] ITERLAW_BENCH_USE_LOCAL_POSTGRES=true but dist build is missing — run `npm run build` in apps/legal-orchestrator first.",
+    );
+  }
+}
 
 // --- Run benchmark -----------------------------------------------------------
 

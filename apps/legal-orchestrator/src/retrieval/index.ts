@@ -36,3 +36,11 @@ export type {
   MultiTierRetrievalGatewayInput,
   MultiTierRetrievalGatewayResult,
 } from "./multiTierRetrievalGateway";
+
+// Sprint 19B — Postgres retrieval adapters
+export {
+  createPostgresFullTextSearch,
+  createPostgresVectorSearch,
+  createPostgresRetrievalAdapters,
+} from "./postgresRetrievalAdapters";
+export type { PostgresAdapterOptions } from "./postgresRetrievalAdapters";

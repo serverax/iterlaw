@@ -37,6 +37,6 @@ The existing intelligence layer at `apps/legal-orchestrator/src/intelligence/` a
 
 ## Next steps
 
-- Wire `planAndExecuteMultiTier` into `handleLegalRequest` behind a feature flag (separate sprint).
-- Provide real `fullTextSearch` and `vectorSearch` adapters that delegate to `apps/legal-orchestrator/src/rag/postgresRetrieval.ts`.
-- Add benchmark harness; measure speed only after the wiring sprint and operator approval.
+- Wire `planAndExecuteMultiTier` into `handleLegalRequest` behind a feature flag (separate sprint). **DONE** in Sprint 19A.
+- Provide real `fullTextSearch` and `vectorSearch` adapters that delegate to `apps/legal-orchestrator/src/rag/postgresRetrieval.ts`. **DONE for FTS** in Sprint 19B (`apps/legal-orchestrator/src/retrieval/postgresRetrievalAdapters.ts`). Vector adapter is intentionally empty until a pgvector port lands.
+- Add benchmark harness; measure speed only after the wiring sprint and operator approval. **Harness added** in Sprint 19A (mock-only). Sprint 19B adds an opt-in local-Postgres scenario behind `ITERLAW_BENCH_USE_LOCAL_POSTGRES=true`; no speed claim is asserted.

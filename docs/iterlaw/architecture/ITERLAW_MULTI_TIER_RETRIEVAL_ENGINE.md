@@ -71,3 +71,22 @@ See `apps/legal-orchestrator/src/retrieval/retrieval.types.ts`:
 - Context pack builder preserves title/url and trims snippet length.
 
 All 13 pass alongside the existing 924 vitest tests; the orchestrator suite is now **75 files / 937 tests PASS**.
+
+## Sprint 19B — Postgres retrieval adapters
+
+`apps/legal-orchestrator/src/retrieval/postgresRetrievalAdapters.ts` exposes:
+
+- `createPostgresFullTextSearch(port, options)` — produces a `FullTextSearch` function suitable for `PlannerDependencies.fullTextSearch`. Delegates to a `RetrievalPort` (`apps/legal-orchestrator/src/rag/retrieval.port.ts`) — typically backed by `PostgresRetrieval` (`apps/legal-orchestrator/src/rag/postgresRetrieval.ts`). Maps `RetrievedLegalChunk` → `RetrievalCandidate` via `mapCorpusSourceType()`.
+- `createPostgresVectorSearch(port, options)` — produces a `VectorSearch` function. Returns `[]` in this sprint because the underlying `PostgresRetrieval` is FTS-only; a future sprint can add a pgvector capability to the port.
+- `createPostgresRetrievalAdapters(port, options)` — convenience factory that builds both at once.
+
+Safety contract (verified by `apps/legal-orchestrator/src/tests/postgresRetrievalAdapters.test.ts`, 10 vitest cases):
+
+- No port → empty result (mock-safe).
+- Empty `chunks` array → empty result.
+- Port `throw` → empty result + no error detail leaked (test exercises a thrown DSN-shaped string and asserts the adapter swallows it).
+- Hard limit caps the result count below the tier limit.
+- Jurisdiction + topic are forwarded to the underlying port's `RetrievalQuery`.
+- `vectorSearch` always returns empty (FTS-only in this sprint).
+
+The benchmark harness (`scripts/bench/iterlaw-retrieval-benchmark.mjs`) gains an opt-in fourth scenario behind `ITERLAW_BENCH_USE_LOCAL_POSTGRES=true` that uses these adapters against an optional local `DATABASE_URL`. The bench never prints the connection string; with `DATABASE_URL` unset it records an empty result honestly and exits 0.

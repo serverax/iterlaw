@@ -50,12 +50,25 @@ For each scenario:
 - Does **not** claim production speed improvements.
 - Does **not** flip any production-readiness gate.
 
-## When to extend
+## Optional local-Postgres scenario (Sprint 19B)
 
-A real-DB benchmark requires:
+Set `ITERLAW_BENCH_USE_LOCAL_POSTGRES=true` to add a fourth scenario that exercises the Sprint 19B `createPostgresRetrievalAdapters(...)` against an optional local `DATABASE_URL`. The scenario:
 
-- An explicit local / staging DB target supplied via env vars.
+- Loads `PostgresRetrieval` from the orchestrator dist build (must be built first).
+- Constructs a `RetrievalPort` instance — which itself short-circuits to an empty result when `DATABASE_URL` is unset.
+- Builds `fullTextSearch` + `vectorSearch` adapters via `createPostgresRetrievalAdapters(...)`.
+- Runs the planner against a sample legal question with those adapters injected.
+
+**The bench will NOT print the connection string.** The adapter swallows port errors and never logs `DATABASE_URL`. When `DATABASE_URL` is unset the planner records the empty result honestly and the bench exits 0.
+
+**No production speed claim** is made by either mode. The harness remains a developer tool for plan-shape diagnostics; rigorous performance comparison still requires a controlled baseline run.
+
+## When to extend further
+
+A production-quality benchmark requires:
+
+- An explicit local / staging DB target supplied via env vars (the operator's responsibility).
 - Operator authorisation (the existing Sprint 12G authorisation pack already governs production access).
 - A baseline-comparison report showing the harness ran against the new tier-aware planner AND the existing single-tier path with the same query set.
 
-None of those preconditions is met yet. Until they are, the harness remains a **mock-only** developer tool.
+The Sprint 19B opt-in adds the first half of the first bullet only. The other items remain operator decisions.

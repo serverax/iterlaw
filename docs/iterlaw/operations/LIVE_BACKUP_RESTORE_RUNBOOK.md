@@ -69,13 +69,21 @@ Follow [`LIVE_BACKUP_RESTORE_ROLLBACK_PLAN.md`](LIVE_BACKUP_RESTORE_ROLLBACK_PLA
 1. Operator fills `reports/templates/ITERLAW_LIVE_BACKUP_EVIDENCE_TEMPLATE.md` into a new timestamped file under `reports/`.
 2. Operator fills `reports/templates/ITERLAW_LIVE_RESTORE_EVIDENCE_TEMPLATE.md` similarly.
 3. Reviewer reads the timestamped reports, redacts anything that resembles a secret, and approves.
-4. Operator updates `docs/iterlaw/project/PRODUCTION_READINESS_GATE.json` to flip `G12` and/or `G13` to `"PASS"`, points `evidence_path` at the new timestamped report, sets `last_verified_at`, clears `blocker`.
-5. Operator commits with message:
+4. **Sprint 12L:** operator runs the evidence-gate apply-script in DryRun first:
+   ```
+   pwsh -ExecutionPolicy Bypass -File scripts/operator/apply-live-backup-restore-evidence-gate.ps1 `
+     -BackupEvidencePath  reports/<timestamped-backup-evidence>.md `
+     -RestoreEvidencePath reports/<timestamped-restore-evidence>.md `
+     -DryRun
+   ```
+   The script validates both files (via the Sprint 12J validator), reads the Verdict / Ready-to-flip lines, and prints the planned G12 + G13 deltas. Exit 0 confirms readiness.
+5. Operator re-runs the same command **without** `-DryRun`. The script atomically updates G12 + G13 in `PRODUCTION_READINESS_GATE.json` and leaves all other gates untouched.
+6. Operator commits with message:
    ```
    ops(iterlaw): record live backup evidence and flip G12 / G13
    ```
-6. Operator pushes to origin/master.
-7. Reviewer confirms by inspecting `git log` on origin.
+7. Operator pushes to origin/master.
+8. Reviewer confirms by inspecting `git log` on origin.
 
 ## 6. Never
 

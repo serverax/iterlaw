@@ -18,6 +18,13 @@ This document and the companion checklist (`PRODUCTION_READINESS_GATE.json`) plu
    - Capture exact output under `evidence_path`.
    - Update the `status`, `last_verified_at`, and clear `blocker`.
    - Commit and push the JSON change alongside the evidence report.
+5. For G12 (live backup) + G13 (live restore) specifically, Sprint 12L added `scripts/operator/apply-live-backup-restore-evidence-gate.ps1`. The operator:
+   - Runs the live backup + restore drill per the runbook.
+   - Fills the Sprint 12G evidence templates with redacted output.
+   - Runs `scripts/operator/validate-live-backup-restore-evidence.ps1 <path>` on each (must exit 0).
+   - Runs `pwsh -ExecutionPolicy Bypass -File scripts/operator/apply-live-backup-restore-evidence-gate.ps1 -BackupEvidencePath <path> -RestoreEvidencePath <path> -DryRun` (prints the planned delta; does not write).
+   - Re-runs the same command **without** `-DryRun` to atomically flip G12 + G13 in this JSON file.
+   - Commits the JSON change alongside the redacted evidence reports.
 
 ---
 

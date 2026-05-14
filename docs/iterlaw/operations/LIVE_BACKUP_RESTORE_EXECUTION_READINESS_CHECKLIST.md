@@ -69,7 +69,8 @@ For each box below, the operator either ticks it after capturing real evidence, 
 - [ ] Operator fills the timestamped evidence report.
 - [ ] Operator runs `scripts/operator/validate-live-backup-restore-evidence.ps1 <report>` and gets exit 0.
 - [ ] Reviewer reads the report, applies a redaction pass, and approves.
-- [ ] Operator updates `docs/iterlaw/project/PRODUCTION_READINESS_GATE.json`: flips `G12` / `G13` to `PASS`, sets `evidence_path`, sets `last_verified_at`, clears `blocker`.
+- [ ] Operator runs `pwsh -ExecutionPolicy Bypass -File scripts/operator/apply-live-backup-restore-evidence-gate.ps1 -BackupEvidencePath <path> -RestoreEvidencePath <path> -DryRun`. The script validates both files, reads the verdicts, and prints the planned G12 + G13 deltas. Exit 0 means the operator can proceed.
+- [ ] Operator re-runs the same command **without** `-DryRun` to atomically flip G12 + G13 in `PRODUCTION_READINESS_GATE.json`. The script writes only those two gates; all other gate entries are preserved byte-for-byte.
 - [ ] Operator commits and pushes the **redacted** evidence + gate flip in a single commit.
 - [ ] Reviewer confirms by inspecting `git log` on origin.
 

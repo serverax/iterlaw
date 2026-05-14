@@ -23,12 +23,12 @@ Forward-looking architecture roadmap. These are **planned future sprints**, not 
 
 - **Sprint 16** — PLANNED start (no commitments past this line).
 
-**Remaining (active roadmap, ending at Sprint 45) — refreshed 2026-05-14 (post-bundle 12K → 26):**
+**Remaining (active roadmap, ending at Sprint 45) — refreshed 2026-05-14 (post-bundle 12M → 34):**
 
-- Numbered remaining inside the active roadmap window (Sprints 27 → 45): **19 sprints**.
-- Numbered remaining including the post-Sprint-45 backlog (Sprints 27 → 57): **31 sprints**.
-- Sprints 46+ (Workspace + RLS + Supreme Controller + Approval + Document intelligence) remain **post-Sprint-45 backlog** and are not in the active 19-count above.
-- **Legacy line preserved for archive:** "30 sprints remaining (Sprint 16 → Sprint 45)" was correct as of 2026-05-13 morning. Bundles 12F→12G, 12H→12J, and 12K→26 delivered Sprints 16–26.
+- Numbered remaining inside the active roadmap window (Sprints 35 → 45): **11 sprints**.
+- Numbered remaining including the post-Sprint-45 backlog (Sprints 35 → 57): **23 sprints**.
+- Sprints 46+ (Workspace + RLS + Supreme Controller + Approval + Document intelligence) remain **post-Sprint-45 backlog** and are not in the active 11-count above.
+- **Legacy line preserved for archive:** "30 sprints remaining (Sprint 16 → Sprint 45)" was correct as of 2026-05-13 morning. Bundles 12F→12G, 12H→12J, 12K→26, and 12M→34 delivered Sprints 16–34.
 
 **Authoritative status source:** [`SPRINT_INDEX.md`](./SPRINT_INDEX.md). If this section disagrees with `SPRINT_INDEX.md`, `SPRINT_INDEX.md` wins; reopen the reconciliation procedure.
 

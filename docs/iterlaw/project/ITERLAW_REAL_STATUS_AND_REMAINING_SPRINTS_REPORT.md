@@ -1,13 +1,14 @@
 # IterLaw Real Status and Remaining Sprints Report
 
-> **Rebaseline note (2026-05-14, post-bundle 12K → 26).** Three 5-sprint and one 10-sprint bundle delivered between this document's body and today:
+> **Rebaseline note (2026-05-14, post-bundle 12M → 34).** Four major bundles delivered between this document's body and today:
 > 1. Bundle **12F / 17 / 18 / 19 / 12G** (summary commit `2821511`).
 > 2. Bundle **12H / 18A / 19A / 20 / 12J** (summary commit `b7af17f`).
-> 3. Bundle **12K / 20A / 19B / 21 / 12L / 22 / 23 / 24 / 25 / 26** — executed 2026-05-14. **9 of 10 PASS, 1 PARTIAL (Sprint 12K — operator-environment-blocked).**
+> 3. Bundle **12K / 20A / 19B / 21 / 12L / 22 / 23 / 24 / 25 / 26** — 2026-05-14 (9 PASS, 1 PARTIAL).
+> 4. Bundle **12M / 27 / 28 / 29 / 30 / 31 / 32 / 12N / 33 / 34** — 2026-05-14 (8 PASS, 2 PARTIAL: 12M operator-environment-blocked; 31 empty cited-rates seed by design).
 >
-> Numbered roadmap status: **Sprints 1–26 delivered**, **Sprints 27–57 remain** (31 numbered sprints). Production readiness: **NO** (12 / 17 gates PASS; G09 / G10 / G11 NOT_VERIFIED, G12 PARTIAL, G13 NOT_VERIFIED). `npm audit --omit=dev`: **0 production vulnerabilities**. Local / code testing readiness: **YES**. Production / live testing readiness: **NO**.
+> Numbered roadmap status: **Sprints 1–34 delivered**, **Sprints 35–57 remain** (23 numbered sprints). Production readiness: **NO** (12 / 17 gates PASS; G09 / G10 / G11 NOT_VERIFIED, G12 PARTIAL, G13 NOT_VERIFIED). `npm audit --omit=dev`: **0 production vulnerabilities**. Local / code testing readiness: **YES**. Production / live testing readiness: **NO**.
 >
-> Full evidence: [`../../../reports/ITERLAW_NEXT_10_SPRINT_BUNDLE_12K_20A_19B_21_12L_22_23_24_25_26_SUMMARY.md`](../../../reports/ITERLAW_NEXT_10_SPRINT_BUNDLE_12K_20A_19B_21_12L_22_23_24_25_26_SUMMARY.md). The 2026-05-13 body below is retained for historical evidence — its specific HEAD reference (`d49ffeb`) is superseded by the current HEAD.
+> Full evidence: [`../../../reports/ITERLAW_NEXT_10_SPRINT_BUNDLE_12M_27_28_29_30_31_32_12N_33_34_SUMMARY.md`](../../../reports/ITERLAW_NEXT_10_SPRINT_BUNDLE_12M_27_28_29_30_31_32_12N_33_34_SUMMARY.md). The 2026-05-13 body below is retained for historical evidence — its specific HEAD reference is superseded by the current HEAD.
 
 ## 1. Executive Summary
 

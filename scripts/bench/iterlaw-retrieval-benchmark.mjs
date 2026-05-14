@@ -115,6 +115,53 @@ const scenarios = [
   },
 ];
 
+// --- Sprint 26 fast-path mock scenario (default ON) -------------------------
+
+const DIST_FAST_PATH_PATH = join(
+  REPO_ROOT,
+  "apps",
+  "legal-orchestrator",
+  "dist",
+  "retrieval",
+  "approvedAnswerFastPath.js",
+);
+
+if (existsSync(DIST_FAST_PATH_PATH)) {
+  try {
+    const fp = await import("file://" + DIST_FAST_PATH_PATH);
+    if (typeof fp.runApprovedAnswerFastPath === "function") {
+      scenarios.push({
+        label: "scenario:fast_path_mock",
+        request: { question: "unfair dismissal qualifying service", queryType: "legal_question" },
+        deps: {},
+        fastPath: {
+          run: () =>
+            fp.runApprovedAnswerFastPath({
+              workspaceId: "ws-bench",
+              projectId: "p-bench",
+              moduleId: "uk_employment",
+              jurisdiction: "UK_ENGLAND_WALES",
+              lawArea: "employment",
+              question: "unfair dismissal qualifying service",
+              contextSourceHash: "bench-ctx",
+              nowIsoDate: "2026-05-14",
+              lookup: () => ({
+                cacheKey: "bench-key",
+                answerText: "An employee normally needs 2 years' continuous service.",
+                citationCount: 2,
+                qaStatus: "approved",
+                lastVerifiedAt: "2026-04-01",
+                expiresAt: "2027-01-01",
+              }),
+            }),
+        },
+      });
+    }
+  } catch (err) {
+    console.error("[BENCH] fast-path scenario init failed; continuing without.");
+  }
+}
+
 // --- Optional local-Postgres scenario (Sprint 19B) --------------------------
 
 const useLocalPostgres = (process.env.ITERLAW_BENCH_USE_LOCAL_POSTGRES ?? "").toLowerCase() === "true";
@@ -185,6 +232,18 @@ for (const sc of scenarios) {
   const t0 = performance.now();
   let result;
   try {
+    if (sc.fastPath) {
+      const fpOut = await sc.fastPath.run();
+      console.log(`[BENCH] ${sc.label}`);
+      console.log(`  fast_path_hit    = ${fpOut.hit === true}`);
+      console.log(`  reason           = ${fpOut.hit ? "hit" : fpOut.reason}`);
+      const elapsed = (performance.now() - t0).toFixed(2);
+      console.log(`  elapsed_ms       = ${elapsed}`);
+      reportLines.push(
+        `| ${sc.label} | (fast_path tier 0) | ${fpOut.hit ? 1 : 0} | n/a | ${elapsed} |`,
+      );
+      continue;
+    }
     result = await planner.planAndExecuteMultiTier(sc.request, sc.deps);
   } catch (err) {
     allOk = false;

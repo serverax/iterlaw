@@ -53,3 +53,14 @@ export type {
   RerankerScore,
   RerankerOutcome,
 } from "./reranker";
+
+// Sprint 26 — Approved-answer fast path
+export { buildRetrievalCacheKey, normaliseQuestion } from "./retrievalCacheKey";
+export type { RetrievalCacheKeyInput } from "./retrievalCacheKey";
+export { runApprovedAnswerFastPath } from "./approvedAnswerFastPath";
+export type {
+  ApprovedAnswerEntry,
+  ApprovedAnswerLookup,
+  ApprovedAnswerFastPathInput,
+  ApprovedAnswerFastPathOutcome,
+} from "./approvedAnswerFastPath";

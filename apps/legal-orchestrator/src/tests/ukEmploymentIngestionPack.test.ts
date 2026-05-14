@@ -149,8 +149,8 @@ describe("Sprint 20 — statutory calculator registry", () => {
     }
   });
 
-  it("statutory_redundancy_pay (Sprint 21) and notice_period (Sprint 33) are implemented; every other calculator stays planned", () => {
-    const implemented = new Set(["statutory_redundancy_pay", "notice_period"]);
+  it("statutory_redundancy_pay (Sprint 21), notice_period (Sprint 33), and holiday_pay (Sprint 38) are implemented; every other calculator stays planned", () => {
+    const implemented = new Set(["statutory_redundancy_pay", "notice_period", "holiday_pay"]);
     for (const c of UK_EMPLOYMENT_STATUTORY_CALCULATORS) {
       if (implemented.has(c.calculatorId)) {
         expect(c.status, `${c.calculatorId} is implemented`).toBe("implemented");

@@ -45,10 +45,10 @@ export const UK_EMPLOYMENT_STATUTORY_CALCULATORS: ReadonlyArray<StatutoryCalcula
   {
     calculatorId: "holiday_pay",
     title: "Statutory holiday entitlement / pay",
-    inputs: ["work_pattern", "weekly_hours", "weeks_worked"],
+    inputs: ["mode", "daysPerWeek_or_hoursWorkedInPeriod", "weeklyPayGbp_or_hourlyRateGbp"],
     officialSource: "https://www.gov.uk/holiday-entitlement-rights",
-    status: "planned",
-    notes: "Working Time Regulations 1998.",
+    status: "implemented",
+    notes: "Working Time Regulations 1998 (reg 13, 13A, 15B) + ERA 1996 ss221-224. Implemented in Sprint 38 — apps/legal-orchestrator/src/legalRules/holidayPayCalculator.ts (19 vitest cases). Returns statutory minimum only; caller must supply a verified 'week's pay' figure for variable-pay workers.",
   },
   {
     calculatorId: "ssp",

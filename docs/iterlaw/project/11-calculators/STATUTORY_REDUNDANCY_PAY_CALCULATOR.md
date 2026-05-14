@@ -81,6 +81,18 @@ Walking back from termination: for year `i` (where `i = 0` is the most recent ye
 }
 ```
 
+## Sprint 31 — cited statutory rate sources (PARTIAL)
+
+`apps/legal-orchestrator/src/legalRules/statutoryRateSources.ts` adds:
+
+- `CitedStatutoryRateEntry` — strict shape (`jurisdiction`, `rate_type`, `amount`, `currency`, `effective_from`, `effective_to`, `source_title`, `source_url`, `verified_at`, `trust_score`).
+- `validateCitedRateEntry(e)` — rejects missing source metadata, non-https URLs, untrusted hosts (must be one of `www.legislation.gov.uk`, `www.gov.uk`, `www.acas.org.uk`, `www.judiciary.uk`), trust_score outside (0, 1], inverted windows, non-ISO dates.
+- `validateNoOverlappingRanges(entries)` — rejects overlapping windows for the same `(jurisdiction, rate_type)` pair. Open-ended `effective_to: null` treated as +∞.
+- `citedToStatutoryWeeklyPayCap(entry)` — converts a validated entry into the calculator's `StatutoryWeeklyPayCapEntry` shape.
+- `CITED_RATES_SEED` — **ships EMPTY by design**. Sprint 31 deliberately does not commit any rate values to product code; the operator must add entries from verified sources. With the empty seed, the calculator continues to return `needs_verified_rate` as before.
+
+16 vitest cases at `apps/legal-orchestrator/src/tests/statutoryRatesRegistry.test.ts` prove validation, overlap detection, and the conversion+calculator integration.
+
 ## What this calculator does NOT do
 
 - Does **not** invent a statutory cap.

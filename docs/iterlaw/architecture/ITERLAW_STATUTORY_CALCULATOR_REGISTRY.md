@@ -32,6 +32,10 @@ Implementation: `apps/legal-orchestrator/src/legalRules/statutoryCalculatorRegis
 - `apps/legal-orchestrator/src/tests/redundancyPayCalculator.test.ts` — 15 vitest cases covering refusals, arithmetic, age-band walk, 20-year cap, weekly-pay cap, full-year truncation, zero / boundary cases.
 - Refusal contract: when no statutory weekly-pay cap covers the supplied `effectiveDate`, the calculator returns `{ ok: false, reason: "needs_verified_rate" }` and refuses to guess.
 
+## Sprint 31 — cited statutory rate sources
+
+`apps/legal-orchestrator/src/legalRules/statutoryRateSources.ts` adds the validation + conversion layer that future operator-supplied seeds must pass through before they reach the calculator. Production seed `CITED_RATES_SEED` ships **empty**; the redundancy calculator therefore continues to return `needs_verified_rate` until an operator supplies validated entries. See `reports/ITERLAW_SPRINT_31_STATUTORY_RATES_REGISTRY.md`.
+
 ## Out of scope
 
 - No DB-backed `statutory_rate` table — the rate registry is a Typescript module the operator supplies entries to.

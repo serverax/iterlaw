@@ -36,6 +36,12 @@ Implementation: `apps/legal-orchestrator/src/legalRules/statutoryCalculatorRegis
 
 `apps/legal-orchestrator/src/legalRules/statutoryRateSources.ts` adds the validation + conversion layer that future operator-supplied seeds must pass through before they reach the calculator. Production seed `CITED_RATES_SEED` ships **empty**; the redundancy calculator therefore continues to return `needs_verified_rate` until an operator supplies validated entries. See `reports/ITERLAW_SPRINT_31_STATUTORY_RATES_REGISTRY.md`.
 
+## Sprint 33 — second implemented calculator: notice_period
+
+`apps/legal-orchestrator/src/legalRules/noticePeriodCalculator.ts` implements ERA 1996 s86 statutory minimum notice (both directions). The registry's `notice_period` entry flips from `planned` to `implemented`. 16 vitest cases at `apps/legal-orchestrator/src/tests/noticePeriodCalculator.test.ts`. See `docs/iterlaw/project/11-calculators/STATUTORY_NOTICE_PERIOD_CALCULATOR.md`.
+
+Two of eight calculators are now `implemented` (`statutory_redundancy_pay` + `notice_period`). Six remain `planned`.
+
 ## Out of scope
 
 - No DB-backed `statutory_rate` table — the rate registry is a Typescript module the operator supplies entries to.

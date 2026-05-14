@@ -37,10 +37,10 @@ export const UK_EMPLOYMENT_STATUTORY_CALCULATORS: ReadonlyArray<StatutoryCalcula
   {
     calculatorId: "notice_period",
     title: "Statutory minimum notice",
-    inputs: ["years_of_service", "notice_direction"],
+    inputs: ["service_months", "notice_direction"],
     officialSource: "https://www.legislation.gov.uk/ukpga/1996/18/section/86",
-    status: "planned",
-    notes: "Section 86 ERA 1996. Direction = employer or employee notice.",
+    status: "implemented",
+    notes: "Section 86 ERA 1996. Direction = employer or employee notice. Implemented in Sprint 33 — `apps/legal-orchestrator/src/legalRules/noticePeriodCalculator.ts` (16 vitest cases). Returns statutory minimum only; contract notice prevails if longer.",
   },
   {
     calculatorId: "holiday_pay",

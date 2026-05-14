@@ -149,10 +149,11 @@ describe("Sprint 20 — statutory calculator registry", () => {
     }
   });
 
-  it("only statutory_redundancy_pay is implemented (Sprint 21); every other calculator stays planned", () => {
+  it("statutory_redundancy_pay (Sprint 21) and notice_period (Sprint 33) are implemented; every other calculator stays planned", () => {
+    const implemented = new Set(["statutory_redundancy_pay", "notice_period"]);
     for (const c of UK_EMPLOYMENT_STATUTORY_CALCULATORS) {
-      if (c.calculatorId === "statutory_redundancy_pay") {
-        expect(c.status, `${c.calculatorId} is implemented in Sprint 21`).toBe("implemented");
+      if (implemented.has(c.calculatorId)) {
+        expect(c.status, `${c.calculatorId} is implemented`).toBe("implemented");
       } else {
         expect(c.status, `${c.calculatorId} must remain planned until implemented`).toBe("planned");
       }

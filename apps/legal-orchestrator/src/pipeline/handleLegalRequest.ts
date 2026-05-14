@@ -46,6 +46,7 @@ import { runIntelligenceGateway } from "../intelligence/intelligenceGateway.js";
 import { routeLegalRequestToModule } from "../lawModuleEngine/legalModuleRouting.js";
 import { runMultiTierRetrievalGateway } from "../retrieval/multiTierRetrievalGateway.js";
 import { runApprovedAnswerFastPathGateway } from "../retrieval/approvedAnswerFastPathGateway.js";
+import { runHardenedCitationGate } from "../citations/citationGateAdapter.js";
 import type {
   IntelligenceResult,
   RetrievalCandidate as IntelligenceRetrievalCandidate,
@@ -418,6 +419,31 @@ export async function handleLegalRequest(
         traceId: input.request_id,
       },
     );
+    // Sprint 29 — shadow-mode hardened citation gate. The legacy citation
+    // verifier inside runLocalDraftingStep stays authoritative. This call is
+    // additive and produces a decision trace + evidence pack the answer-path
+    // can consult; it does not change the response shape in this sprint.
+    try {
+      const hardenedDecision = runHardenedCitationGate({
+        answerText: drafted.answer ?? "",
+        citations: drafted.citations.map((c) => ({ chunk_id: c.chunkId })),
+        retrievedChunks: chunks.map((c) => ({
+          chunk_id: c.chunk_id,
+          chunk_text: c.chunk_text,
+          source_type: c.source_type,
+          source_id: c.document_id,
+          title: c.title ?? null,
+          url: c.url ?? null,
+          effective_date: null,
+          applicable_to: null,
+          authority_level: c.authority_level ?? null,
+        })),
+        nowIsoDate: new Date().toISOString().slice(0, 10),
+      });
+      void hardenedDecision;
+    } catch {
+      // Defensive — the legacy gate remains authoritative.
+    }
     return mapDrafterOutputToLegalResponse({
       input,
       classification,

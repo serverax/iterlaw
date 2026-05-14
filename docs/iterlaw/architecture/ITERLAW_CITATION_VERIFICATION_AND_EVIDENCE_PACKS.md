@@ -53,3 +53,20 @@ Each entry carries exactly the fields the spec called for:
 - Does **not** wire itself into `handleLegalRequest`. That wiring (placing the hardened verifier and the evidence-pack builder ahead of the legacy citation gate) is a future, change-controlled sprint.
 - Does **not** change the existing `modules/citationVerifier.ts` behaviour — Sprint 24 builds **on top** of it and preserves every existing failure code.
 - Does **not** modify G15 in the production readiness gate JSON (the citation gate stays PASS; this sprint tightens the model used by future wiring sprints).
+
+## Sprint 29 — wired into `handleLegalRequest` in shadow mode
+
+Sprint 29 adds `runHardenedCitationGate(input)` (the orchestrator-shape adapter at `apps/legal-orchestrator/src/citations/citationGateAdapter.ts`) and invokes it right after the drafter produces an answer + citations in the Phase-4 synth path. The call is **shadow-mode**:
+
+- The legacy citation verifier inside `runLocalDraftingStep` / `modules/citationVerifier.ts` stays authoritative.
+- The hardened gate produces a structured evidence pack + decision trace, but the orchestrator does **not** change the LegalResponse based on its output in this sprint.
+- Any exception thrown by the adapter is swallowed so the legacy gate is never weakened.
+
+8 vitest cases at `apps/legal-orchestrator/src/tests/citationGateAdapter.test.ts` prove the gate enforces:
+
+- Zero citations + legal-claim heuristics → `blocked_no_citation`.
+- Citation backed by a chunk with no `url` → `blocked_no_source`.
+- Stale source (effective_to in the past) → `blocked_stale` (or `needs_review` in historical mode).
+- Trust score in `(0, minTrust)` → `needs_review`.
+- camelCase citation shape (`chunkId` / `quoteText`) is accepted as an alias.
+- Decision trace begins with `citation_gate:entered`.

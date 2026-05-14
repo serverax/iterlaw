@@ -111,3 +111,23 @@ export const MULTI_TIER_RETRIEVAL_FLAGS = {
   ITERLAW_MULTI_TIER_RETRIEVAL_ENABLED:
     "Boolean string. Default false. When true, handleLegalRequest runs the multi-tier retrieval gateway in shadow mode for telemetry only; gateway result is recorded in trace but does not change the public response shape. No external LLM, no network, no DB.",
 } as const;
+
+// Sprint 23 — Deterministic reranker feature flag.
+// Reads ONE environment variable:
+//   ITERLAW_RERANKER_ENABLED (boolean string)
+// Default OFF. Fails closed.
+
+export interface RerankerConfig {
+  enabled: boolean;
+  source: "env";
+}
+
+export function getRerankerConfig(): RerankerConfig {
+  const raw = readEnv("ITERLAW_RERANKER_ENABLED");
+  return { enabled: parseBool(raw), source: "env" };
+}
+
+export const RERANKER_FLAGS = {
+  ITERLAW_RERANKER_ENABLED:
+    "Boolean string. Default false. When true, the multi-tier retrieval pipeline reorders its final candidates using the deterministic reranker (apps/legal-orchestrator/src/retrieval/reranker.ts). No external reranker model, no LLM, no network.",
+} as const;

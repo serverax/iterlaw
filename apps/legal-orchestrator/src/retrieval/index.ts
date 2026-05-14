@@ -44,3 +44,12 @@ export {
   createPostgresRetrievalAdapters,
 } from "./postgresRetrievalAdapters";
 export type { PostgresAdapterOptions } from "./postgresRetrievalAdapters";
+
+// Sprint 23 — Deterministic reranker
+export { rerankCandidates, DEFAULT_RERANKER_WEIGHTS } from "./reranker";
+export type {
+  RerankerWeights,
+  RerankerContext,
+  RerankerScore,
+  RerankerOutcome,
+} from "./reranker";

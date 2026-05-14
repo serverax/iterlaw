@@ -148,6 +148,22 @@ export const APPROVED_ANSWER_FAST_PATH_FLAGS = {
     "Boolean string. Default false. When true, handleLegalRequest checks the approved-answer fast path (Sprint 26) in shadow mode and records the trace. The legacy answer path is byte-identical when no fast-path hit is found and unchanged in this sprint even on a hit.",
 } as const;
 
+// Sprint 36 — pgvector gateway feature flag.
+export interface PgvectorGatewayConfig {
+  enabled: boolean;
+  source: "env";
+}
+
+export function getPgvectorGatewayConfig(): PgvectorGatewayConfig {
+  const raw = readEnv("ITERLAW_PGVECTOR_GATEWAY_ENABLED");
+  return { enabled: parseBool(raw), source: "env" };
+}
+
+export const PGVECTOR_GATEWAY_FLAGS = {
+  ITERLAW_PGVECTOR_GATEWAY_ENABLED:
+    "Boolean string. Default false. When true, runMultiTierRetrievalGateway uses the Sprint 32 pgvector adapter for vectorSearch (when a client + embedder are supplied). Without the deps the gateway records a `pgvector_gateway:no_dependencies` trace and falls back to no vector search.",
+} as const;
+
 // Sprint 30 — Entitlement gate feature flag.
 export interface EntitlementGateConfig {
   enabled: boolean;

@@ -85,7 +85,7 @@
       "evidence_path": "reports/ITERLAW_SPRINT_14_DOCKER_STAGING_MIGRATION_REPLAY.md",
       "command": "powershell -File scripts/operator/sprint14-docker-staging-migration-replay.ps1",
       "last_verified_at": null,
-      "blocker": "Sprint 14 script committed and safety-scanned (no kubectl, no production-host, refuses on missing env vars). Sprint 12K (2026-05-14) re-probed; Docker Desktop client 29.4.1 present, daemon still not running on this workstation (`docker version` returns 'failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine'). Operator action: start Docker Desktop, set throwaway ITERLAW_STAGING_PG_* env vars, run scripts/operator/sprint14-docker-staging-migration-replay.ps1. Evidence: reports/ITERLAW_SPRINT_12K_OPERATOR_EVIDENCE_FLIPS_G09_G10_G11.md."
+      "blocker": "Sprint 14 script committed and safety-scanned (no kubectl, no production-host, refuses on missing env vars). Sprint 12M (2026-05-14) re-probed; Docker Desktop client 29.4.1 present, daemon still not running on this workstation (`docker version` returns 'failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine'). Operator action: start Docker Desktop, set throwaway ITERLAW_STAGING_PG_* env vars, run scripts/operator/sprint14-docker-staging-migration-replay.ps1. Evidence: reports/ITERLAW_SPRINT_12M_OPERATOR_EVIDENCE_FLIPS_G09_G10_G11.md."
     },
     {
       "gate_id": "G10",
@@ -94,7 +94,7 @@
       "evidence_path": "reports/ITERLAW_SPRINT_15_K3S_TRAEFIK_READONLY_VERIFICATION.md",
       "command": "powershell -File scripts/infra/verify-iterlaw-live-readonly.ps1",
       "last_verified_at": null,
-      "blocker": "Sprint 15 script committed at scripts/infra/verify-iterlaw-live-readonly.ps1; master pinned to 138.201.253.56 with 138.201.253.245 in deny list. Sprint 12K (2026-05-14) re-probed root@138.201.253.56; SSH probe denied by Claude Code permission classifier ('Production reads via remote shell ... require explicit user authorization naming the prod target'). Live run requires operator-authorised SSH agent/key on the workstation. Evidence: reports/ITERLAW_SPRINT_12K_OPERATOR_EVIDENCE_FLIPS_G09_G10_G11.md."
+      "blocker": "Sprint 15 script committed at scripts/infra/verify-iterlaw-live-readonly.ps1; master pinned to 138.201.253.56 with 138.201.253.245 in deny list. Sprint 12M (2026-05-14) re-probed root@138.201.253.56; SSH probe reached the network but timed out at TCP/22 ('ssh: connect to host 138.201.253.56 port 22: Connection timed out'). Either the workstation IP is not allowlisted at the operator firewall, or the host is not responding on port 22 from this network. Live run requires operator-authorised SSH key + workstation reachable to port 22. Evidence: reports/ITERLAW_SPRINT_12M_OPERATOR_EVIDENCE_FLIPS_G09_G10_G11.md."
     },
     {
       "gate_id": "G11",

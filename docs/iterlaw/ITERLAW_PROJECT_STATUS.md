@@ -1,8 +1,10 @@
 # IterLaw Project Status
 
-Last updated: 2026-05-13.
+Last updated: 2026-05-14.
 
 This file mirrors the canonical project status. The single source of truth lives at [`project/ITERLAW_PROJECT_STATUS.md`](project/ITERLAW_PROJECT_STATUS.md); a thin pointer also sits at the repo root `ITERLAW_PROJECT_STATUS.md`. This copy exists so that the path `docs/iterlaw/ITERLAW_PROJECT_STATUS.md` is reachable for tools and docs that link to it.
+
+> **Rebaseline note (2026-05-14, HEAD `b7af17f`).** Sprints 16–20 are now delivered. Numbered sprints remaining: **37** (Sprints 21–57). Production-readiness gates: 12 of 17 PASS; 5 outstanding (G09 / G10 / G11 NOT_VERIFIED, G12 PARTIAL, G13 NOT_VERIFIED). Local / code testing readiness: **YES**. Production / live testing readiness: **NO**. Authoritative status: [`project/ITERLAW_PROJECT_STATUS.md`](project/ITERLAW_PROJECT_STATUS.md). Evidence: [`../../reports/ITERLAW_REBASELINE_AFTER_12H_BUNDLE_AND_REMAINING_SPRINTS.md`](../../reports/ITERLAW_REBASELINE_AFTER_12H_BUNDLE_AND_REMAINING_SPRINTS.md). Next 10-sprint bundle plan: [`project/07-sprints/NEXT_10_SPRINT_BUNDLE_AFTER_12H_PLAN.md`](project/07-sprints/NEXT_10_SPRINT_BUNDLE_AFTER_12H_PLAN.md).
 
 ---
 
@@ -32,13 +34,13 @@ This file mirrors the canonical project status. The single source of truth lives
 
 ---
 
-## Sprint count
+## Sprint count (refreshed 2026-05-14)
 
-- **Total roadmap:** **57 sprints**.
-- **Completed:** **15** (Sprints 1–11 PASS; Sprint 12 PASS-for-dry-run-foundation; Sprint 13 PASS-for-operator-workstation-readiness; Sprint 14 PASS-for-intelligence-foundation; Sprint 15 PASS-for-feature-flagged-local-wiring).
-- **Current sprint:** **Sprint 16** (planned start).
-- **Remaining:** **42**.
-- **Remaining range:** **Sprint 16 → Sprint 57.**
+- **Total numbered roadmap:** **57 sprints**.
+- **Numbered sprints delivered with reports + commits:** **20** (Sprints 1–20).
+- **Numbered sprints remaining:** **37** (Sprints 21–57).
+- **Operational / correction / wiring sprints delivered alongside (not in the 57 count):** **11** (12A, 12B, 12C, 12D, 12E, 12F, 12G, 12H, 12J, 18A, 19A).
+- **Legacy line preserved for archive:** "Completed: 15 / Remaining: 42 / Current: Sprint 16 planned start" was correct as of 2026-05-13 morning; the 12F→12G and 12H→12J bundles advanced this.
 - **Sprint 10:** **PASS** — Docker staging verification.
 - **Sprint 11:** **PASS** — Phase 1 + Phase 2A + hardening + Phase 2B + Phase 4.
 - **Sprint 12:** **PASS FOR DRY-RUN FOUNDATION ONLY** — Track B operator-side scripts; live not executed.

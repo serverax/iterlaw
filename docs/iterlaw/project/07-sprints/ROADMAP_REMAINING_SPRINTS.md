@@ -2,6 +2,8 @@
 
 Forward-looking architecture roadmap. These are **planned future sprints**, not committed delivery. They land **after** the first IterLaw beta (UK Employment) is shipped.
 
+> **Rebaseline note (2026-05-14, HEAD `b7af17f`).** Numbered sprints 1–20 delivered. Numbered sprints remaining: **37** (Sprints 21–57). Sprints 16 (MVP smoke), 17 (Next 14→15), 18 (Law Module Engine), 19 (Multi-tier retrieval), 20 (UK Employment ingestion pack) all delivered with reports + commits — see [`SPRINT_INDEX.md`](./SPRINT_INDEX.md) and [`../ITERLAW_PROJECT_STATUS.md`](../ITERLAW_PROJECT_STATUS.md). Operational / wiring sprints delivered alongside: 12A → 12J + 18A + 19A. Next 10-sprint bundle plan (12K → 26): [`./NEXT_10_SPRINT_BUNDLE_AFTER_12H_PLAN.md`](./NEXT_10_SPRINT_BUNDLE_AFTER_12H_PLAN.md) — not yet executed.
+
 ## Remaining sprint count
 
 **Roadmap target:** Sprint 45 (Sprints 46–57 remain as post-Sprint-45 backlog and are not in the active remaining count).
@@ -21,10 +23,12 @@ Forward-looking architecture roadmap. These are **planned future sprints**, not 
 
 - **Sprint 16** — PLANNED start (no commitments past this line).
 
-**Remaining (active roadmap, ending at Sprint 45):**
+**Remaining (active roadmap, ending at Sprint 45) — refreshed 2026-05-14:**
 
-- **30 sprints remaining (Sprint 16 → Sprint 45).**
-- Sprint 46+ entries listed lower in this document (Workspace + RLS + Supreme Controller + Approval + Document intelligence) are **post-Sprint-45 backlog** and are not counted in the 30 above.
+- Numbered remaining inside the active roadmap window (Sprints 21 → 45): **25 sprints**.
+- Numbered remaining including the post-Sprint-45 backlog (Sprints 21 → 57): **37 sprints**.
+- Sprints 46+ (Workspace + RLS + Supreme Controller + Approval + Document intelligence) remain **post-Sprint-45 backlog** and are not in the active 25-count above.
+- **Legacy line preserved for archive:** "30 sprints remaining (Sprint 16 → Sprint 45)" was correct as of 2026-05-13 morning; the 12F→12G and 12H→12J bundles delivered Sprints 16, 17, 18, 19, 20.
 
 **Authoritative status source:** [`SPRINT_INDEX.md`](./SPRINT_INDEX.md). If this section disagrees with `SPRINT_INDEX.md`, `SPRINT_INDEX.md` wins; reopen the reconciliation procedure.
 

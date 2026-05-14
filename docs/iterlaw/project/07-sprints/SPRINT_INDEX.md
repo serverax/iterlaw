@@ -4,6 +4,8 @@ Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/IT
 
 > Latest evidence-backed audit of real status vs. claims: [`../ITERLAW_REAL_STATUS_AND_REMAINING_SPRINTS_REPORT.md`](../ITERLAW_REAL_STATUS_AND_REMAINING_SPRINTS_REPORT.md) (2026-05-13; verdict PARTIAL; lists what is real vs documented-only vs not started).
 
+> **Rebaseline note (2026-05-14, HEAD `b7af17f`).** Numbered sprints delivered: **20 (Sprints 1–20)**. Numbered remaining: **37 (Sprints 21–57)**. Sprint 16 = MVP smoke readiness (commit `a415af0`). Sprint 17 = Next.js 14→15 security upgrade (commit `9411a38`). Sprint 18 = Law Module Engine foundation (commit `7b34065`). Sprint 19 = Multi-tier retrieval foundation (commit `bceb7ec`). Sprint 20 = UK Employment ingestion pack foundation (commit `6ab8525`). Operational sprints 12A–12J + 18A + 19A delivered alongside. Next 10-sprint bundle (12K → 26) planned: [`./NEXT_10_SPRINT_BUNDLE_AFTER_12H_PLAN.md`](./NEXT_10_SPRINT_BUNDLE_AFTER_12H_PLAN.md) — not yet executed.
+
 ## Current verified gate state
 
 - Sprint 10 code-side migration verification: **PASS**.
@@ -25,13 +27,14 @@ Authoritative pointer to sprint status. Full long-form roadmap: `docs/iterlaw/IT
 - Real Docker staging DB replay executed by `scripts/operator/sprint10-docker-staging-replay.ps1` on 2026-05-13: all migrations applied, extensions verified, key tables present, RLS enabled where expected, policies present, smoke counts captured, orchestrator `/ready` returned `rag.configured=true`, `rag.mode=postgres`, `rag.database=configured`, `legal_safety.citation_required=true`, `legal_safety.zero_citation_answer_blocked=true`. No DSN / password leaked in `/ready` or in any committed artefact.
 - QA evidence: `reports/ITERLAW_QA_REPORT_SPRINT_10_MIGRATION_102_COMPATIBILITY_FIX.md` + `reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`.
 
-## Sprint count
+## Sprint count (refreshed 2026-05-14)
 
-- **Total roadmap:** **57 sprints**.
-- **Completed:** **15** (Sprints 1–11 PASS; Sprint 12 PASS-for-dry-run-foundation; Sprint 13 PASS-for-operator-workstation-readiness; Sprint 14 PASS-for-intelligence-foundation; Sprint 15 PASS-for-feature-flagged-local-wiring; plus correction Sprint 12A).
-- **Current:** **Sprint 16** (planned start).
-- **Remaining:** **42**.
-- **Remaining range:** **Sprint 16 → Sprint 57.**
+- **Total numbered roadmap:** **57 sprints**.
+- **Numbered sprints delivered with reports + commits:** **20** (Sprints 1–20).
+- **Numbered sprints remaining:** **37** (Sprints 21–57).
+- **Operational / correction / wiring sprints delivered alongside (not in the 57 count):** **11** — 12A, 12B, 12C, 12D, 12E, 12F, 12G, 12H, 12J, 18A, 19A.
+- **Production-readiness gates:** 17 total; **12 PASS**, 5 not PASS (G09 / G10 / G11 NOT_VERIFIED, G12 PARTIAL, G13 NOT_VERIFIED).
+- **Legacy line preserved for archive:** "Completed: 15 / Remaining: 42 / Current: Sprint 16 (planned start)" was correct as of 2026-05-13 morning. The 12F→12G and 12H→12J bundles advanced this.
 - Sprint 10: **PASS** — Docker staging verification passed (`reports/ITERLAW_SPRINT_10_STAGING_APPLY_2026-05-13.md`).
 - Sprint 11: **PASS** — Phase 1 + Phase 2A + hardening tests + Phase 2B (live local HTTP transport, commit `3681fab`) + Phase 4 (pipeline wiring of `runLocalDraftingStep` into `handleLegalRequest`, commit `120b9de`) all green. Full suite **58 files / 763 tests PASS**. Closeout QA report: [`../11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md`](../11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md). ADR: [`../11-ai-governance/ADR_SPRINT_11_LOCAL_LLM_TRANSPORT_AND_PIPELINE_WIRING.md`](../11-ai-governance/ADR_SPRINT_11_LOCAL_LLM_TRANSPORT_AND_PIPELINE_WIRING.md).
 - Sprint 12: **PASS FOR DRY-RUN FOUNDATION ONLY** — Track B operator-side backup + restore-verify scripts, manifest validator, restore-target validator, 39 new vitest tests, runbook, ADR. Full suite **59 files / 802 tests PASS** (commits `a750f88` → `fdafca3`). Live backup + live restore **NOT EXECUTED**. Track A (cluster Borg path) **unchanged**. Closeout QA report: [`../12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md`](../12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md).

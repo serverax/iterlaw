@@ -1,8 +1,22 @@
 # IterLaw Project Status
 
-Last updated: 13 May 2026.
+Last updated: 14 May 2026.
 
 This file is the **canonical project status**. The root `ITERLAW_PROJECT_STATUS.md` is a pointer to this file.
+
+> **Rebaseline note (2026-05-14, HEAD `b7af17f`).** Two 5-sprint bundles landed on `origin/master` since this file last named "Sprint 16" as the next planned sprint:
+>
+> - Bundle 12F / 17 / 18 / 19 / 12G (summary commit `2821511`). Sprint 17 cleared the Next.js production advisory (G08 flipped to PASS). Sprints 18 / 19 / 12G all PASS. Sprint 12F PARTIAL (operator-environment blocked).
+> - Bundle 12H / 18A / 19A / 20 / 12J (summary commit `b7af17f`). Sprints 18A / 19A / 20 / 12J all PASS. Sprint 12H PARTIAL (same operator-environment blocker).
+>
+> Numbered sprints delivered: **1–20** (20 of 57). Numbered sprints remaining: **37** (21–57). Operational / wiring sprints delivered alongside: **11** (12A → 12J + 18A + 19A).
+>
+> Production readiness: **NO**. 17 gates total; 12 PASS; 5 not PASS (G09 / G10 / G11 NOT_VERIFIED, G12 PARTIAL, G13 NOT_VERIFIED). All five remaining blockers are operator-environment dependencies (Docker daemon on workstation; authorised SSH agent for `root@138.201.253.56`; live backup authorisation; isolated restore drill target). Full evidence: [`../../../reports/ITERLAW_REBASELINE_AFTER_12H_BUNDLE_AND_REMAINING_SPRINTS.md`](../../../reports/ITERLAW_REBASELINE_AFTER_12H_BUNDLE_AND_REMAINING_SPRINTS.md).
+>
+> Local / code testing readiness: **YES** (root + orchestrator typecheck + lint + build + tests pass; `npm audit --omit=dev` 0 vulnerabilities).
+> Production / live testing readiness: **NO** (verifier exits 1 with 5 gates outstanding).
+>
+> Next 10-sprint bundle (12K → 26) is planned only — see [`07-sprints/NEXT_10_SPRINT_BUNDLE_AFTER_12H_PLAN.md`](07-sprints/NEXT_10_SPRINT_BUNDLE_AFTER_12H_PLAN.md). Execution not yet authorised.
 
 ## Current verified gate state
 
@@ -46,13 +60,13 @@ QA evidence:
 - **RAG:** local DB + pgvector + verified citations only. No external retrieval, no scraping in the answer path.
 - **WASM:** control plane / safety / routing / validation layer, **not** the heavy LLM runtime.
 
-## Sprint count
+## Sprint count (refreshed 2026-05-14)
 
-- **Total roadmap:** **57 sprints**.
-- **Completed (scoped):** **15** (Sprints 1–11 PASS; Sprint 12 PASS-for-dry-run-foundation; Sprint 13 PASS-for-operator-workstation-readiness; Sprint 14 PASS-for-intelligence-foundation; Sprint 15 PASS-for-feature-flagged-local-wiring; plus correction Sprint 12A).
-- **Current sprint:** **Sprint 16** (PLANNED start).
-- **Remaining:** **42**.
-- **Remaining range:** **Sprint 16 → Sprint 57.**
+- **Total numbered roadmap:** **57 sprints**.
+- **Numbered sprints delivered with reports + commits:** **20** (Sprints 1–20). Sprint 16 (MVP smoke readiness, commit `a415af0`); Sprint 17 (Next.js 15 upgrade, commit `9411a38`); Sprint 18 (Law Module Engine foundation, commit `7b34065`); Sprint 19 (Multi-tier retrieval foundation, commit `bceb7ec`); Sprint 20 (UK Employment ingestion pack foundation, commit `6ab8525`).
+- **Numbered sprints remaining:** **37** (Sprints 21–57).
+- **Operational / correction / wiring sprints delivered alongside (not in the 57-numbered count):** **11** — 12A, 12B, 12C, 12D, 12E, 12F, 12G, 12H, 12J, 18A, 19A.
+- **Legacy line preserved for archive:** as of 2026-05-13 morning this file recorded "Completed (scoped): 15 … Current: Sprint 16 (PLANNED start) … Remaining: 42". Bundles 12F / 17 / 18 / 19 / 12G and 12H / 18A / 19A / 20 / 12J advanced this to the values above.
 - **Sprint 10:** **PASS** — Docker staging verification.
 - **Sprint 11:** **PASS** — Phase 1 + Phase 2A foundation + Sprint 11 hardening tests + Phase 2B (live local HTTP transport, commit `3681fab`) + Phase 4 (pipeline wiring of `runLocalDraftingStep`, commit `120b9de`). Full suite **58 files / 763 tests PASS** (was 56 / 733 → +2 files / +30 tests). Closeout QA report: [`11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md`](11-ai-governance/SPRINT_11_PHASE_2B_4_QA_REPORT.md).
 - **Sprint 12:** **PASS FOR DRY-RUN FOUNDATION ONLY** — Track B operator-side backup script + restore-verify script + manifest validator + restore-target validator + 39 vitest tests + runbook + ADR (commits `a750f88` → `fdafca3`). Full suite **59 files / 802 tests PASS** (was 58 / 763 → +1 file / +39 tests). Live backup + live restore **NOT EXECUTED**. Track A (cluster Borg path) **unchanged**. Closeout QA report: [`12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md`](12-backup-go-live/SPRINT_12_BACKUP_GO_LIVE_QA_REPORT.md). ADR: [`12-backup-go-live/ADR_SPRINT_12_BACKUP_AND_RECOVERY_POLICY.md`](12-backup-go-live/ADR_SPRINT_12_BACKUP_AND_RECOVERY_POLICY.md). Runbook: [`12-backup-go-live/SPRINT_12_BACKUP_RESTORE_RUNBOOK.md`](12-backup-go-live/SPRINT_12_BACKUP_RESTORE_RUNBOOK.md).

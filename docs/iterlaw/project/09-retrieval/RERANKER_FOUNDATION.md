@@ -39,6 +39,10 @@ Tests assert each of:
 - Does **not** wire itself into `handleLegalRequest`. The multi-tier gateway can compose `rerankCandidates` over its `final_candidates` when `ITERLAW_RERANKER_ENABLED=true`; that wiring is a future sprint under change control.
 - Does **not** assert any production relevance improvement.
 
+## Sprint 28 follow-up
+
+Sprint 28 wires the reranker into `runMultiTierRetrievalGateway`. See `docs/iterlaw/architecture/ITERLAW_RERANKER_POLICY.md` "Sprint 28 — wired into the multi-tier retrieval gateway" and `reports/ITERLAW_SPRINT_28_RERANKER_GATEWAY_WIRING.md`. Tests at `apps/legal-orchestrator/src/tests/rerankerGatewayFlag.test.ts`.
+
 ## Architecture cross-reference
 
 [`docs/iterlaw/architecture/ITERLAW_RERANKER_POLICY.md`](../../architecture/ITERLAW_RERANKER_POLICY.md).

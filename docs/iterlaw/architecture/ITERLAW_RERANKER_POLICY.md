@@ -48,3 +48,14 @@ The caller is responsible for including these in the audit envelope when telemet
 - No embedding-based similarity reranking.
 - No LLM-as-rerank judge.
 - No production relevance claim — this is a deterministic foundation that future sprints can benchmark against a human-graded golden set.
+
+## Sprint 28 — wired into the multi-tier retrieval gateway
+
+`runMultiTierRetrievalGateway` now applies `rerankCandidates` over the planner's `finalCandidates` when `ITERLAW_RERANKER_ENABLED=true` AND at least two candidates survive the trust + freshness filters. Behaviour:
+
+- Flag OFF → no reranker is invoked; decision trace contains no `reranker_gateway:*` codes.
+- Flag ON + ≥2 candidates → reranker reorders; decision trace adds `reranker_gateway:applied` + `reranker_gateway:count:<n>`.
+- Flag ON + <2 candidates → reranker skipped; trace adds `reranker_gateway:skipped:not_enough_candidates`.
+- Reranker throwing → caught; trace adds `reranker_gateway:error` and the original ordering is preserved (defensive fall-through).
+
+6 vitest cases at `apps/legal-orchestrator/src/tests/rerankerGatewayFlag.test.ts`.

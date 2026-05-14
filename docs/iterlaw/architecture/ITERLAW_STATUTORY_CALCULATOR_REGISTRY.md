@@ -1,6 +1,6 @@
 # IterLaw Statutory Calculator Registry (UK Employment)
 
-> Foundation only. **Every calculator is `status: "planned"`.** No calculator is implemented by this sprint.
+> Sprint 20 foundation: 8 calculators registered, all PLANNED. **Sprint 21 update: `statutory_redundancy_pay` is now `implemented`** (deterministic, source-required). The other 7 calculators remain PLANNED.
 
 Implementation: `apps/legal-orchestrator/src/legalRules/statutoryCalculatorRegistry.ts`.
 
@@ -25,8 +25,15 @@ Implementation: `apps/legal-orchestrator/src/legalRules/statutoryCalculatorRegis
 - Every entry remains `status: "planned"` (no false claim of implementation).
 - Every `officialSource` points at `legislation.gov.uk`, `gov.uk`, or `judiciary.uk` (other hosts are rejected at compile-time grep — drift would fail the test).
 
+## Sprint 21 — statutory_redundancy_pay implementation
+
+- `apps/legal-orchestrator/src/legalRules/redundancyPayCalculator.ts` — pure deterministic function `calculateStatutoryRedundancyPay(input, opts)` implementing ERA 1996 s162.
+- `apps/legal-orchestrator/src/legalRules/statutoryRates.ts` — versioned cap registry (effective_from / effective_to). **Ships EMPTY by default.** Operators must add entries with real `source` URLs.
+- `apps/legal-orchestrator/src/tests/redundancyPayCalculator.test.ts` — 15 vitest cases covering refusals, arithmetic, age-band walk, 20-year cap, weekly-pay cap, full-year truncation, zero / boundary cases.
+- Refusal contract: when no statutory weekly-pay cap covers the supplied `effectiveDate`, the calculator returns `{ ok: false, reason: "needs_verified_rate" }` and refuses to guess.
+
 ## Out of scope
 
-- No calculator function exists.
-- No `database` field — values that vary by date (statutory rate caps, NMW bands, Vento bands) require a separate sprint that builds a `statutory_rate` table with `effective_from` / `effective_to`.
+- No DB-backed `statutory_rate` table — the rate registry is a Typescript module the operator supplies entries to.
 - No production write.
+- The other seven calculators remain PLANNED.

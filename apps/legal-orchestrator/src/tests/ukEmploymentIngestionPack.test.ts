@@ -143,10 +143,19 @@ describe("Sprint 20 — statutory calculator registry", () => {
     }
   });
 
-  it("every calculator is status=planned and points at an official source", () => {
+  it("every calculator points at an official source", () => {
     for (const c of UK_EMPLOYMENT_STATUTORY_CALCULATORS) {
-      expect(c.status, `${c.calculatorId} must remain planned until implemented`).toBe("planned");
       expect(c.officialSource).toMatch(/^https:\/\/(www\.legislation\.gov\.uk|www\.gov\.uk|www\.judiciary\.uk)\//);
+    }
+  });
+
+  it("only statutory_redundancy_pay is implemented (Sprint 21); every other calculator stays planned", () => {
+    for (const c of UK_EMPLOYMENT_STATUTORY_CALCULATORS) {
+      if (c.calculatorId === "statutory_redundancy_pay") {
+        expect(c.status, `${c.calculatorId} is implemented in Sprint 21`).toBe("implemented");
+      } else {
+        expect(c.status, `${c.calculatorId} must remain planned until implemented`).toBe("planned");
+      }
     }
   });
 

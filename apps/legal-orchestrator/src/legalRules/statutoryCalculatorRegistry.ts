@@ -31,8 +31,8 @@ export const UK_EMPLOYMENT_STATUTORY_CALCULATORS: ReadonlyArray<StatutoryCalcula
     title: "Statutory redundancy pay",
     inputs: ["age", "years_of_service", "weekly_pay", "effective_date"],
     officialSource: "https://www.gov.uk/calculate-your-redundancy-pay",
-    status: "planned",
-    notes: "Section 162 ERA 1996; subject to statutory cap (weekly_pay) at the effective date.",
+    status: "implemented",
+    notes: "Section 162 ERA 1996; subject to statutory cap (weekly_pay) at the effective date. Implemented in Sprint 21 — `apps/legal-orchestrator/src/legalRules/redundancyPayCalculator.ts` (15 vitest cases). Default statutory rates registry ships EMPTY; operator must supply verified cap entries.",
   },
   {
     calculatorId: "notice_period",

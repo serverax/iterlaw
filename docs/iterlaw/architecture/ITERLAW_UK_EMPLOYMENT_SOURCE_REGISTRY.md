@@ -50,8 +50,19 @@ Pure function. No network. No DB. No external LLM.
 - legal sources additionally require `effective_from` or `effective_to`; missing → `needs_review` (not blocked, but flagged).
 - returns typed `{ ok: false, reasons: [...] }` or `{ ok: true, level: "fully_cited" | "needs_review" }`.
 
+## Unified ingestion pipeline policy gate (Sprint 20A)
+
+`evaluateIngestionPipelinePolicy(candidate)` combines the URL-allowlist gate and the citation-metadata gate into a single decision so an ingestion runner can refuse a candidate up-front with one call:
+
+- success → `{ ok: true, level: "fully_cited" | "needs_review", host, reasonCodes }`.
+- failure at URL step → `{ ok: false, blockedBy: "url", reasonCodes: ["url_unapproved_host" | "url_non_https" | "url_unparseable"] }`.
+- failure at metadata step → `{ ok: false, blockedBy: "metadata", reasonCodes: [...] }`.
+
+Pure function. No network. No DB. No external LLM. Exported from `apps/legal-orchestrator/src/ingestion/index.ts`. 10 vitest cases at `apps/legal-orchestrator/src/tests/ingestionPipelinePolicyGate.test.ts`.
+
 ## Out of scope (deliberately)
 
 - **No scraping or fetch is performed by this pack.** The allowlist + policy gate exist so a future ingestion sprint can implement a fetch path that the policy gate guards.
-- **No production DB write.** No migration is added in Sprint 20.
+- **No production DB write.** No migration is added in Sprint 20 or Sprint 20A.
 - **No claim that the corpus is ingested.** This pack lists allowed hosts and validates citation metadata; it does not ingest content.
+- **Sprint 20A does not modify `runIngestionPipeline`** — the gate is exposed for downstream use; integration into the runtime ingestion runner remains a future, change-controlled sprint.

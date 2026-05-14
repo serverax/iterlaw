@@ -35,6 +35,33 @@ Cross-reference:
 
 ## Next steps (future sprints)
 
-- Sprint 20.x — integrate `evaluateIngestionPolicy` + `evaluateCitationMetadata` into the existing ingestion pipeline.
+- Sprint 20.x — integrate `evaluateIngestionPolicy` + `evaluateCitationMetadata` into the existing ingestion pipeline. **DONE** in Sprint 20A (see below).
 - Sprint 20.y — implement the first calculator (`statutory_redundancy_pay`) with a `statutory_rate` history table.
 - Sprint 20.z — corpus seed against the allowlisted hosts under change control.
+
+---
+
+## Sprint 20A addendum — Unified ingestion policy gate
+
+**Status:** PASS (foundation wiring; no live fetch, no DB write).
+
+**What landed:**
+
+- `apps/legal-orchestrator/src/ingestion/ingestionPipelinePolicyGate.ts` — pure function `evaluateIngestionPipelinePolicy(candidate)` combining the Sprint 20 URL allowlist gate with the Sprint 20 citation metadata gate into a single decision.
+- `apps/legal-orchestrator/src/tests/ingestionPipelinePolicyGate.test.ts` — 10 vitest cases.
+- `apps/legal-orchestrator/src/ingestion/index.ts` — re-exports the new gate.
+
+**Behaviour:**
+
+- Returns `{ ok: true, level: "fully_cited", host, reasonCodes: [] }` for an allowlisted official legal source with complete metadata.
+- Returns `{ ok: true, level: "needs_review", host, reasonCodes: ["metadata_needs_review"] }` for an allowlisted legal source missing an effective date.
+- Returns `{ ok: false, blockedBy: "url", reasonCodes: ["url_unapproved_host" | "url_non_https" | "url_unparseable"] }` for URL-policy failures.
+- Returns `{ ok: false, blockedBy: "metadata", reasonCodes: [...underlying CitationPolicyOutcome reasons] }` for metadata failures.
+- Does **not** call `fetch`, `axios`, `http`, `https`. Does **not** touch the DB. Does **not** call any external LLM. Does **not** wire itself into `runIngestionPipeline` yet — the gate is exposed for use by future ingestion-runner changes under their own change control.
+
+**Acceptance evidence:**
+
+- `npx vitest run src/tests/ingestionPipelinePolicyGate.test.ts` → 10 / 10 PASS.
+- Full orchestrator vitest grew from 78 / 978 to 79 / 988 (`+1 file / +10 tests`).
+
+**Sprint 20A report:** `reports/ITERLAW_SPRINT_20A_INGESTION_POLICY_GATE_WIRING.md`.

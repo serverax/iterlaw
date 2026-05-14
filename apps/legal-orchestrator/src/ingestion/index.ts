@@ -11,3 +11,4 @@ export * from "./runIngestionPlan";
 export * from "./cliRunner";
 export * from "./citationExtractor";
 export * from "./ingestionPipeline";
+export * from "./ingestionPipelinePolicyGate";

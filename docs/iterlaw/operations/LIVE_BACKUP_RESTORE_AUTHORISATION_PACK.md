@@ -123,7 +123,7 @@ If you are the operator AND the reviewer, the live run is **postponed** until a 
 - Real passwords / API keys / tokens.
 - Real backup archive paths that contain a credential or a host identifier.
 - Anything that would let a reader of the repo reconstruct the production target.
-- Any field whose value resembles `BEGIN RSA PRIVATE KEY` / `BEGIN OPENSSH PRIVATE KEY` / `ghp_…` / `sk-…` / `AKIA…` / `AIza…`.
+- Any field whose value resembles PEM private-key material (classic RSA or OpenSSH key block headers), GitHub PATs (`ghp_…`), OpenAI-style keys (`sk-…`), AWS access keys (`AKIA…`), or Google API keys (`AIza…`).
 
 ## 13. Companion files (in this commit)
 

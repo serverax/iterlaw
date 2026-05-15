@@ -58,5 +58,5 @@
 - Real DSNs.
 - Real passwords / API keys / tokens.
 - Production hostnames or IPs.
-- Anything that resembles `BEGIN RSA PRIVATE KEY` / `BEGIN OPENSSH PRIVATE KEY` / `ghp_…` / `sk-…` / `AKIA…` / `AIza…`.
+- Anything that resembles PEM private-key material (RSA or OpenSSH key block headers), GitHub PATs (`ghp_…`), OpenAI-style keys (`sk-…`), AWS access keys (`AKIA…`), or Google API keys (`AIza…`).
 - Restored row content beyond counts.

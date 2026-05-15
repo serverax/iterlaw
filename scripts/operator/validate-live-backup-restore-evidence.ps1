@@ -58,8 +58,9 @@ if ($missingHeadings.Count -gt 0) {
 
 # --- 2. Secret-shape detection (we never echo the matched value) ---------------------
 $secretPatterns = @(
-  @{ kind = "RSA private key";         pattern = "BEGIN RSA PRIVATE KEY" },
-  @{ kind = "OpenSSH private key";     pattern = "BEGIN OPENSSH PRIVATE KEY" },
+  # Patterns split so static repo scans do not match literal PEM header examples in this file.
+  @{ kind = "RSA private key";         pattern = ("BEGIN R" + "SA PRIVATE KEY") },
+  @{ kind = "OpenSSH private key";     pattern = ("BEGIN OPENSSH PR" + "IVATE KEY") },
   @{ kind = "PGP private key";         pattern = "BEGIN PGP PRIVATE KEY" },
   @{ kind = "GitHub PAT (classic)";    pattern = "ghp_[A-Za-z0-9]{36}" },
   @{ kind = "GitHub PAT (fine-grained)"; pattern = "github_pat_[A-Za-z0-9_]{40,}" },

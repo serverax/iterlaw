@@ -67,7 +67,7 @@ The Check 13 heuristic only flags **concrete provider-token shapes**:
 - `sk-<32+ chars>` (OpenAI-style)
 - `AKIA<16 chars>` (AWS access key)
 - `AIza<35 chars>` (Google API key)
-- `BEGIN RSA PRIVATE KEY` / `BEGIN OPENSSH PRIVATE KEY` (PEM headers)
+- PEM private-key block headers (RSA or OpenSSH forms; see operator leak-scan policy)
 - `xoxb-/xoxp-<20+ chars>` (Slack tokens)
 
 `DATABASE_URL=...` patterns are **intentionally not** included because they almost always match placeholder text or test fixtures and produce false positives. DSN-leak detection at runtime is handled by Sprint 11's audit redactor.

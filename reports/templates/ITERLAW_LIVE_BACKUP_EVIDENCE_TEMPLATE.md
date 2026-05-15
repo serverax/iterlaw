@@ -48,5 +48,5 @@
 - Real DSNs.
 - Real passwords / API keys / tokens.
 - Real backup paths that embed credentials.
-- Anything that resembles `BEGIN RSA PRIVATE KEY` / `BEGIN OPENSSH PRIVATE KEY` / `ghp_…` / `sk-…` / `AKIA…` / `AIza…`.
+- Anything that resembles PEM private-key material (RSA or OpenSSH key block headers), GitHub PATs (`ghp_…`), OpenAI-style keys (`sk-…`), AWS access keys (`AKIA…`), or Google API keys (`AIza…`).
 - Anything that would let a reader of the repo reconstruct a production target.

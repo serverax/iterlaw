@@ -4,6 +4,8 @@ import type {
   LawAnalysisResult,
   LawChecklistItem,
   LawChecklistResult,
+  LawFinalizationResult,
+  LawReadinessLevel,
   LawRefinementResult,
   LawRiskBand,
   Zone2LawService,
@@ -49,6 +51,25 @@ function stableChecklistId(input: AnonymizedLawCaseInput, riskBand: LawRiskBand)
   return createHash("sha256").update(canonical, "utf8").digest("hex").slice(0, 20);
 }
 
+/** Must match `readinessFromRiskBand` in lawEnginePhase5.ts. */
+function readinessFromRiskStub(riskBand: LawRiskBand): LawReadinessLevel {
+  if (riskBand === "LOW") return "DRAFT";
+  if (riskBand === "MEDIUM") return "REVIEW";
+  return "COURT_READY";
+}
+
+function stablePackId(input: AnonymizedLawCaseInput, checklistId: string, riskBand: LawRiskBand): string {
+  const canonical = JSON.stringify([
+    input.employeeToken,
+    input.companyToken,
+    input.situationType,
+    input.yearsOfService,
+    checklistId,
+    riskBand,
+  ]);
+  return createHash("sha256").update(canonical, "utf8").digest("hex").slice(0, 24);
+}
+
 /**
  * Deterministic Zone 2 stub — same anonymized input yields same analysisId and confidence.
  * No network I/O.
@@ -85,5 +106,19 @@ export class Zone2LawServiceStub implements Zone2LawService {
       items.push({ id: `chk-${riskBand}-${i}`, label: `UK_EMP_CHECKLIST_${riskBand}_${i}` });
     }
     return { checklistId: stableChecklistId(input, riskBand), items };
+  }
+
+  async finalizeEngagementPack(
+    input: AnonymizedLawCaseInput,
+    checklistId: string,
+    riskBand: LawRiskBand,
+  ): Promise<LawFinalizationResult> {
+    const readinessLevel = readinessFromRiskStub(riskBand);
+    const packId = stablePackId(input, checklistId, riskBand);
+    const digest = createHash("sha256")
+      .update(`${packId}|${readinessLevel}`, "utf8")
+      .digest("hex")
+      .slice(0, 16);
+    return { packId, readinessLevel, digest };
   }
 }

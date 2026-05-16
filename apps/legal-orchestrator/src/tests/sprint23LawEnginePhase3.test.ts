@@ -164,6 +164,9 @@ describe("Sprint 23 — LawEnginePhase3Band", () => {
       async buildComplianceChecklist(input, riskBand) {
         return new Zone2LawServiceStub().buildComplianceChecklist(input, riskBand);
       },
+      async finalizeEngagementPack(input, checklistId, riskBand) {
+        return new Zone2LawServiceStub().finalizeEngagementPack(input, checklistId, riskBand);
+      },
     };
     const band = new LawEnginePhase3Band(zone2);
     await band.analyze({
@@ -191,6 +194,9 @@ describe("Sprint 23 — LawEnginePhase3Band", () => {
       },
       async buildComplianceChecklist(input, riskBand) {
         return new Zone2LawServiceStub().buildComplianceChecklist(input, riskBand);
+      },
+      async finalizeEngagementPack(input, checklistId, riskBand) {
+        return new Zone2LawServiceStub().finalizeEngagementPack(input, checklistId, riskBand);
       },
     };
     const band = new LawEnginePhase3Band(bad);

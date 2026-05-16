@@ -95,6 +95,9 @@ describe("Sprint 24 — LawEnginePhase4Band", () => {
         return new Zone2LawServiceStub().refineLawBand(input, fused);
       },
       buildComplianceChecklist: checklist,
+      async finalizeEngagementPack(input, checklistId, riskBand) {
+        return new Zone2LawServiceStub().finalizeEngagementPack(input, checklistId, riskBand);
+      },
     };
     const band = new LawEnginePhase4Band(zone2);
     await band.analyze({

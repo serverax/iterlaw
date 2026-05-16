@@ -221,6 +221,9 @@ describe("Sprint 22 — LawEnginePhase2Band integration", () => {
       async buildComplianceChecklist() {
         return { checklistId: "c-custom", items: [{ id: "1", label: "L" }] };
       },
+      async finalizeEngagementPack(input, checklistId, riskBand) {
+        return new Zone2LawServiceStub().finalizeEngagementPack(input, checklistId, riskBand);
+      },
     };
     const band = new LawEnginePhase2Band(custom);
     const out = await band.analyze({

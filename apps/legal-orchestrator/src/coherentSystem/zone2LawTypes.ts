@@ -67,6 +67,21 @@ export interface UserFacingLawPhase4Result extends UserFacingLawPhase3Result {
   readonly checklistItems: readonly LawChecklistItem[];
 }
 
+export type LawReadinessLevel = "DRAFT" | "REVIEW" | "COURT_READY";
+
+export interface LawFinalizationResult {
+  readonly packId: string;
+  readonly readinessLevel: LawReadinessLevel;
+  /** Short deterministic digest (hex), token-safe. */
+  readonly digest: string;
+}
+
+export interface UserFacingLawPhase5Result extends UserFacingLawPhase4Result {
+  readonly packId: string;
+  readonly readinessLevel: LawReadinessLevel;
+  readonly packDigest: string;
+}
+
 export interface AnonymizeLawCaseResult {
   readonly anonymized: AnonymizedLawCaseInput;
   /** Token → short display label for user-facing copy (Zone 1 only). */
@@ -77,4 +92,9 @@ export interface Zone2LawService {
   analyzeLaw(input: AnonymizedLawCaseInput): Promise<LawAnalysisResult>;
   refineLawBand(input: AnonymizedLawCaseInput, fusedScore: number): Promise<LawRefinementResult>;
   buildComplianceChecklist(input: AnonymizedLawCaseInput, riskBand: LawRiskBand): Promise<LawChecklistResult>;
+  finalizeEngagementPack(
+    input: AnonymizedLawCaseInput,
+    checklistId: string,
+    riskBand: LawRiskBand,
+  ): Promise<LawFinalizationResult>;
 }

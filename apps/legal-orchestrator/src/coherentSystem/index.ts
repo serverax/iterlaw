@@ -24,6 +24,7 @@ export * from "./wasmMerkleCommitmentPhase6.js";
 export * from "./wasmZkpVerificationPhase7.js";
 export * from "./wasmLedgerIntegrationPhase8.js";
 export * from "./wasmAggregationPhase9.js";
+export * from "./wasmDisputeResolutionPhase10.js";
 export * from "./workspaceTemporalBand.js";
 export * from "./documentIntelBand.js";
 export * from "./zone2LawTypes.js";
@@ -58,6 +59,7 @@ import { WasmMerkleCommitmentPhase6Band } from "./wasmMerkleCommitmentPhase6.js"
 import { WasmZkpVerificationPhase7Band } from "./wasmZkpVerificationPhase7.js";
 import { WasmLedgerIntegrationPhase8Band } from "./wasmLedgerIntegrationPhase8.js";
 import { WasmAggregationPhase9Band } from "./wasmAggregationPhase9.js";
+import { WasmDisputeResolutionPhase10Band } from "./wasmDisputeResolutionPhase10.js";
 
 const zone2Retrieval = new Zone2RetrievalServiceStub();
 const retrievalOllamaPhase2BandInstance = new RetrievalOllamaPhase2Band(zone2Retrieval);
@@ -136,3 +138,6 @@ export const wasmLedgerIntegrationPhase8Band = new WasmLedgerIntegrationPhase8Ba
 
 /** Sprint 43 — Proof aggregation and compression. */
 export const wasmAggregationPhase9Band = new WasmAggregationPhase9Band(zone2Wasm);
+
+/** Sprint 44 — Case-scoped dispute resolution. */
+export const wasmDisputeResolutionPhase10Band = new WasmDisputeResolutionPhase10Band(zone2Wasm);

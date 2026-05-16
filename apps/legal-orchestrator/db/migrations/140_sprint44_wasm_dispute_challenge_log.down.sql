@@ -1,0 +1,2 @@
+DROP POLICY IF EXISTS wasm_dispute_challenge_log_case_insert ON public.wasm_dispute_challenge_log;
+DROP POLICY IF EXISTS wasm_dispute_challenge_log_case_select ON public.wasm_dispute_challenge_log;

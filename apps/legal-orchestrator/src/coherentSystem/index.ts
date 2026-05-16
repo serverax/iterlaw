@@ -18,6 +18,7 @@ export * from "./zone2WasmStub.js";
 export * from "./wasmSandboxPhase1.js";
 export * from "./wasmProofVerificationPhase2.js";
 export * from "./wasmClientProofPhase3.js";
+export * from "./wasmSignedPackagePhase4.js";
 export * from "./workspaceTemporalBand.js";
 export * from "./documentIntelBand.js";
 export * from "./zone2LawTypes.js";
@@ -46,6 +47,7 @@ import { Zone2WasmServiceStub } from "./zone2WasmStub.js";
 import { WasmSandboxPhase1Band } from "./wasmSandboxPhase1.js";
 import { WasmProofVerificationPhase2Band } from "./wasmProofVerificationPhase2.js";
 import { WasmClientProofPhase3Band } from "./wasmClientProofPhase3.js";
+import { WasmSignedPackagePhase4Band } from "./wasmSignedPackagePhase4.js";
 
 const zone2Retrieval = new Zone2RetrievalServiceStub();
 const retrievalOllamaPhase2BandInstance = new RetrievalOllamaPhase2Band(zone2Retrieval);
@@ -106,3 +108,6 @@ export const wasmProofVerificationPhase2Band = new WasmProofVerificationPhase2Ba
 
 /** Sprint 37 — Client-side proof generation + cache. */
 export const wasmClientProofPhase3Band = new WasmClientProofPhase3Band(zone2Wasm);
+
+/** Sprint 38 — Signed evidence packages (ECDSA/EdDSA stub). */
+export const wasmSignedPackagePhase4Band = new WasmSignedPackagePhase4Band(zone2Wasm);

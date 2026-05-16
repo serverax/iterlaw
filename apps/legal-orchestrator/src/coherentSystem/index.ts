@@ -16,6 +16,7 @@ export * from "./wasmBand.js";
 export * from "./zone2WasmTypes.js";
 export * from "./zone2WasmStub.js";
 export * from "./wasmSandboxPhase1.js";
+export * from "./wasmProofVerificationPhase2.js";
 export * from "./workspaceTemporalBand.js";
 export * from "./documentIntelBand.js";
 export * from "./zone2LawTypes.js";
@@ -42,6 +43,7 @@ import { RetrievalCacheInvalidationPhase8Band } from "./retrievalCacheInvalidati
 import { RetrievalFallbackPhase9Band } from "./retrievalFallbackPhase9.js";
 import { Zone2WasmServiceStub } from "./zone2WasmStub.js";
 import { WasmSandboxPhase1Band } from "./wasmSandboxPhase1.js";
+import { WasmProofVerificationPhase2Band } from "./wasmProofVerificationPhase2.js";
 
 const zone2Retrieval = new Zone2RetrievalServiceStub();
 const retrievalOllamaPhase2BandInstance = new RetrievalOllamaPhase2Band(zone2Retrieval);
@@ -96,3 +98,6 @@ const zone2Wasm = new Zone2WasmServiceStub();
 
 /** Sprint 35 — WASM sandbox (64 KiB memory ceiling). */
 export const wasmSandboxPhase1Band = new WasmSandboxPhase1Band(zone2Wasm);
+
+/** Sprint 36 — Deterministic WASM proof verification. */
+export const wasmProofVerificationPhase2Band = new WasmProofVerificationPhase2Band(zone2Wasm);

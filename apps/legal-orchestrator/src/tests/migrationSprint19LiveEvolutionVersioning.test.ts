@@ -37,4 +37,14 @@ describe("migration 110_sprint19_live_evolution_versioning.sql", () => {
     expect(sql).toMatch(/ab_test_metrics_admin_all/i);
     expect(sql).toMatch(/current_app_user_is_admin\(\)/i);
   });
+
+  it("indexes prompt/rule keys and ab_test_metrics by test_id", () => {
+    expect(sql).toMatch(/idx_prompt_versions_key/i);
+    expect(sql).toMatch(/idx_rule_versions_key/i);
+    expect(sql).toMatch(/idx_ab_test_metrics_test_id/i);
+  });
+
+  it("ab_test_flags carries updated_at for live edits", () => {
+    expect(sql).toMatch(/updated_at\s+TIMESTAMPTZ/i);
+  });
 });

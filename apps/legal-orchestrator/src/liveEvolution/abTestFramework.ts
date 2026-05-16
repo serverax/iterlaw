@@ -1,46 +1,47 @@
-export type SegmentRules = {
-  /** When set, flag applies only to these subscription tiers. */
-  tiers?: string[];
-};
+import type { SubscriptionTier } from "../memberAuth/subscriptionTier.js";
 
-export type AbMetricRow = {
+export interface AbMetricSample {
   testId: string;
   variantVersion: number;
   conversionRate: number;
   errorRate: number;
   recordedAt: string;
-};
+}
+
+type FlagRow = { enabled: boolean; tiers?: SubscriptionTier[] };
 
 /**
- * In-memory A/B flag + metrics (Sprint 19). Aligns with `ab_test_flags` / `ab_test_metrics` tables.
+ * In-memory A/B flag + metric recorder (Sprint 19 slice).
  */
 export class ABTestFramework {
-  private readonly flags = new Map<string, { enabled: boolean; segmentRules: SegmentRules }>();
-  private readonly metrics: AbMetricRow[] = [];
+  private readonly flags = new Map<string, FlagRow>();
+  private readonly metrics: AbMetricSample[] = [];
 
   reset(): void {
     this.flags.clear();
     this.metrics.length = 0;
   }
 
-  setFlag(flagName: string, enabled: boolean, segmentRules: SegmentRules = {}): void {
-    this.flags.set(flagName, { enabled, segmentRules });
+  setFlag(name: string, enabled: boolean, rules: { tiers?: SubscriptionTier[] }): void {
+    this.flags.set(name, {
+      enabled,
+      tiers: rules.tiers ? [...rules.tiers] : undefined,
+    });
   }
 
-  isEnabled(flagName: string, ctx: { tier: string }): boolean {
-    const f = this.flags.get(flagName);
-    if (!f?.enabled) {
+  isEnabled(name: string, ctx: { tier: SubscriptionTier }): boolean {
+    const f = this.flags.get(name);
+    if (!f || !f.enabled) {
       return false;
     }
-    const tiers = f.segmentRules.tiers;
-    if (!tiers || tiers.length === 0) {
+    if (!f.tiers || f.tiers.length === 0) {
       return true;
     }
-    return tiers.includes(ctx.tier);
+    return f.tiers.includes(ctx.tier);
   }
 
   recordMetric(testId: string, variantVersion: number, conversionRate: number, errorRate: number): void {
-    this.metrics.push({
+    this.metrics.unshift({
       testId,
       variantVersion,
       conversionRate,
@@ -49,8 +50,8 @@ export class ABTestFramework {
     });
   }
 
-  listMetrics(testId?: string): AbMetricRow[] {
-    if (!testId) {
+  listMetrics(testId?: string): AbMetricSample[] {
+    if (testId === undefined) {
       return [...this.metrics];
     }
     return this.metrics.filter((m) => m.testId === testId);

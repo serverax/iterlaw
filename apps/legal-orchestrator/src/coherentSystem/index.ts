@@ -13,6 +13,9 @@ export * from "./retrievalBatchPhase7.js";
 export * from "./retrievalCacheInvalidationPhase8.js";
 export * from "./retrievalFallbackPhase9.js";
 export * from "./wasmBand.js";
+export * from "./zone2WasmTypes.js";
+export * from "./zone2WasmStub.js";
+export * from "./wasmSandboxPhase1.js";
 export * from "./workspaceTemporalBand.js";
 export * from "./documentIntelBand.js";
 export * from "./zone2LawTypes.js";
@@ -37,6 +40,8 @@ import { RetrievalQueryOptPhase6Band } from "./retrievalQueryOptPhase6.js";
 import { RetrievalBatchPhase7Band } from "./retrievalBatchPhase7.js";
 import { RetrievalCacheInvalidationPhase8Band } from "./retrievalCacheInvalidationPhase8.js";
 import { RetrievalFallbackPhase9Band } from "./retrievalFallbackPhase9.js";
+import { Zone2WasmServiceStub } from "./zone2WasmStub.js";
+import { WasmSandboxPhase1Band } from "./wasmSandboxPhase1.js";
 
 const zone2Retrieval = new Zone2RetrievalServiceStub();
 const retrievalOllamaPhase2BandInstance = new RetrievalOllamaPhase2Band(zone2Retrieval);
@@ -86,3 +91,8 @@ export const retrievalCacheInvalidationPhase8Band = new RetrievalCacheInvalidati
 
 /** Sprint 34 — Fallback chain HNSW → Ollama → BM25 → static FAQ. */
 export const retrievalFallbackPhase9Band = new RetrievalFallbackPhase9Band(zone2Retrieval);
+
+const zone2Wasm = new Zone2WasmServiceStub();
+
+/** Sprint 35 — WASM sandbox (64 KiB memory ceiling). */
+export const wasmSandboxPhase1Band = new WasmSandboxPhase1Band(zone2Wasm);

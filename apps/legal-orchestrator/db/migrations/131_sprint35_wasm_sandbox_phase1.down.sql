@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS wasm_module_registry_sprint35_admin_all ON public.wasm_module_registry;

@@ -3,7 +3,7 @@
 Generated: 2026-05-16
 Repository: C:\Users\kalsh\projects\iterlaw
 Branch: master
-Latest commit: 9747e80
+Latest commit: e098a54
 0-REM-E tag: pushed to origin
 
 ## Status: COMPLETE / CLEAN
@@ -22,11 +22,11 @@ nothing to commit, working tree clean
 Latest commits:
 
 ```text
+e098a54 fix: clear 0-rem-e launch blockers
+2b29ccb docs: pre-launch gates and Sprints 51-58 clarifications framework
 9747e80 feat(sprint-50): workspace settings and defaults
 5df6088 feat(sprint-49): cross-workspace isolation enforcement
 b6af2db feat(sprint-48): workspace RBAC permission matrix
-9a62bda feat(sprint-47): immutable workspace audit trail
-6ce7aea docs(sprint-46): sprint report
 ```
 
 0-REM tags:

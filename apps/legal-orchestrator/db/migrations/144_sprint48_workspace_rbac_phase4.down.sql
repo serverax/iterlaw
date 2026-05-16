@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS workspace_role_permissions_public_select ON public.workspace_role_permissions;

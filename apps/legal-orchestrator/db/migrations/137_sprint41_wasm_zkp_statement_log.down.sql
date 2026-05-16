@@ -1,0 +1,2 @@
+DROP POLICY IF EXISTS wasm_zkp_statement_log_self_insert ON public.wasm_zkp_statement_log;
+DROP POLICY IF EXISTS wasm_zkp_statement_log_self_select ON public.wasm_zkp_statement_log;

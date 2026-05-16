@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS workspace_isolation_policy_admin_all ON public.workspace_isolation_policy;

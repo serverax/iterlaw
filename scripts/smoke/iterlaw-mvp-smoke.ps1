@@ -1,11 +1,11 @@
 #!/usr/bin/env pwsh
-# Sprint 16 — IterLaw MVP smoke test runner.
+# Sprint 16 - IterLaw MVP smoke test runner.
 #
 # Runs every static and runtime check in
 # docs/iterlaw/project/MVP_SMOKE_TEST_CHECKLIST.md (checks 1-14).
 # Checks 15 and 16 (live /health and /ready) only run if
 # ITERLAW_MVP_SMOKE_RUN_SERVER=1 is set and the operator has the
-# orchestrator running locally — this script does NOT start it.
+# orchestrator running locally - this script does NOT start it.
 #
 # Forbidden / never invoked by this script:
 #   - kubectl (any verb)
@@ -79,11 +79,14 @@ function Add-Result {
 function Run-And-Capture {
   param([string]$shellCmd, [string]$cwd)
   Push-Location $cwd
+  $oldErrorActionPreference = $ErrorActionPreference
   try {
-    $out = (& cmd /c $shellCmd 2>&1 | Out-String).Trim()
+    $ErrorActionPreference = "Continue"
+    $out = (& cmd /c $shellCmd 2>&1 | ForEach-Object { $_.ToString() } | Out-String).Trim()
     $code = $LASTEXITCODE
     return [pscustomobject]@{ output = $out; exit = $code }
   } finally {
+    $ErrorActionPreference = $oldErrorActionPreference
     Pop-Location
   }
 }
@@ -230,7 +233,7 @@ foreach ($p in @($docsRoot, $projectMd)) {
   Get-ChildItem -Path $p -Recurse -File -Include *.md -ErrorAction SilentlyContinue | ForEach-Object {
     Select-String -Path $_.FullName -Pattern "PRODUCTION READY|production ready" -ErrorAction SilentlyContinue | ForEach-Object {
       # Skip if line clearly negates / quotes / counts the claim
-      if ($_.Line -match "Never claim|no claim that|NOT production ready|production readiness.*NO|forbidden|Do not claim|Never use|production ready.*[—-]\s*\*\*NO\*\*|production ready.*NO[;,]") { return }
+      if ($_.Line -match "Never claim|no claim that|NOT production ready|production readiness.*NO|forbidden|Do not claim|Never use|production ready.*(?:\u2014|-)\s*\*\*NO\*\*|production ready.*NO[;,]") { return }
       # Skip lines that report a scan count of 0 or list the pattern as a search target
       if ($_.Line -match "\|\s*0\s*\|" -or $_.Line -match "scan-pattern|leak-scan|leak scan|in updated status docs") { return }
       # Skip the gate doc / status docs / governance docs that record the policy
@@ -279,7 +282,7 @@ $notRunCount  = ($results | Where-Object { $_.status -eq "NOT_RUN" } | Measure-O
 $verdict      = if ($failCount -eq 0) { "PASS" } else { "FAIL" }
 
 $reportLines = @(
-  "# Sprint 16 — MVP smoke test ($ts)",
+  "# Sprint 16 - MVP smoke test ($ts)",
   "",
   "## STATUS: $verdict",
   "",

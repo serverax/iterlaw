@@ -22,6 +22,7 @@ export * from "./wasmSignedPackagePhase4.js";
 export * from "./wasmMemoryEnforcementPhase5.js";
 export * from "./wasmMerkleCommitmentPhase6.js";
 export * from "./wasmZkpVerificationPhase7.js";
+export * from "./wasmLedgerIntegrationPhase8.js";
 export * from "./workspaceTemporalBand.js";
 export * from "./documentIntelBand.js";
 export * from "./zone2LawTypes.js";
@@ -54,6 +55,7 @@ import { WasmSignedPackagePhase4Band } from "./wasmSignedPackagePhase4.js";
 import { WasmMemoryEnforcementPhase5Band } from "./wasmMemoryEnforcementPhase5.js";
 import { WasmMerkleCommitmentPhase6Band } from "./wasmMerkleCommitmentPhase6.js";
 import { WasmZkpVerificationPhase7Band } from "./wasmZkpVerificationPhase7.js";
+import { WasmLedgerIntegrationPhase8Band } from "./wasmLedgerIntegrationPhase8.js";
 
 const zone2Retrieval = new Zone2RetrievalServiceStub();
 const retrievalOllamaPhase2BandInstance = new RetrievalOllamaPhase2Band(zone2Retrieval);
@@ -126,3 +128,6 @@ export const wasmMerkleCommitmentPhase6Band = new WasmMerkleCommitmentPhase6Band
 
 /** Sprint 41 — Zero-knowledge proof verification (Fiat-Shamir stub). */
 export const wasmZkpVerificationPhase7Band = new WasmZkpVerificationPhase7Band(zone2Wasm);
+
+/** Sprint 42 — Ledger sync for Merkle proof references. */
+export const wasmLedgerIntegrationPhase8Band = new WasmLedgerIntegrationPhase8Band(zone2Wasm);

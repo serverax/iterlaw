@@ -6,6 +6,7 @@ export * from "./zone2RetrievalStub.js";
 export * from "./retrievalHNSWPhase1.js";
 export * from "./retrievalOllamaPhase2.js";
 export * from "./retrievalStreamingPhase3.js";
+export * from "./retrievalSpeculativePhase4.js";
 export * from "./wasmBand.js";
 export * from "./workspaceTemporalBand.js";
 export * from "./documentIntelBand.js";
@@ -25,6 +26,7 @@ import { LawEnginePhase5Band } from "./lawEnginePhase5.js";
 import { RetrievalHNSWPhase1Band } from "./retrievalHNSWPhase1.js";
 import { RetrievalOllamaPhase2Band } from "./retrievalOllamaPhase2.js";
 import { RetrievalStreamingPhase3Band } from "./retrievalStreamingPhase3.js";
+import { RetrievalSpeculativePhase4Band } from "./retrievalSpeculativePhase4.js";
 
 const zone2Retrieval = new Zone2RetrievalServiceStub();
 const retrievalOllamaPhase2BandInstance = new RetrievalOllamaPhase2Band(zone2Retrieval);
@@ -51,4 +53,11 @@ export const retrievalOllamaPhase2Band = retrievalOllamaPhase2BandInstance;
 export const retrievalStreamingPhase3Band = new RetrievalStreamingPhase3Band(
   zone2Retrieval,
   retrievalOllamaPhase2BandInstance,
+);
+
+/** Sprint 29 — Speculative draft/verify + Phases 2–3 context. */
+export const retrievalSpeculativePhase4Band = new RetrievalSpeculativePhase4Band(
+  zone2Retrieval,
+  retrievalOllamaPhase2BandInstance,
+  retrievalStreamingPhase3Band,
 );

@@ -3,6 +3,8 @@ import type {
   Zone2HnswBuildSpec,
   Zone2OllamaTtlHint,
   Zone2RetrievalService,
+  Zone2SpeculativeDraft,
+  Zone2SpeculativeVerify,
   Zone2StreamChunk,
 } from "./zone2RetrievalTypes.js";
 import { ollamaCacheTtlMs } from "./retrievalBand.js";
@@ -36,5 +38,31 @@ export class Zone2RetrievalServiceStub implements Zone2RetrievalService {
       return [{ seq: 0, text: "[noop]" }];
     }
     return words.map((w, i) => ({ seq: i, text: w }));
+  }
+
+  async speculativeDecodeDraft(query: string): Promise<Zone2SpeculativeDraft> {
+    const q = query.trim();
+    const words = q ? q.split(/\s+/).filter(Boolean) : [];
+    if (words.length === 0) {
+      return { draftTokens: ["[empty-draft]"] };
+    }
+    return { draftTokens: words.map((w) => `draft:${w}`) };
+  }
+
+  async verifyDraftAgainstVerifier(draft: readonly string[], verifier: string): Promise<Zone2SpeculativeVerify> {
+    const v = verifier.toLowerCase();
+    if (draft.length === 0) {
+      return { acceptanceRate: 0 };
+    }
+    const hits = draft.filter((t) => {
+      const x = t.toLowerCase();
+      if (x.startsWith("draft:")) {
+        const w = x.slice("draft:".length);
+        return v.includes(w);
+      }
+      return v.includes(x);
+    }).length;
+    const rate = hits / draft.length;
+    return { acceptanceRate: Math.min(1, Math.max(0, rate)) };
   }
 }

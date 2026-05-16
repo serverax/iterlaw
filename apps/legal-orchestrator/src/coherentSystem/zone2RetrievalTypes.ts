@@ -27,10 +27,24 @@ export interface Zone2StreamChunk {
   readonly text: string;
 }
 
+/** Sprint 29 — mock draft model output. */
+export interface Zone2SpeculativeDraft {
+  readonly draftTokens: readonly string[];
+}
+
+/** Sprint 29 — mock verifier acceptance. */
+export interface Zone2SpeculativeVerify {
+  readonly acceptanceRate: number;
+}
+
 export interface Zone2RetrievalService {
   suggestRemoteHnswBuild(params: HnswBuildParams): Promise<Zone2HnswBuildSpec>;
   /** Zone 2 Ollama cache TTL suggestion (stub until remote policy service exists). */
   suggestOllamaCacheTtl(model: string): Promise<Zone2OllamaTtlHint>;
   /** Zone 2 chunked Ollama-style response (stub). */
   streamOllamaResponseChunked(query: string): Promise<readonly Zone2StreamChunk[]>;
+  /** Sprint 29 — speculative draft tokens (stub). */
+  speculativeDecodeDraft(query: string): Promise<Zone2SpeculativeDraft>;
+  /** Sprint 29 — draft vs verifier acceptance rate (stub). */
+  verifyDraftAgainstVerifier(draft: readonly string[], verifier: string): Promise<Zone2SpeculativeVerify>;
 }

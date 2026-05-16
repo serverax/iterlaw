@@ -10,7 +10,8 @@ import {
 } from "../coherentSystem/retrievalHNSWPhase1.js";
 import { hnswEfSearchDefault } from "../coherentSystem/retrievalBand.js";
 import { Zone2RetrievalServiceStub } from "../coherentSystem/zone2RetrievalStub.js";
-import type { HnswBuildParams, Zone2RetrievalService } from "../coherentSystem/zone2RetrievalTypes.js";
+import type { HnswBuildParams } from "../coherentSystem/zone2RetrievalTypes.js";
+import { delegatingZone2Retrieval } from "./helpers/zone2RetrievalTestDouble.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const sql122 = readFileSync(join(__dirname, "../../db/migrations/122_sprint26_retrieval_hnsw_setup.sql"), "utf8");
@@ -166,17 +167,11 @@ describe("Sprint 26 — RetrievalHNSWPhase1Band", () => {
   });
 
   it("uses injected Zone2 service", async () => {
-    const zone2: Zone2RetrievalService = {
+    const zone2 = delegatingZone2Retrieval({
       async suggestRemoteHnswBuild() {
         return { remoteIndexId: "fixed-remote", recommendedLists: 100 };
       },
-      async suggestOllamaCacheTtl(model: string) {
-        return new Zone2RetrievalServiceStub().suggestOllamaCacheTtl(model);
-      },
-      async streamOllamaResponseChunked(q: string) {
-        return new Zone2RetrievalServiceStub().streamOllamaResponseChunked(q);
-      },
-    };
+    });
     const band = new RetrievalHNSWPhase1Band(zone2);
     const plan = await band.planBuild({
       laneId: "x",
@@ -195,7 +190,7 @@ describe("Sprint 26 — RetrievalHNSWPhase1Band", () => {
     const spy = vi.fn(async (p: HnswBuildParams) => {
       return new Zone2RetrievalServiceStub().suggestRemoteHnswBuild(p);
     });
-    const zone2: Zone2RetrievalService = { suggestRemoteHnswBuild: spy, suggestOllamaCacheTtl: (m) => new Zone2RetrievalServiceStub().suggestOllamaCacheTtl(m), streamOllamaResponseChunked: (q) => new Zone2RetrievalServiceStub().streamOllamaResponseChunked(q) };
+    const zone2 = delegatingZone2Retrieval({ suggestRemoteHnswBuild: spy });
     const band = new RetrievalHNSWPhase1Band(zone2);
     const params: HnswBuildParams = {
       laneId: "lane",

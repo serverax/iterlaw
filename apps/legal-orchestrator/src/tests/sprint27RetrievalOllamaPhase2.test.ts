@@ -9,7 +9,7 @@ import {
 } from "../coherentSystem/retrievalOllamaPhase2.js";
 import { ollamaCacheTtlMs } from "../coherentSystem/retrievalBand.js";
 import { Zone2RetrievalServiceStub } from "../coherentSystem/zone2RetrievalStub.js";
-import type { Zone2RetrievalService } from "../coherentSystem/zone2RetrievalTypes.js";
+import { delegatingZone2Retrieval } from "./helpers/zone2RetrievalTestDouble.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const sql123 = readFileSync(join(__dirname, "../../db/migrations/123_sprint27_retrieval_ollama_phase2.sql"), "utf8");
@@ -95,17 +95,11 @@ describe("Sprint 27 — RetrievalOllamaPhase2Band", () => {
   });
 
   it("injected zone2 overrides ttl", async () => {
-    const zone2: Zone2RetrievalService = {
-      async suggestRemoteHnswBuild(p) {
-        return new Zone2RetrievalServiceStub().suggestRemoteHnswBuild(p);
-      },
+    const zone2 = delegatingZone2Retrieval({
       async suggestOllamaCacheTtl() {
         return { ttlMs: 10_000 };
       },
-      async streamOllamaResponseChunked(q) {
-        return new Zone2RetrievalServiceStub().streamOllamaResponseChunked(q);
-      },
-    };
+    });
     const band = new RetrievalOllamaPhase2Band(zone2);
     const plan = await band.planCacheTtl("anything");
     expect(plan.zone2TtlMs).toBe(10_000);
@@ -114,15 +108,9 @@ describe("Sprint 27 — RetrievalOllamaPhase2Band", () => {
 
   it("spy on suggestOllamaCacheTtl", async () => {
     const spy = vi.fn(async (m: string) => new Zone2RetrievalServiceStub().suggestOllamaCacheTtl(m));
-    const zone2: Zone2RetrievalService = {
-      async suggestRemoteHnswBuild(p) {
-        return new Zone2RetrievalServiceStub().suggestRemoteHnswBuild(p);
-      },
+    const zone2 = delegatingZone2Retrieval({
       suggestOllamaCacheTtl: spy,
-      async streamOllamaResponseChunked(q) {
-        return new Zone2RetrievalServiceStub().streamOllamaResponseChunked(q);
-      },
-    };
+    });
     const band = new RetrievalOllamaPhase2Band(zone2);
     await band.planCacheTtl("model-x");
     expect(spy).toHaveBeenCalledWith("model-x");
@@ -167,17 +155,11 @@ describe("Sprint 27 — stub vs zone1 for 13b model", () => {
 describe("Sprint 27 — merge when zone2 equals zone1 edge", () => {
   it("custom zone2 same as z1 yields merged z1", async () => {
     const z1 = ollamaCacheTtlMs("llama3");
-    const zone2: Zone2RetrievalService = {
-      async suggestRemoteHnswBuild(p) {
-        return new Zone2RetrievalServiceStub().suggestRemoteHnswBuild(p);
-      },
+    const zone2 = delegatingZone2Retrieval({
       async suggestOllamaCacheTtl() {
         return { ttlMs: z1 };
       },
-      async streamOllamaResponseChunked(q) {
-        return new Zone2RetrievalServiceStub().streamOllamaResponseChunked(q);
-      },
-    };
+    });
     const band = new RetrievalOllamaPhase2Band(zone2);
     const plan = await band.planCacheTtl("llama3");
     expect(plan.mergedTtlMs).toBe(z1);

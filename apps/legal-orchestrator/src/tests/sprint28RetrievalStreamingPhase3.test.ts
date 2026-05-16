@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { RetrievalStreamingPhase3Band } from "../coherentSystem/retrievalStreamingPhase3.js";
 import { RetrievalOllamaPhase2Band } from "../coherentSystem/retrievalOllamaPhase2.js";
 import { Zone2RetrievalServiceStub } from "../coherentSystem/zone2RetrievalStub.js";
-import type { Zone2RetrievalService } from "../coherentSystem/zone2RetrievalTypes.js";
+import { delegatingZone2Retrieval } from "./helpers/zone2RetrievalTestDouble.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const sql124 = readFileSync(join(__dirname, "../../db/migrations/124_sprint28_retrieval_streaming_phase3.sql"), "utf8");
@@ -96,15 +96,9 @@ describe("Sprint 28 — RetrievalStreamingPhase3Band", () => {
 
   it("spy on streamOllamaResponseChunked", async () => {
     const spy = vi.fn(async (q: string) => new Zone2RetrievalServiceStub().streamOllamaResponseChunked(q));
-    const zone2: Zone2RetrievalService = {
-      async suggestRemoteHnswBuild(p) {
-        return new Zone2RetrievalServiceStub().suggestRemoteHnswBuild(p);
-      },
-      async suggestOllamaCacheTtl(m) {
-        return new Zone2RetrievalServiceStub().suggestOllamaCacheTtl(m);
-      },
+    const zone2 = delegatingZone2Retrieval({
       streamOllamaResponseChunked: spy,
-    };
+    });
     const band = new RetrievalStreamingPhase3Band(zone2, new RetrievalOllamaPhase2Band(zone2));
     await band.streamResponseChunks({ model: "m", query: "one two", requestId: "00000000-0000-4000-8000-000000000002" });
     expect(spy).toHaveBeenCalledWith("one two");
@@ -162,20 +156,14 @@ describe("Sprint 28 — single word", () => {
 
 describe("Sprint 28 — custom stream chunks", () => {
   it("uses injected stream", async () => {
-    const zone2: Zone2RetrievalService = {
-      async suggestRemoteHnswBuild(p) {
-        return new Zone2RetrievalServiceStub().suggestRemoteHnswBuild(p);
-      },
-      async suggestOllamaCacheTtl(m) {
-        return new Zone2RetrievalServiceStub().suggestOllamaCacheTtl(m);
-      },
+    const zone2 = delegatingZone2Retrieval({
       async streamOllamaResponseChunked() {
         return [
           { seq: 0, text: "A" },
           { seq: 1, text: "B" },
         ];
       },
-    };
+    });
     const band = new RetrievalStreamingPhase3Band(zone2, new RetrievalOllamaPhase2Band(zone2));
     const out = await band.streamResponseChunks({
       model: "x",

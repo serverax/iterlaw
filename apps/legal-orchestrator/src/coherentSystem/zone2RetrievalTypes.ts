@@ -22,8 +22,15 @@ export interface Zone2OllamaTtlHint {
   readonly ttlMs: number;
 }
 
+export interface Zone2StreamChunk {
+  readonly seq: number;
+  readonly text: string;
+}
+
 export interface Zone2RetrievalService {
   suggestRemoteHnswBuild(params: HnswBuildParams): Promise<Zone2HnswBuildSpec>;
   /** Zone 2 Ollama cache TTL suggestion (stub until remote policy service exists). */
   suggestOllamaCacheTtl(model: string): Promise<Zone2OllamaTtlHint>;
+  /** Zone 2 chunked Ollama-style response (stub). */
+  streamOllamaResponseChunked(query: string): Promise<readonly Zone2StreamChunk[]>;
 }

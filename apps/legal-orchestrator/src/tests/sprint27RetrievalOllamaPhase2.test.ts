@@ -102,6 +102,9 @@ describe("Sprint 27 — RetrievalOllamaPhase2Band", () => {
       async suggestOllamaCacheTtl() {
         return { ttlMs: 10_000 };
       },
+      async streamOllamaResponseChunked(q) {
+        return new Zone2RetrievalServiceStub().streamOllamaResponseChunked(q);
+      },
     };
     const band = new RetrievalOllamaPhase2Band(zone2);
     const plan = await band.planCacheTtl("anything");
@@ -116,6 +119,9 @@ describe("Sprint 27 — RetrievalOllamaPhase2Band", () => {
         return new Zone2RetrievalServiceStub().suggestRemoteHnswBuild(p);
       },
       suggestOllamaCacheTtl: spy,
+      async streamOllamaResponseChunked(q) {
+        return new Zone2RetrievalServiceStub().streamOllamaResponseChunked(q);
+      },
     };
     const band = new RetrievalOllamaPhase2Band(zone2);
     await band.planCacheTtl("model-x");
@@ -167,6 +173,9 @@ describe("Sprint 27 — merge when zone2 equals zone1 edge", () => {
       },
       async suggestOllamaCacheTtl() {
         return { ttlMs: z1 };
+      },
+      async streamOllamaResponseChunked(q) {
+        return new Zone2RetrievalServiceStub().streamOllamaResponseChunked(q);
       },
     };
     const band = new RetrievalOllamaPhase2Band(zone2);

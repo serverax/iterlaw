@@ -1,0 +1,4 @@
+DROP POLICY IF EXISTS retrieval_streaming_queue_admin_delete ON public.retrieval_streaming_response_queue;
+DROP POLICY IF EXISTS retrieval_streaming_queue_self_insert ON public.retrieval_streaming_response_queue;
+DROP POLICY IF EXISTS retrieval_streaming_queue_self_select ON public.retrieval_streaming_response_queue;
+DROP TABLE IF EXISTS public.retrieval_streaming_response_queue;

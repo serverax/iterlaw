@@ -3,6 +3,7 @@ import type {
   Zone2HnswBuildSpec,
   Zone2OllamaTtlHint,
   Zone2RetrievalService,
+  Zone2StreamChunk,
 } from "./zone2RetrievalTypes.js";
 import { ollamaCacheTtlMs } from "./retrievalBand.js";
 
@@ -26,5 +27,14 @@ export class Zone2RetrievalServiceStub implements Zone2RetrievalService {
     const base = ollamaCacheTtlMs(model);
     const ttlMs = Math.max(60_000, base - 3_600_000);
     return { ttlMs };
+  }
+
+  async streamOllamaResponseChunked(query: string): Promise<readonly Zone2StreamChunk[]> {
+    const q = query.trim();
+    const words = q ? q.split(/\s+/).filter(Boolean) : [];
+    if (words.length === 0) {
+      return [{ seq: 0, text: "[noop]" }];
+    }
+    return words.map((w, i) => ({ seq: i, text: w }));
   }
 }

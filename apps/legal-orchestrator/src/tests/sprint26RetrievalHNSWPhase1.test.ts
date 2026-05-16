@@ -173,6 +173,9 @@ describe("Sprint 26 — RetrievalHNSWPhase1Band", () => {
       async suggestOllamaCacheTtl(model: string) {
         return new Zone2RetrievalServiceStub().suggestOllamaCacheTtl(model);
       },
+      async streamOllamaResponseChunked(q: string) {
+        return new Zone2RetrievalServiceStub().streamOllamaResponseChunked(q);
+      },
     };
     const band = new RetrievalHNSWPhase1Band(zone2);
     const plan = await band.planBuild({
@@ -192,7 +195,7 @@ describe("Sprint 26 — RetrievalHNSWPhase1Band", () => {
     const spy = vi.fn(async (p: HnswBuildParams) => {
       return new Zone2RetrievalServiceStub().suggestRemoteHnswBuild(p);
     });
-    const zone2: Zone2RetrievalService = { suggestRemoteHnswBuild: spy, suggestOllamaCacheTtl: (m) => new Zone2RetrievalServiceStub().suggestOllamaCacheTtl(m) };
+    const zone2: Zone2RetrievalService = { suggestRemoteHnswBuild: spy, suggestOllamaCacheTtl: (m) => new Zone2RetrievalServiceStub().suggestOllamaCacheTtl(m), streamOllamaResponseChunked: (q) => new Zone2RetrievalServiceStub().streamOllamaResponseChunked(q) };
     const band = new RetrievalHNSWPhase1Band(zone2);
     const params: HnswBuildParams = {
       laneId: "lane",

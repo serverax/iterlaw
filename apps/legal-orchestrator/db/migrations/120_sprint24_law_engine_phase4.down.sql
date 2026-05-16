@@ -1,0 +1,4 @@
+DROP POLICY IF EXISTS law_engine_phase4_checklist_admin_delete ON public.law_engine_phase4_checklist_audit;
+DROP POLICY IF EXISTS law_engine_phase4_checklist_self_insert ON public.law_engine_phase4_checklist_audit;
+DROP POLICY IF EXISTS law_engine_phase4_checklist_self_select ON public.law_engine_phase4_checklist_audit;
+DROP TABLE IF EXISTS public.law_engine_phase4_checklist_audit;

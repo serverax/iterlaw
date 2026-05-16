@@ -2,12 +2,14 @@ import type {
   HnswBuildParams,
   Zone2HnswBuildSpec,
   Zone2LatencyBudget,
+  Zone2OptimizedQueryPlan,
   Zone2OllamaTtlHint,
   Zone2RetrievalService,
   Zone2SpeculativeDraft,
   Zone2SpeculativeVerify,
   Zone2StreamChunk,
 } from "./zone2RetrievalTypes.js";
+import { createHash } from "node:crypto";
 import { ollamaCacheTtlMs } from "./retrievalBand.js";
 
 /**
@@ -71,5 +73,15 @@ export class Zone2RetrievalServiceStub implements Zone2RetrievalService {
     const n = Number.isFinite(requestSize) ? Math.max(0, requestSize) : 0;
     const slaTargetMs = Math.max(250, Math.min(500, 500 - Math.floor(n / 20)));
     return { slaTargetMs };
+  }
+
+  async optimizeQueryRemote(query: string): Promise<Zone2OptimizedQueryPlan> {
+    const fp = createHash("sha256").update(query).digest("hex").slice(0, 24);
+    const estRows = Math.max(1, Math.floor(query.length * 100));
+    return {
+      fingerprint: fp,
+      executionPlan: { op: "seq_scan", table: "legal_chunks_stub", queryLen: query.length },
+      estRows,
+    };
   }
 }

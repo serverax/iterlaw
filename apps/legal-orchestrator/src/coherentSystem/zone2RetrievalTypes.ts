@@ -55,6 +55,11 @@ export interface Zone2BatchRemoteRow {
   readonly summary: string;
 }
 
+/** Sprint 33 — mock invalidation TTL for a cache type key. */
+export interface Zone2InvalidationTtlHint {
+  readonly ttlSeconds: number;
+}
+
 export interface Zone2RetrievalService {
   suggestRemoteHnswBuild(params: HnswBuildParams): Promise<Zone2HnswBuildSpec>;
   /** Zone 2 Ollama cache TTL suggestion (stub until remote policy service exists). */
@@ -71,4 +76,6 @@ export interface Zone2RetrievalService {
   optimizeQueryRemote(query: string): Promise<Zone2OptimizedQueryPlan>;
   /** Sprint 32 — remote batch query execution (stub). */
   processBatchRemote(queries: readonly string[]): Promise<readonly Zone2BatchRemoteRow[]>;
+  /** Sprint 33 — cache invalidation TTL recommendation (stub). */
+  suggestInvalidationTtl(cacheType: string): Promise<Zone2InvalidationTtlHint>;
 }

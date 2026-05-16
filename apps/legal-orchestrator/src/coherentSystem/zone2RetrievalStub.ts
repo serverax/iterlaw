@@ -3,6 +3,7 @@ import type {
   Zone2HnswBuildSpec,
   Zone2LatencyBudget,
   Zone2BatchRemoteRow,
+  Zone2InvalidationTtlHint,
   Zone2OptimizedQueryPlan,
   Zone2OllamaTtlHint,
   Zone2RetrievalService,
@@ -91,5 +92,11 @@ export class Zone2RetrievalServiceStub implements Zone2RetrievalService {
       queryIndex: i,
       summary: q.length === 0 ? "err:empty" : `ok:${q.length}`,
     }));
+  }
+
+  async suggestInvalidationTtl(cacheType: string): Promise<Zone2InvalidationTtlHint> {
+    const key = cacheType.trim().toLowerCase();
+    const base = key.includes("ollama") ? 86_400 : key.includes("hnsw") ? 43_200 : 21_600;
+    return { ttlSeconds: Math.max(300, base) };
   }
 }

@@ -10,6 +10,7 @@ export * from "./retrievalSpeculativePhase4.js";
 export * from "./retrievalLatencySLAPhase5.js";
 export * from "./retrievalQueryOptPhase6.js";
 export * from "./retrievalBatchPhase7.js";
+export * from "./retrievalCacheInvalidationPhase8.js";
 export * from "./wasmBand.js";
 export * from "./workspaceTemporalBand.js";
 export * from "./documentIntelBand.js";
@@ -33,6 +34,7 @@ import { RetrievalSpeculativePhase4Band } from "./retrievalSpeculativePhase4.js"
 import { RetrievalLatencySLAPhase5Band } from "./retrievalLatencySLAPhase5.js";
 import { RetrievalQueryOptPhase6Band } from "./retrievalQueryOptPhase6.js";
 import { RetrievalBatchPhase7Band } from "./retrievalBatchPhase7.js";
+import { RetrievalCacheInvalidationPhase8Band } from "./retrievalCacheInvalidationPhase8.js";
 
 const zone2Retrieval = new Zone2RetrievalServiceStub();
 const retrievalOllamaPhase2BandInstance = new RetrievalOllamaPhase2Band(zone2Retrieval);
@@ -76,3 +78,6 @@ export const retrievalQueryOptPhase6Band = new RetrievalQueryOptPhase6Band(zone2
 
 /** Sprint 32 — Batch query jobs + remote batch stub. */
 export const retrievalBatchPhase7Band = new RetrievalBatchPhase7Band(zone2Retrieval);
+
+/** Sprint 33 — Cache invalidation rules + stale purge. */
+export const retrievalCacheInvalidationPhase8Band = new RetrievalCacheInvalidationPhase8Band(zone2Retrieval);

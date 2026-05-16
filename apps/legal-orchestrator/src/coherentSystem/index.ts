@@ -7,6 +7,7 @@ export * from "./retrievalHNSWPhase1.js";
 export * from "./retrievalOllamaPhase2.js";
 export * from "./retrievalStreamingPhase3.js";
 export * from "./retrievalSpeculativePhase4.js";
+export * from "./retrievalLatencySLAPhase5.js";
 export * from "./wasmBand.js";
 export * from "./workspaceTemporalBand.js";
 export * from "./documentIntelBand.js";
@@ -27,6 +28,7 @@ import { RetrievalHNSWPhase1Band } from "./retrievalHNSWPhase1.js";
 import { RetrievalOllamaPhase2Band } from "./retrievalOllamaPhase2.js";
 import { RetrievalStreamingPhase3Band } from "./retrievalStreamingPhase3.js";
 import { RetrievalSpeculativePhase4Band } from "./retrievalSpeculativePhase4.js";
+import { RetrievalLatencySLAPhase5Band } from "./retrievalLatencySLAPhase5.js";
 
 const zone2Retrieval = new Zone2RetrievalServiceStub();
 const retrievalOllamaPhase2BandInstance = new RetrievalOllamaPhase2Band(zone2Retrieval);
@@ -61,3 +63,6 @@ export const retrievalSpeculativePhase4Band = new RetrievalSpeculativePhase4Band
   retrievalOllamaPhase2BandInstance,
   retrievalStreamingPhase3Band,
 );
+
+/** Sprint 30 — Latency percentiles + SLA compliance vs Zone 2 budget. */
+export const retrievalLatencySLAPhase5Band = new RetrievalLatencySLAPhase5Band(zone2Retrieval);

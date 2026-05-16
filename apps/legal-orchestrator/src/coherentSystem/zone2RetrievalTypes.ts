@@ -37,6 +37,11 @@ export interface Zone2SpeculativeVerify {
   readonly acceptanceRate: number;
 }
 
+/** Sprint 30 — mock SLA budget from request size. */
+export interface Zone2LatencyBudget {
+  readonly slaTargetMs: number;
+}
+
 export interface Zone2RetrievalService {
   suggestRemoteHnswBuild(params: HnswBuildParams): Promise<Zone2HnswBuildSpec>;
   /** Zone 2 Ollama cache TTL suggestion (stub until remote policy service exists). */
@@ -47,4 +52,6 @@ export interface Zone2RetrievalService {
   speculativeDecodeDraft(query: string): Promise<Zone2SpeculativeDraft>;
   /** Sprint 29 — draft vs verifier acceptance rate (stub). */
   verifyDraftAgainstVerifier(draft: readonly string[], verifier: string): Promise<Zone2SpeculativeVerify>;
+  /** Sprint 30 — latency SLA budget hint from logical request size (stub). */
+  computeLatencyBudget(requestSize: number): Promise<Zone2LatencyBudget>;
 }

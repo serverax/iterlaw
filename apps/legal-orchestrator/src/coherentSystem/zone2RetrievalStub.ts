@@ -1,6 +1,7 @@
 import type {
   HnswBuildParams,
   Zone2HnswBuildSpec,
+  Zone2LatencyBudget,
   Zone2OllamaTtlHint,
   Zone2RetrievalService,
   Zone2SpeculativeDraft,
@@ -64,5 +65,11 @@ export class Zone2RetrievalServiceStub implements Zone2RetrievalService {
     }).length;
     const rate = hits / draft.length;
     return { acceptanceRate: Math.min(1, Math.max(0, rate)) };
+  }
+
+  async computeLatencyBudget(requestSize: number): Promise<Zone2LatencyBudget> {
+    const n = Number.isFinite(requestSize) ? Math.max(0, requestSize) : 0;
+    const slaTargetMs = Math.max(250, Math.min(500, 500 - Math.floor(n / 20)));
+    return { slaTargetMs };
   }
 }

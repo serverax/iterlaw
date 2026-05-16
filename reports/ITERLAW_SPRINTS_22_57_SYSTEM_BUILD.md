@@ -26,5 +26,5 @@ RLS uses `current_user_in_workspace`, `current_user_can_write_workspace`, `curre
 
 `cd apps/legal-orchestrator && npm run typecheck && npm test` — expect **2011** tests (post-merge hash recorded below).
 
-**Hash:** _(set at commit)_  
+**Hash:** `2ad3237`  
 **Tests:** 2011 total

@@ -1,0 +1,2 @@
+DROP POLICY IF EXISTS retrieval_hnsw_lane_profiles_admin_all ON public.retrieval_hnsw_lane_profiles;
+DROP TABLE IF EXISTS public.retrieval_hnsw_lane_profiles;

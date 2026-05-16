@@ -13,4 +13,4 @@
 
 From `apps/legal-orchestrator`: `npm run typecheck && npm test`.
 
-**Last verification:** **1437** Vitest tests (orchestrator), commit after merge will be on `master`.
+**Last verification:** **1437** Vitest tests (orchestrator), commit **`0236ea4`** on `master`.

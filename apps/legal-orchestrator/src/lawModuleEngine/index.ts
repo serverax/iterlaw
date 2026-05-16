@@ -1,18 +1,9 @@
-// Sprint 18 — Law Module Engine public surface.
-
-export { legalModuleRegistry } from "./legalModuleRegistry";
-export type { LegalModuleRegistry } from "./legalModuleRegistry";
-export { UK_EMPLOYMENT_MODULE } from "./ukEmploymentModule";
-export { PLANNED_LAW_MODULES } from "./plannedModules";
-export type {
-  CitationPolicy,
-  LawArea,
-  LawJurisdiction,
-  LawModule,
-  LawModuleLookupError,
-  LawModuleLookupKey,
-  LawModuleLookupResult,
-  LawModuleStatus,
-  SourceTier,
-  TemporalPolicy,
-} from "./legalModule.types";
+export * from "./legalModule.types.js";
+export * from "./plannedModules.js";
+export * from "./ukEmploymentModule.js";
+export * from "./legalModuleRegistry.js";
+export * from "./legalModuleRouting.js";
+export * from "./inputFingerprint.js";
+export * from "./rerankerBlend.js";
+export * from "./evidencePackMetrics.js";
+export * from "./phase1Orchestrator.js";

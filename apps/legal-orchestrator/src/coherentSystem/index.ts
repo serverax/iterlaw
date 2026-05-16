@@ -25,6 +25,14 @@ export * from "./wasmZkpVerificationPhase7.js";
 export * from "./wasmLedgerIntegrationPhase8.js";
 export * from "./wasmAggregationPhase9.js";
 export * from "./wasmDisputeResolutionPhase10.js";
+export * from "./zone2WorkspaceTypes.js";
+export * from "./zone2WorkspaceStub.js";
+export * from "./workspaceIsolationPhase1.js";
+export * from "./temporalRlsPhase2.js";
+export * from "./auditTrailLoggingPhase3.js";
+export * from "./workspaceRbacPhase4.js";
+export * from "./crossWorkspaceRestrictionsPhase5.js";
+export * from "./workspaceSettingsPhase6.js";
 export * from "./workspaceTemporalBand.js";
 export * from "./documentIntelBand.js";
 export * from "./zone2LawTypes.js";
@@ -60,6 +68,13 @@ import { WasmZkpVerificationPhase7Band } from "./wasmZkpVerificationPhase7.js";
 import { WasmLedgerIntegrationPhase8Band } from "./wasmLedgerIntegrationPhase8.js";
 import { WasmAggregationPhase9Band } from "./wasmAggregationPhase9.js";
 import { WasmDisputeResolutionPhase10Band } from "./wasmDisputeResolutionPhase10.js";
+import { Zone2WorkspaceServiceStub } from "./zone2WorkspaceStub.js";
+import { WorkspaceIsolationPhase1Band } from "./workspaceIsolationPhase1.js";
+import { TemporalRlsPhase2Band } from "./temporalRlsPhase2.js";
+import { AuditTrailLoggingPhase3Band } from "./auditTrailLoggingPhase3.js";
+import { WorkspaceRbacPhase4Band } from "./workspaceRbacPhase4.js";
+import { CrossWorkspaceRestrictionsPhase5Band } from "./crossWorkspaceRestrictionsPhase5.js";
+import { WorkspaceSettingsPhase6Band } from "./workspaceSettingsPhase6.js";
 
 const zone2Retrieval = new Zone2RetrievalServiceStub();
 const retrievalOllamaPhase2BandInstance = new RetrievalOllamaPhase2Band(zone2Retrieval);
@@ -141,3 +156,23 @@ export const wasmAggregationPhase9Band = new WasmAggregationPhase9Band(zone2Wasm
 
 /** Sprint 44 — Case-scoped dispute resolution. */
 export const wasmDisputeResolutionPhase10Band = new WasmDisputeResolutionPhase10Band(zone2Wasm);
+
+const zone2Workspace = new Zone2WorkspaceServiceStub();
+
+/** Sprint 45 — Multi-tenant workspace foundation. */
+export const workspaceIsolationPhase1Band = new WorkspaceIsolationPhase1Band(zone2Workspace);
+
+/** Sprint 46 — Temporal workspace member roles. */
+export const temporalRlsPhase2Band = new TemporalRlsPhase2Band(zone2Workspace);
+
+/** Sprint 47 — Immutable workspace audit trail. */
+export const auditTrailLoggingPhase3Band = new AuditTrailLoggingPhase3Band(zone2Workspace);
+
+/** Sprint 48 — Workspace RBAC permission matrix. */
+export const workspaceRbacPhase4Band = new WorkspaceRbacPhase4Band(zone2Workspace);
+
+/** Sprint 49 — Cross-workspace isolation enforcement. */
+export const crossWorkspaceRestrictionsPhase5Band = new CrossWorkspaceRestrictionsPhase5Band(zone2Workspace);
+
+/** Sprint 50 — Workspace settings and defaults. */
+export const workspaceSettingsPhase6Band = new WorkspaceSettingsPhase6Band(zone2Workspace);

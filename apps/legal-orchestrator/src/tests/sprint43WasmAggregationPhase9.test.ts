@@ -278,3 +278,7 @@ describe("Sprint 43 — stub aggregated root hex", () => {
     expect(r.aggregatedRoot).toMatch(/^[a-f0-9]{64}$/);
   });
 });
+
+describe("Sprint 43 — primary key uuid", () => {
+  it("sql", () => expect(sql139).toMatch(/id\s+UUID PRIMARY KEY/i));
+});

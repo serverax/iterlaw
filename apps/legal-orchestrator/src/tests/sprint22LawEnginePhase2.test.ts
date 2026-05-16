@@ -211,6 +211,16 @@ describe("Sprint 22 — LawEnginePhase2Band integration", () => {
           recommendation: "OK",
         };
       },
+      async refineLawBand() {
+        return {
+          refinementId: "r-custom",
+          riskBand: "MEDIUM",
+          summary: "custom-refine",
+        };
+      },
+      async buildComplianceChecklist() {
+        return { checklistId: "c-custom", items: [{ id: "1", label: "L" }] };
+      },
     };
     const band = new LawEnginePhase2Band(custom);
     const out = await band.analyze({

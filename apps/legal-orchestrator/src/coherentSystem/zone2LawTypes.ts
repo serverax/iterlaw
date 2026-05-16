@@ -37,6 +37,36 @@ export interface UserFacingLawResult {
   readonly employerLabel: string;
 }
 
+export type LawRiskBand = "LOW" | "MEDIUM" | "HIGH";
+
+export interface LawRefinementResult {
+  readonly refinementId: string;
+  readonly riskBand: LawRiskBand;
+  /** Token-safe stub copy (no raw PII). */
+  readonly summary: string;
+}
+
+export interface UserFacingLawPhase3Result extends UserFacingLawResult {
+  readonly riskBand: LawRiskBand;
+  readonly refinementId: string;
+  readonly refinementSummary: string;
+}
+
+export interface LawChecklistItem {
+  readonly id: string;
+  readonly label: string;
+}
+
+export interface LawChecklistResult {
+  readonly checklistId: string;
+  readonly items: readonly LawChecklistItem[];
+}
+
+export interface UserFacingLawPhase4Result extends UserFacingLawPhase3Result {
+  readonly checklistId: string;
+  readonly checklistItems: readonly LawChecklistItem[];
+}
+
 export interface AnonymizeLawCaseResult {
   readonly anonymized: AnonymizedLawCaseInput;
   /** Token → short display label for user-facing copy (Zone 1 only). */
@@ -45,4 +75,6 @@ export interface AnonymizeLawCaseResult {
 
 export interface Zone2LawService {
   analyzeLaw(input: AnonymizedLawCaseInput): Promise<LawAnalysisResult>;
+  refineLawBand(input: AnonymizedLawCaseInput, fusedScore: number): Promise<LawRefinementResult>;
+  buildComplianceChecklist(input: AnonymizedLawCaseInput, riskBand: LawRiskBand): Promise<LawChecklistResult>;
 }

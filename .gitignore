@@ -65,3 +65,10 @@ iterlaw.code-workspace
 
 # TypeScript
 *.tsbuildinfo
+
+# Local / operator artefacts (Sprint 16 closeout — do not commit)
+/postgresql-18.4-1-windows-x64.exe
+/superpowers-marketplace-main.zip
+/docs/*.md
+/docs/iterlaw/project/HYBRID_ARCHITECTURE/*.md
+/reports/ITERLAW_SPRINT_16_MVP_SMOKE_TEST_READINESS_2026-05-16T00-18-56.md

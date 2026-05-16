@@ -4,7 +4,9 @@ import type {
   Zone2LatencyBudget,
   Zone2BatchRemoteRow,
   Zone2InvalidationTtlHint,
+  Zone2FallbackRecommendation,
   Zone2OptimizedQueryPlan,
+  RetrievalFallbackStrategy,
   Zone2OllamaTtlHint,
   Zone2RetrievalService,
   Zone2SpeculativeDraft,
@@ -98,5 +100,13 @@ export class Zone2RetrievalServiceStub implements Zone2RetrievalService {
     const key = cacheType.trim().toLowerCase();
     const base = key.includes("ollama") ? 86_400 : key.includes("hnsw") ? 43_200 : 21_600;
     return { ttlSeconds: Math.max(300, base) };
+  }
+
+  async recommendFallback(strategy: RetrievalFallbackStrategy, error: string): Promise<Zone2FallbackRecommendation> {
+    const chain: readonly RetrievalFallbackStrategy[] = ["hnsw", "ollama", "bm25", "static_faq"];
+    const idx = chain.indexOf(strategy);
+    const next = idx >= 0 && idx < chain.length - 1 ? chain[idx + 1]! : "static_faq";
+    const reason = error.trim() ? `zone2:${error.slice(0, 80)}` : "zone2:fallback";
+    return { fallbackStrategy: next, reason };
   }
 }

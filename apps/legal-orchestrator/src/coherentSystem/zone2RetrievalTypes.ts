@@ -60,6 +60,15 @@ export interface Zone2InvalidationTtlHint {
   readonly ttlSeconds: number;
 }
 
+/** Sprint 34 — retrieval strategy identifiers in fallback chain order. */
+export type RetrievalFallbackStrategy = "hnsw" | "ollama" | "bm25" | "static_faq";
+
+/** Sprint 34 — mock fallback recommendation from Zone 2. */
+export interface Zone2FallbackRecommendation {
+  readonly fallbackStrategy: RetrievalFallbackStrategy;
+  readonly reason: string;
+}
+
 export interface Zone2RetrievalService {
   suggestRemoteHnswBuild(params: HnswBuildParams): Promise<Zone2HnswBuildSpec>;
   /** Zone 2 Ollama cache TTL suggestion (stub until remote policy service exists). */
@@ -78,4 +87,6 @@ export interface Zone2RetrievalService {
   processBatchRemote(queries: readonly string[]): Promise<readonly Zone2BatchRemoteRow[]>;
   /** Sprint 33 — cache invalidation TTL recommendation (stub). */
   suggestInvalidationTtl(cacheType: string): Promise<Zone2InvalidationTtlHint>;
+  /** Sprint 34 — fallback recommendation after primary strategy error (stub). */
+  recommendFallback(strategy: RetrievalFallbackStrategy, error: string): Promise<Zone2FallbackRecommendation>;
 }

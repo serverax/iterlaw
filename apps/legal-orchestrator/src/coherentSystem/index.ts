@@ -11,6 +11,7 @@ export * from "./retrievalLatencySLAPhase5.js";
 export * from "./retrievalQueryOptPhase6.js";
 export * from "./retrievalBatchPhase7.js";
 export * from "./retrievalCacheInvalidationPhase8.js";
+export * from "./retrievalFallbackPhase9.js";
 export * from "./wasmBand.js";
 export * from "./workspaceTemporalBand.js";
 export * from "./documentIntelBand.js";
@@ -35,6 +36,7 @@ import { RetrievalLatencySLAPhase5Band } from "./retrievalLatencySLAPhase5.js";
 import { RetrievalQueryOptPhase6Band } from "./retrievalQueryOptPhase6.js";
 import { RetrievalBatchPhase7Band } from "./retrievalBatchPhase7.js";
 import { RetrievalCacheInvalidationPhase8Band } from "./retrievalCacheInvalidationPhase8.js";
+import { RetrievalFallbackPhase9Band } from "./retrievalFallbackPhase9.js";
 
 const zone2Retrieval = new Zone2RetrievalServiceStub();
 const retrievalOllamaPhase2BandInstance = new RetrievalOllamaPhase2Band(zone2Retrieval);
@@ -81,3 +83,6 @@ export const retrievalBatchPhase7Band = new RetrievalBatchPhase7Band(zone2Retrie
 
 /** Sprint 33 — Cache invalidation rules + stale purge. */
 export const retrievalCacheInvalidationPhase8Band = new RetrievalCacheInvalidationPhase8Band(zone2Retrieval);
+
+/** Sprint 34 — Fallback chain HNSW → Ollama → BM25 → static FAQ. */
+export const retrievalFallbackPhase9Band = new RetrievalFallbackPhase9Band(zone2Retrieval);

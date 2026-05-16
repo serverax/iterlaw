@@ -1,0 +1,3 @@
+DROP POLICY IF EXISTS wasm_merkle_evidence_tree_admin_delete ON public.wasm_merkle_evidence_tree;
+DROP POLICY IF EXISTS wasm_merkle_evidence_tree_self_insert ON public.wasm_merkle_evidence_tree;
+DROP POLICY IF EXISTS wasm_merkle_evidence_tree_self_select ON public.wasm_merkle_evidence_tree;

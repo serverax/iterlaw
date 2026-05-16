@@ -17,9 +17,11 @@ Populate the **Decision** and **Recorded answer** fields when answers arrive. Do
 | **Options** | **A)** `workspace_id` only — documents attach to workspace; case link optional via `document_metadata.linked_case_id`. **B)** Required `case_id` on every upload — upload API rejects without active case. **C)** Dual required — both workspace membership and case must match RLS. |
 | **Recommendation (engineering)** | **A** for prep; enforce case link at classification time (Sprint 54) unless product requires upload-to-case only. |
 | **Blocking** | Yes |
-| **Decision** | _TBD_ |
-| **Recorded answer** | _TBD_ |
-| **Date resolved** | _TBD_ |
+| **Status** | OPEN |
+| **Decision** | _TBD (A / B / C)_ |
+| **Answer** | _TBD_ |
+| **Recorded by** | _TBD_ |
+| **Date** | _TBD_ |
 | **Implements in** | Migration 147, `POST /api/documents/upload`, RLS policies |
 
 **Notes**
@@ -36,9 +38,19 @@ Populate the **Decision** and **Recorded answer** fields when answers arrive. Do
 |-------|--------|
 | **Question** | Confirm env var names, API version, region, and model IDs for OCR. |
 | **Blocking** | Yes |
-| **Decision** | _TBD_ |
-| **Recorded answer** | _TBD_ |
-| **Date resolved** | _TBD_ |
+| **Status** | OPEN |
+| **Answer** | _TBD_ |
+| **Recorded by** | _TBD_ |
+| **Date** | _TBD_ |
+
+### Canonical names (code) vs staging aliases
+
+| Purpose | Canonical (prep code) | Staging alias (if different) | Value |
+|---------|----------------------|------------------------------|-------|
+| Endpoint | `AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT` | `AZURE_DOC_INTEL_ENDPOINT` | _TBD_ |
+| API key | `AZURE_DOCUMENT_INTELLIGENCE_KEY` | `AZURE_DOC_INTEL_KEY` | _TBD (name only in git)_ |
+| API version | `AZURE_DOCUMENT_INTELLIGENCE_API_VERSION` | `AZURE_DOC_INTEL_API_VERSION` | _TBD_ |
+| Model id | `AZURE_DOCUMENT_INTELLIGENCE_MODEL_ID` | — | _TBD_ |
 
 ### Environment variables (fill when known)
 
@@ -66,9 +78,11 @@ Populate the **Decision** and **Recorded answer** fields when answers arrive. Do
 |-------|--------|
 | **Question** | What is the exact Azure OpenAI **deployment name** for embeddings (not just model family)? |
 | **Blocking** | Yes (Sprint 55+) |
-| **Decision** | _TBD_ |
-| **Recorded answer** | _TBD_ |
-| **Date resolved** | _TBD_ |
+| **Status** | OPEN |
+| **Answer** | _TBD_ |
+| **Deployment name** | _TBD_ |
+| **Recorded by** | _TBD_ |
+| **Date** | _TBD_ |
 
 ### Environment variables (fill when known)
 

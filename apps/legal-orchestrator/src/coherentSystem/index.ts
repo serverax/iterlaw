@@ -4,6 +4,7 @@ export * from "./retrievalBand.js";
 export * from "./zone2RetrievalTypes.js";
 export * from "./zone2RetrievalStub.js";
 export * from "./retrievalHNSWPhase1.js";
+export * from "./retrievalOllamaPhase2.js";
 export * from "./wasmBand.js";
 export * from "./workspaceTemporalBand.js";
 export * from "./documentIntelBand.js";
@@ -21,6 +22,7 @@ import { LawEnginePhase3Band } from "./lawEnginePhase3.js";
 import { LawEnginePhase4Band } from "./lawEnginePhase4.js";
 import { LawEnginePhase5Band } from "./lawEnginePhase5.js";
 import { RetrievalHNSWPhase1Band } from "./retrievalHNSWPhase1.js";
+import { RetrievalOllamaPhase2Band } from "./retrievalOllamaPhase2.js";
 
 /** Default Phase 2 band wired to the Zone 2 stub (swap for real Zone2LawService later). */
 export const lawEnginePhase2Band = new LawEnginePhase2Band(new Zone2LawServiceStub());
@@ -36,3 +38,6 @@ export const lawEnginePhase5Band = new LawEnginePhase5Band(new Zone2LawServiceSt
 
 /** Sprint 26 — HNSW Phase 1 (Zone 2 retrieval stub for remote index hints). */
 export const retrievalHnswPhase1Band = new RetrievalHNSWPhase1Band(new Zone2RetrievalServiceStub());
+
+/** Sprint 27 — Ollama inference cache TTL merge (Zone 2 retrieval stub). */
+export const retrievalOllamaPhase2Band = new RetrievalOllamaPhase2Band(new Zone2RetrievalServiceStub());

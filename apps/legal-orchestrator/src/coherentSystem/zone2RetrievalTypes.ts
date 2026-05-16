@@ -18,6 +18,12 @@ export interface Zone2HnswBuildSpec {
   readonly recommendedLists: number;
 }
 
+export interface Zone2OllamaTtlHint {
+  readonly ttlMs: number;
+}
+
 export interface Zone2RetrievalService {
   suggestRemoteHnswBuild(params: HnswBuildParams): Promise<Zone2HnswBuildSpec>;
+  /** Zone 2 Ollama cache TTL suggestion (stub until remote policy service exists). */
+  suggestOllamaCacheTtl(model: string): Promise<Zone2OllamaTtlHint>;
 }

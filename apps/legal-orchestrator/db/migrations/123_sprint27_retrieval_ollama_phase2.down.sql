@@ -1,0 +1,4 @@
+DROP POLICY IF EXISTS retrieval_ollama_cache_admin_delete ON public.retrieval_ollama_inference_cache;
+DROP POLICY IF EXISTS retrieval_ollama_cache_self_insert ON public.retrieval_ollama_inference_cache;
+DROP POLICY IF EXISTS retrieval_ollama_cache_self_select ON public.retrieval_ollama_inference_cache;
+DROP TABLE IF EXISTS public.retrieval_ollama_inference_cache;

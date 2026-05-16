@@ -1,4 +1,10 @@
-import type { HnswBuildParams, Zone2HnswBuildSpec, Zone2RetrievalService } from "./zone2RetrievalTypes.js";
+import type {
+  HnswBuildParams,
+  Zone2HnswBuildSpec,
+  Zone2OllamaTtlHint,
+  Zone2RetrievalService,
+} from "./zone2RetrievalTypes.js";
+import { ollamaCacheTtlMs } from "./retrievalBand.js";
 
 /**
  * Deterministic Zone 2 retrieval stub — no network I/O.
@@ -11,5 +17,14 @@ export class Zone2RetrievalServiceStub implements Zone2RetrievalService {
     const safeIdx = params.indexName.replace(/[^a-zA-Z0-9_-]/g, "_");
     const remoteIndexId = `milvus-stub-${safeLane}-${safeIdx}`.slice(0, 120);
     return { remoteIndexId, recommendedLists };
+  }
+
+  /**
+   * Shorter TTL than Zone 1 baseline so merged TTL uses conservative `min(zone1, zone2)`.
+   */
+  async suggestOllamaCacheTtl(model: string): Promise<Zone2OllamaTtlHint> {
+    const base = ollamaCacheTtlMs(model);
+    const ttlMs = Math.max(60_000, base - 3_600_000);
+    return { ttlMs };
   }
 }

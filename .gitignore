@@ -70,5 +70,12 @@ iterlaw.code-workspace
 /postgresql-18.4-1-windows-x64.exe
 /superpowers-marketplace-main.zip
 /docs/*.md
+!/docs/SPRINTS_51_58_CLARIFICATIONS.md
+!/docs/DISTRIBUTION_PLAN.md
+!/docs/LEGAL_CONTENT_AUDIT.md
+!/docs/SOLICITOR_REFERRAL_PARTNERS.md
+!/docs/APP_STORE_SUBMISSION.md
+!/docs/PENETRATION_TEST_SCOPE.md
+!/docs/RISK_REGISTER.md
 /docs/iterlaw/project/HYBRID_ARCHITECTURE/*.md
 /reports/ITERLAW_SPRINT_16_MVP_SMOKE_TEST_READINESS_2026-05-16T00-18-56.md

@@ -49,6 +49,12 @@ export interface Zone2OptimizedQueryPlan {
   readonly estRows: number;
 }
 
+/** Sprint 32 — one row from remote batch execution (stub). */
+export interface Zone2BatchRemoteRow {
+  readonly queryIndex: number;
+  readonly summary: string;
+}
+
 export interface Zone2RetrievalService {
   suggestRemoteHnswBuild(params: HnswBuildParams): Promise<Zone2HnswBuildSpec>;
   /** Zone 2 Ollama cache TTL suggestion (stub until remote policy service exists). */
@@ -63,4 +69,6 @@ export interface Zone2RetrievalService {
   computeLatencyBudget(requestSize: number): Promise<Zone2LatencyBudget>;
   /** Sprint 31 — remote query plan optimization (stub). */
   optimizeQueryRemote(query: string): Promise<Zone2OptimizedQueryPlan>;
+  /** Sprint 32 — remote batch query execution (stub). */
+  processBatchRemote(queries: readonly string[]): Promise<readonly Zone2BatchRemoteRow[]>;
 }

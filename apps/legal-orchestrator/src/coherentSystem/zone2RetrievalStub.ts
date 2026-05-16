@@ -2,6 +2,7 @@ import type {
   HnswBuildParams,
   Zone2HnswBuildSpec,
   Zone2LatencyBudget,
+  Zone2BatchRemoteRow,
   Zone2OptimizedQueryPlan,
   Zone2OllamaTtlHint,
   Zone2RetrievalService,
@@ -83,5 +84,12 @@ export class Zone2RetrievalServiceStub implements Zone2RetrievalService {
       executionPlan: { op: "seq_scan", table: "legal_chunks_stub", queryLen: query.length },
       estRows,
     };
+  }
+
+  async processBatchRemote(queries: readonly string[]): Promise<readonly Zone2BatchRemoteRow[]> {
+    return queries.map((q, i) => ({
+      queryIndex: i,
+      summary: q.length === 0 ? "err:empty" : `ok:${q.length}`,
+    }));
   }
 }

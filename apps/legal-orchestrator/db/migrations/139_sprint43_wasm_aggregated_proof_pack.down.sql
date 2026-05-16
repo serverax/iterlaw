@@ -1,0 +1,2 @@
+DROP POLICY IF EXISTS wasm_aggregated_proof_pack_self_insert ON public.wasm_aggregated_proof_pack;
+DROP POLICY IF EXISTS wasm_aggregated_proof_pack_self_select ON public.wasm_aggregated_proof_pack;

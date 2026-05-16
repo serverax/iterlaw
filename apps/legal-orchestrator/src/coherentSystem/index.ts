@@ -17,6 +17,7 @@ export * from "./zone2WasmTypes.js";
 export * from "./zone2WasmStub.js";
 export * from "./wasmSandboxPhase1.js";
 export * from "./wasmProofVerificationPhase2.js";
+export * from "./wasmClientProofPhase3.js";
 export * from "./workspaceTemporalBand.js";
 export * from "./documentIntelBand.js";
 export * from "./zone2LawTypes.js";
@@ -44,6 +45,7 @@ import { RetrievalFallbackPhase9Band } from "./retrievalFallbackPhase9.js";
 import { Zone2WasmServiceStub } from "./zone2WasmStub.js";
 import { WasmSandboxPhase1Band } from "./wasmSandboxPhase1.js";
 import { WasmProofVerificationPhase2Band } from "./wasmProofVerificationPhase2.js";
+import { WasmClientProofPhase3Band } from "./wasmClientProofPhase3.js";
 
 const zone2Retrieval = new Zone2RetrievalServiceStub();
 const retrievalOllamaPhase2BandInstance = new RetrievalOllamaPhase2Band(zone2Retrieval);
@@ -101,3 +103,6 @@ export const wasmSandboxPhase1Band = new WasmSandboxPhase1Band(zone2Wasm);
 
 /** Sprint 36 — Deterministic WASM proof verification. */
 export const wasmProofVerificationPhase2Band = new WasmProofVerificationPhase2Band(zone2Wasm);
+
+/** Sprint 37 — Client-side proof generation + cache. */
+export const wasmClientProofPhase3Band = new WasmClientProofPhase3Band(zone2Wasm);

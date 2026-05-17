@@ -17,6 +17,22 @@
 | npm audit (`--omit=dev`) | VERIFIED 0 vulns | — | Engineering |
 | UAT | IN PROGRESS | Stakeholder sign-off | Product |
 | Sprint 51 implementation | GATED | UAT + clarifications + start signal | Engineering |
+| Product launch Sprints 5–9 | PLANNING | Not scheduled vs 51–58 priority | Product + Engineering |
+
+---
+
+## Product launch track (Sprints 5–9, weeks 11–20)
+
+**Master doc:** `docs/SPRINTS_5_9_LAUNCH_EXECUTION_ORDER.md`  
+**Checklists:** `docs/launch/SPRINT_5_CHECKLIST.md` … `SPRINT_9_CHECKLIST.md`
+
+| Sprint | Status | Gate doc / checklist |
+|--------|--------|----------------------|
+| 5 Timeline + upload + deadlines | NOT STARTED | `launch/SPRINT_5_CHECKLIST.md` |
+| 6 Stripe + paywall + escalation | NOT STARTED | `launch/SPRINT_6_CHECKLIST.md` + `SOLICITOR_REFERRAL_PARTNERS.md` |
+| 7 Audit + pen test + GDPR | NOT STARTED | `launch/SPRINT_7_CHECKLIST.md` + `LEGAL_CONTENT_AUDIT.md` |
+| 8 App stores + beta | NOT STARTED | `launch/SPRINT_8_CHECKLIST.md` + `APP_STORE_SUBMISSION.md` |
+| 9 Production + launch | NOT STARTED | `launch/SPRINT_9_CHECKLIST.md` + `DISTRIBUTION_PLAN.md` |
 
 ---
 

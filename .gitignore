@@ -79,5 +79,7 @@ iterlaw.code-workspace
 !/docs/RISK_REGISTER.md
 !/docs/SPRINTS_51_58_CLARIFICATION_REQUEST.md
 !/docs/GATE_STATUS_BOARD.md
+!/docs/SPRINTS_5_9_LAUNCH_EXECUTION_ORDER.md
+!/docs/launch/
 /docs/iterlaw/project/HYBRID_ARCHITECTURE/*.md
 /reports/ITERLAW_SPRINT_16_MVP_SMOKE_TEST_READINESS_2026-05-16T00-18-56.md

@@ -1,15 +1,24 @@
-import type { Zone2DocumentService, Zone2EmbeddingBatch, Zone2OcrResult, Zone2SynthesisResult } from "./zone2DocumentTypes.js";
+import type {
+  Zone2DocumentService,
+  Zone2EmbeddingBatch,
+  Zone2OcrRequest,
+  Zone2OcrResult,
+  Zone2SynthesisResult,
+} from "./zone2DocumentTypes.js";
 
 /** Deterministic stub OCR (Azure Document Intelligence stand-in). */
 export class Zone2DocumentServiceStub implements Zone2DocumentService {
-  async runDocumentOcr(storageKey: string, mimeType: string): Promise<Zone2OcrResult> {
-    const key = storageKey.trim();
+  async runDocumentOcr(request: Zone2OcrRequest): Promise<Zone2OcrResult> {
+    const key = request.storageKey.trim();
     if (!key) {
       return { text: "", confidence: 0, timedOut: false };
     }
+    const fromContent = request.content?.length
+      ? request.content.toString("utf8").slice(0, 5000)
+      : "";
     return {
-      text: `[stub-ocr:${mimeType}] ${key}`,
-      confidence: 0.85,
+      text: fromContent || `[stub-ocr:${request.mimeType}] ${key}`,
+      confidence: fromContent ? 0.88 : 0.85,
       timedOut: false,
     };
   }

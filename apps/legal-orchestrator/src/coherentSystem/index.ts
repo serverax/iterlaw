@@ -78,7 +78,7 @@ import { WasmZkpVerificationPhase7Band } from "./wasmZkpVerificationPhase7.js";
 import { WasmLedgerIntegrationPhase8Band } from "./wasmLedgerIntegrationPhase8.js";
 import { WasmAggregationPhase9Band } from "./wasmAggregationPhase9.js";
 import { WasmDisputeResolutionPhase10Band } from "./wasmDisputeResolutionPhase10.js";
-import { Zone2DocumentServiceStub } from "./zone2DocumentStub.js";
+import { createZone2DocumentService } from "./azureDocumentIntelligenceZone2.js";
 import { DocumentUploadOcrPhase51Band } from "./documentUploadOcrPhase51.js";
 import { EntityExtractionPhase52Band } from "./entityExtractionPhase52.js";
 import { LegalDocumentParsingPhase53Band } from "./legalDocumentParsingPhase53.js";
@@ -196,9 +196,9 @@ export const crossWorkspaceRestrictionsPhase5Band = new CrossWorkspaceRestrictio
 /** Sprint 50 — Workspace settings and defaults. */
 export const workspaceSettingsPhase6Band = new WorkspaceSettingsPhase6Band(zone2Workspace);
 
-const zone2Document = new Zone2DocumentServiceStub();
+const zone2Document = createZone2DocumentService();
 
-/** Sprint 51 — Document upload + OCR (prep; full pipeline post-UAT). */
+/** Sprint 51 — Document upload + OCR (Azure DI or stub). */
 export const documentUploadOcrPhase51Band = new DocumentUploadOcrPhase51Band(zone2Document);
 
 /** Sprint 52 — Entity extraction. */

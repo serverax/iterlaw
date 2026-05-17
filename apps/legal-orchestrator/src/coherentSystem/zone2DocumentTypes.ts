@@ -18,8 +18,14 @@ export interface Zone2SynthesisResult {
   readonly confidence: number;
 }
 
+export interface Zone2OcrRequest {
+  readonly storageKey: string;
+  readonly mimeType: string;
+  readonly content?: Buffer;
+}
+
 export interface Zone2DocumentService {
-  runDocumentOcr(storageKey: string, mimeType: string): Promise<Zone2OcrResult>;
+  runDocumentOcr(request: Zone2OcrRequest): Promise<Zone2OcrResult>;
   embedTexts(texts: readonly string[]): Promise<Zone2EmbeddingBatch>;
   synthesizeCitedAnswer(
     question: string,

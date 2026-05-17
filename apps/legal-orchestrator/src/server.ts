@@ -15,6 +15,10 @@ import {
 import type { SynthesisHealthPort } from "./synthesis/synthesisHealth.js";
 import { describeLocalLlmGateway } from "./legal/llm/localLlmGateway.js";
 import { getIntelligenceLayerConfig } from "./config/featureFlags.js";
+import { createZone2DocumentService } from "./coherentSystem/azureDocumentIntelligenceZone2.js";
+import { DocumentUploadService } from "./documents/documentUploadService.js";
+import { InMemoryDocumentUploadStore } from "./documents/documentUploadStore.js";
+import { registerDocumentUploadRoutes } from "./routes/documentUploadRoutes.js";
 
 type RagReadySlice = {
   configured: boolean;
@@ -63,6 +67,8 @@ export interface CreateAppOptions {
    * which honestly reports configured=false / reachable=false.
    */
   synthesisHealth?: SynthesisHealthPort;
+  /** Override document upload service (Sprint 51). */
+  documentUploadService?: DocumentUploadService;
 }
 
 export function createApp(opts: CreateAppOptions = {}) {
@@ -70,6 +76,9 @@ export function createApp(opts: CreateAppOptions = {}) {
   const retrieval: RagService = opts.ragService ?? createRagService();
   const synthesisHealth: SynthesisHealthPort =
     opts.synthesisHealth ?? new UnconfiguredSynthesisHealth();
+  const documentUploadService =
+    opts.documentUploadService ??
+    new DocumentUploadService(createZone2DocumentService(), new InMemoryDocumentUploadStore());
 
   app.use(express.json({ limit: "1mb" }));
 
@@ -123,6 +132,8 @@ export function createApp(opts: CreateAppOptions = {}) {
     facts: z.record(z.unknown()).optional(),
     allow_external_llm: z.boolean().optional(),
   });
+
+  registerDocumentUploadRoutes(app, { documentUploadService });
 
   app.post("/api/legal/ask", async (req: Request, res: Response) => {
     const parsed = askSchema.safeParse(req.body);

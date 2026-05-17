@@ -1,11 +1,13 @@
 # Sprints 51–58 — Clarifications (single source of truth)
 
-**Status:** AWAITING STAKEHOLDER INPUT  
+**Status:** SPRINT 51 RESOLVED — Sprints 52–58 items partially open  
 **Owner:** Product + Engineering  
-**Last updated:** 2026-05-16  
-**Related:** `reports/SPRINTS_51_58_DOCUMENT_INTELLIGENCE_SPEC.md`, `feature/sprints-51-58-prep` (`dac26c9`)
+**Last updated:** 2026-05-17  
+**Related:** `reports/ITERLAW_SPRINT_51_DOCUMENT_UPLOAD_OCR.md`, `feature/sprint-51-doc-upload`
 
-Populate the **Decision** and **Recorded answer** fields when answers arrive. Do not start Sprint 51 implementation until every **Blocking** item is `RESOLVED`.
+**UAT sign-off:** Engineering sequencing decision — START ENGINEERING SPRINT 51 (2026-05-17). Product foundation-first order approved.
+
+**Sprint 51 start authorized:** 2026-05-17 · Branch `feature/sprint-51-doc-upload`
 
 ---
 
@@ -16,10 +18,12 @@ Populate the **Decision** and **Recorded answer** fields when answers arrive. Do
 | **Question** | Should `document_uploads` require both `workspace_id` (from migration 117) and `case_id` (from migration 147), or is workspace-only linkage sufficient for MVP? |
 | **Options** | **A)** `workspace_id` only — documents attach to workspace; case link optional via `document_metadata.linked_case_id`. **B)** Required `case_id` on every upload — upload API rejects without active case. **C)** Dual required — both workspace membership and case must match RLS. |
 | **Recommendation (engineering)** | **A** for prep; enforce case link at classification time (Sprint 54) unless product requires upload-to-case only. |
-| **Blocking** | Yes |
-| **Decision** | _TBD_ |
-| **Recorded answer** | _TBD_ |
-| **Date resolved** | _TBD_ |
+| **Blocking** | Yes (Sprint 51) |
+| **Status** | **RESOLVED** |
+| **Decision** | **A** |
+| **Answer** | `workspace_id` required on upload (migration 117); `case_id` **optional** on `POST /api/documents/upload` (Sprint 54 may require link for classification). |
+| **Recorded by** | Engineering (sequencing decision) |
+| **Date** | 2026-05-17 |
 | **Implements in** | Migration 147, `POST /api/documents/upload`, RLS policies |
 
 **Notes**
@@ -35,28 +39,29 @@ Populate the **Decision** and **Recorded answer** fields when answers arrive. Do
 | Field | Value |
 |-------|--------|
 | **Question** | Confirm env var names, API version, region, and model IDs for OCR. |
-| **Blocking** | Yes |
-| **Decision** | _TBD_ |
-| **Recorded answer** | _TBD_ |
-| **Date resolved** | _TBD_ |
+| **Blocking** | Yes (Sprint 51) |
+| **Status** | **RESOLVED** (canonical names; staging values TBD in vault) |
+| **Answer** | Use `AZURE_DOCUMENT_INTELLIGENCE_*` (not `AZURE_DOC_INTEL_*`). REST client in `azureDocumentIntelligenceZone2.ts`; stub when env unset. |
+| **Recorded by** | Engineering |
+| **Date** | 2026-05-17 |
 
-### Environment variables (fill when known)
+### Environment variables (canonical)
 
-| Variable | Purpose | Example / placeholder | Secret? | Status |
-|----------|---------|----------------------|---------|--------|
-| `AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT` | Regional DI base URL | `https://<region>.api.cognitive.microsoft.com` | No | MISSING |
-| `AZURE_DOCUMENT_INTELLIGENCE_KEY` | API key | _(from Azure portal)_ | Yes | MISSING |
-| `AZURE_DOCUMENT_INTELLIGENCE_API_VERSION` | REST API version | e.g. `2024-11-30` | No | MISSING |
-| `AZURE_DOCUMENT_INTELLIGENCE_MODEL_ID` | Model | `prebuilt-document` or `prebuilt-layout` | No | MISSING |
+| Variable | Purpose | Secret? | Status |
+|----------|---------|---------|--------|
+| `AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT` | Regional DI base URL | No | NAME LOCKED — value in staging vault |
+| `AZURE_DOCUMENT_INTELLIGENCE_KEY` | API key | Yes | NAME LOCKED — value in staging vault |
+| `AZURE_DOCUMENT_INTELLIGENCE_API_VERSION` | REST API version | No | Default `2024-11-30` |
+| `AZURE_DOCUMENT_INTELLIGENCE_MODEL_ID` | Model | No | Default `prebuilt-document` |
 
-### Operational parameters (confirm)
+### Operational parameters (Sprint 51)
 
-| Parameter | Spec default | Confirmed value |
-|-----------|--------------|-----------------|
-| Max upload size | 10 MB | _TBD_ |
-| OCR confidence manual-review threshold | 0.7 | _TBD_ |
-| OCR sync timeout (queue async after) | 30 s | _TBD_ |
-| Allowed MIME types | PDF, DOCX, plain text (see `documentUploadMimeAllowed`) | _TBD_ |
+| Parameter | Confirmed value |
+|-----------|-----------------|
+| Max upload size | 10 MB |
+| OCR confidence manual-review threshold | 0.7 |
+| OCR sync timeout → `pending_async` | 30 s |
+| Allowed MIME types | PDF, DOCX, plain text (`documentUploadMimeAllowed`) |
 
 ---
 
@@ -65,10 +70,11 @@ Populate the **Decision** and **Recorded answer** fields when answers arrive. Do
 | Field | Value |
 |-------|--------|
 | **Question** | What is the exact Azure OpenAI **deployment name** for embeddings (not just model family)? |
-| **Blocking** | Yes (Sprint 55+) |
-| **Decision** | _TBD_ |
-| **Recorded answer** | _TBD_ |
-| **Date resolved** | _TBD_ |
+| **Blocking** | Sprint 55+ only |
+| **Status** | OPEN (not blocking Sprint 51) |
+| **Answer** | _Pending DevOps — deployment name for `text-embedding-3-small`, 1536 dims_ |
+| **Recorded by** | _TBD_ |
+| **Date** | _TBD_ |
 
 ### Environment variables (fill when known)
 
@@ -93,10 +99,11 @@ Populate the **Decision** and **Recorded answer** fields when answers arrive. Do
 | Field | Value |
 |-------|--------|
 | **Question** | Where do sanitized employment letters live for Sprint 53 E2E and who generates them? |
-| **Blocking** | Yes (Sprint 53 E2E) |
-| **Decision** | _TBD_ |
-| **Recorded answer** | _TBD_ |
-| **Date resolved** | _TBD_ |
+| **Blocking** | Sprint 53 E2E only |
+| **Status** | **RESOLVED** (path; fixtures in Sprint 53) |
+| **Answer** | Synthetic fixtures under `apps/legal-orchestrator/src/tests/fixtures/documents/` (G1). |
+| **Recorded by** | Engineering |
+| **Date** | 2026-05-17 |
 
 ### Proposed layout (adjust when confirmed)
 
@@ -129,8 +136,9 @@ Populate the **Decision** and **Recorded answer** fields when answers arrive. Do
 
 | Endpoint | Method | Confirmed? |
 |----------|--------|------------|
-| `/api/documents/upload` | POST multipart | _TBD_ |
-| `/api/documents/:id/analyze` | POST | _TBD_ |
+| `/api/documents/upload` | POST multipart | **YES** (Sprint 51) |
+| `GET /api/documents/:id` | GET metadata | **YES** (Sprint 51) |
+| `/api/documents/:id/analyze` | POST | Sprint 52+ |
 | `/api/documents/:id/chunks` | GET | _TBD_ |
 | `/api/documents/:id/search` | POST | _TBD_ |
 | `/api/documents/:id/answer` | GET or POST | _TBD_ |
@@ -141,11 +149,11 @@ Populate the **Decision** and **Recorded answer** fields when answers arrive. Do
 
 | # | Item | Status |
 |---|------|--------|
-| 1 | Case linkage decision recorded | OPEN |
-| 2 | Azure DI env vars in staging vault | OPEN |
-| 3 | Azure OpenAI embedding deployment named | OPEN |
-| 4 | Sample document path + 5 fixtures available | OPEN |
-| 5 | UAT complete | OPEN |
-| 6 | Explicit engineering start signal ("start sprint 51") | OPEN |
+| 1 | Case linkage decision recorded | **RESOLVED** |
+| 2 | Azure DI env vars in staging vault | NAMES LOCKED — values pending ops |
+| 3 | Azure OpenAI embedding deployment named | OPEN (Sprint 55+) |
+| 4 | Sample document path + 5 fixtures available | **RESOLVED** (path; files Sprint 53) |
+| 5 | UAT / sequencing sign-off | **RESOLVED** (2026-05-17) |
+| 6 | Sprint 51 implementation | **IN PROGRESS** on `feature/sprint-51-doc-upload` |
 
-**When all blocking items are RESOLVED:** begin implementation on `feature/sprint-51-doc-upload` from `feature/sprints-51-58-prep`.
+**Sprint 52+:** continue on `feature/sprint-52-entity-extraction` after Sprint 51 merge + tag.

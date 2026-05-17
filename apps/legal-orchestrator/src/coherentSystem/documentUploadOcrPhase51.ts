@@ -45,13 +45,41 @@ export class DocumentUploadOcrPhase51Band {
     return confidence < DOCUMENT_OCR_CONFIDENCE_REVIEW_THRESHOLD;
   }
 
-  async extractTextOcr(storageKey: string, mimeType: string): Promise<{ readonly rawText: string; readonly confidenceScore: number; readonly needsManualReview: boolean }> {
-    const ocr = await this.zone2.runDocumentOcr(storageKey, mimeType);
+  async extractTextOcr(
+    storageKey: string,
+    mimeType: string,
+    content?: Buffer,
+  ): Promise<{ readonly rawText: string; readonly confidenceScore: number; readonly needsManualReview: boolean; readonly timedOut: boolean }> {
+    const ocr = await this.runOcrWithTimeout({ storageKey, mimeType, content });
     const confidenceScore = Math.min(1, Math.max(0, ocr.confidence));
     return {
       rawText: ocr.text,
       confidenceScore,
       needsManualReview: this.needsManualReview(confidenceScore),
+      timedOut: ocr.timedOut,
     };
+  }
+
+  private async runOcrWithTimeout(request: {
+    readonly storageKey: string;
+    readonly mimeType: string;
+    readonly content?: Buffer;
+  }): Promise<{ readonly text: string; readonly confidence: number; readonly timedOut: boolean }> {
+    const timeoutMs = DOCUMENT_OCR_TIMEOUT_MS;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      const ocrPromise = this.zone2.runDocumentOcr(request);
+      const timeoutPromise = new Promise<{ readonly text: string; readonly confidence: number; readonly timedOut: boolean }>(
+        (resolve) => {
+          timer = setTimeout(() => resolve({ text: "", confidence: 0, timedOut: true }), timeoutMs);
+        },
+      );
+      const result = await Promise.race([ocrPromise, timeoutPromise]);
+      return { text: result.text, confidence: result.confidence, timedOut: result.timedOut ?? false };
+    } finally {
+      if (timer !== undefined) {
+        clearTimeout(timer);
+      }
+    }
   }
 }

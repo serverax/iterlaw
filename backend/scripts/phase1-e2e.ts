@@ -13,6 +13,7 @@ const dummyEnv: Env = {
   PORT: 4000,
   SUPABASE_URL: 'https://example.supabase.co',
   SUPABASE_SERVICE_ROLE_KEY: 'dummy-service-role-key-for-mock-only',
+  ALLOWED_ORIGINS: '*',
 };
 
 const QA_APPROVED = [

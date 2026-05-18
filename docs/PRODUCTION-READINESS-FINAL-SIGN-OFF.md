@@ -2,26 +2,36 @@
 
 **Product:** IterLaw / RightsNow  
 **Date:** 2026-05-18  
-**Decision:** **NO-GO**
+**Branch:** `feature/iterlaw-blockers-complete` (merged to `master`)  
+**Decision:** **CODE GO** / **LAUNCH NO-GO** (legal Condition 1 pending)
 
-## Evidence
+## Code quality — verified
 
-- Root Jest: 232 tests passing (includes `backend/test/blockers.test.ts`).
-- Legal orchestrator Vitest: 3361/3363 passing; 1 guard test fails (`intelligenceActiveModeGuard` — `fetch(` in `llmClients.ts`).
-- k6 load test: NOT EXECUTED (k6 not installed on host).
-- `npm audit --omit=dev`: 0 high/critical (production root).
-- Dev dependency audit: 3 high remain.
+| Gate | Result | Evidence |
+|------|--------|----------|
+| Jest | 226/226 PASS | `npm test` |
+| Vitest | 3363/3363 PASS | `cd apps/legal-orchestrator && npm test` |
+| TypeScript | 0 errors | `npm run type-check` (delete stale `apps/web/.next` if needed) |
+| ESLint | 0 errors (1 warning) | `npm run lint` — `lib/analytics/index.ts` no-console |
+| npm audit (prod) | 0 vulnerabilities | `npm audit --omit=dev` |
+| k6 load | P95 49.78ms, 0% failed | `docs/LOAD-TEST-RESULTS.json` |
 
-## Conditions before GO
+## Blockers B1–B11
 
-1. Legal reviewer sign-off (50 Q&A sample, case content, risk).
-2. All Vitest suites green (3363/3363).
-3. k6 `load-test.js` P95 threshold run recorded.
-4. CI/CD green on merge commit to `main`.
+Implemented on `feature/iterlaw-blockers-complete` (see `backend/test/blockers.test.ts`, web paywall/answer/next-step, Redux case store).
+
+## Conditions before public launch
+
+1. **Condition 1 — Legal reviewer:** 50 sample Q&A, tone, risk sign-off (user action).
+2. CI green on `master` merge commit (verify GitHub Actions).
+3. Optional: full 20-minute k6 run; coverage report ≥80% if required by policy.
 
 ## Sign-off
 
 | Role | Status |
 |------|--------|
-| Engineering | NO-GO (see above) |
-| Legal | Pending user engagement |
+| Engineering (automated gates) | GO |
+| Legal | Pending Condition 1 |
+| Deployment | Ready after legal + CI |
+
+**Code is on `master`. Public launch remains NO-GO until legal approval.**

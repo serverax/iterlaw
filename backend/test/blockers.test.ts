@@ -32,10 +32,17 @@ describe('Blockers — loyalty engine', () => {
 
 describe('Blockers — QA cache expiry', () => {
   it('expires entries', () => {
-    setCacheEntry('q1', { answer: 'x' }, 1);
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
+    setCacheEntry('q1', { answer: 'x' }, 1000);
     expect(getCacheEntry('q1')).toBeDefined();
+    jest.advanceTimersByTime(1001);
+    expect(getCacheEntry('q1')).toBeUndefined();
+    setCacheEntry('q2', { answer: 'y' }, 1000);
+    jest.advanceTimersByTime(1001);
     const removed = purgeExpiredCacheEntries();
-    expect(removed).toBeGreaterThanOrEqual(0);
+    expect(removed).toBeGreaterThanOrEqual(1);
+    jest.useRealTimers();
   });
 });
 

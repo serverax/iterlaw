@@ -1,0 +1,26 @@
+{
+  "date": "2026-05-18",
+  "tool": "k6",
+  "method": "docker",
+  "image": "grafana/k6:latest",
+  "script": "load-test.js",
+  "config": {
+    "vus": 100,
+    "duration": "30s",
+    "BASE_URL": "http://host.docker.internal:3000",
+    "ORCH_URL": "http://host.docker.internal:8081"
+  },
+  "results": {
+    "http_reqs": 5924,
+    "http_req_failed_rate": 0,
+    "http_req_duration_avg_ms": 12.54,
+    "http_req_duration_p95_ms": 49.78,
+    "http_req_duration_p90_ms": 19.42,
+    "checks_succeeded_percent": 100,
+    "thresholds": {
+      "http_req_duration_p95_lt_2000ms": true,
+      "http_req_failed_rate_lt_0.2": true
+    }
+  },
+  "status": "PASS"
+}

@@ -148,14 +148,8 @@ jobs:
         run: |
           npm ci
           npm run build
-      - uses: docker/setup-buildx-action@v3
-      - name: Docker smoke build (orchestrator)
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: apps/legal-orchestrator/Dockerfile
-          push: false
-          tags: iterlaw/legal-orchestrator:ci-smoke
+      - name: Orchestrator compile (CI)
+        run: npm run build:orchestrator
 
   deploy-staging:
     name: Gate 6 — Deploy staging

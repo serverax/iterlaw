@@ -1,43 +1,104 @@
 'use client';
 
-type PaywallSheetProps = {
-  open: boolean;
-  onClose: () => void;
-  onUpgrade?: () => void;
-};
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
-export function PaywallSheet({ open, onClose, onUpgrade }: PaywallSheetProps) {
+export interface PaywallSheetProps {
+  onSubscribe?: () => void;
+  open?: boolean;
+  onClose?: () => void;
+  variant?: 'inline' | 'modal';
+}
+
+const PLANS = {
+  essential: {
+    name: 'Essential',
+    price: '£4.99',
+    period: '/month',
+    features: ['30 questions per month', '5 document uploads', 'Deadline alerts', 'Case timeline'],
+  },
+  active: {
+    name: 'Active Case',
+    price: '£9.99',
+    period: '/month',
+    features: [
+      'Unlimited questions',
+      'Unlimited uploads',
+      'Solicitor referral',
+      'Case summary PDF',
+    ],
+  },
+} as const;
+
+type PlanId = keyof typeof PLANS;
+
+export function PaywallSheet({
+  onSubscribe,
+  open = true,
+  onClose,
+  variant = 'inline',
+}: PaywallSheetProps) {
+  const [selectedPlan, setSelectedPlan] = useState<PlanId>('essential');
+
   if (!open) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4" role="presentation">
-      <div
-        role="dialog"
-        aria-label="Upgrade to continue"
-        className="w-full max-w-md rounded-t-2xl bg-white p-6 shadow-lg"
-      >
-        <h2 className="text-lg font-semibold text-gray-900">Continue with Essential</h2>
-        <p className="mt-2 text-sm text-gray-600">
-          You have reached the free question limit. Upgrade for unlimited guided answers and case
-          tools.
-        </p>
-        <div className="mt-6 flex gap-3">
+  const content = (
+    <Card className="border-gold/50">
+      <header className="mb-8">
+        <h3 className="font-fraunces text-2xl font-bold text-text-primary">Upgrade to continue</h3>
+        <p className="mt-2 text-text-secondary">You have used your free questions for this month</p>
+      </header>
+
+      <section className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+        {(Object.entries(PLANS) as [PlanId, (typeof PLANS)[PlanId]][]).map(([key, plan]) => (
           <button
+            key={key}
             type="button"
-            className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm"
-            onClick={onClose}
+            onClick={() => setSelectedPlan(key)}
+            className={`rounded-lg border p-6 text-left transition-all ${
+              selectedPlan === key
+                ? 'border-gold bg-gold/10'
+                : 'border-steel bg-slate hover:border-gold/50'
+            }`}
           >
-            Not now
+            <header className="mb-4 flex items-start justify-between">
+              <h4 className="text-lg font-bold text-text-primary">{plan.name}</h4>
+              {selectedPlan === key ? <Badge label="Selected" variant="success" size="sm" /> : null}
+            </header>
+            <p className="mb-4">
+              <span className="text-3xl font-bold text-gold">{plan.price}</span>
+              <span className="ml-2 text-text-secondary">{plan.period}</span>
+            </p>
+            <ul className="space-y-2">
+              {plan.features.map((f) => (
+                <li key={f} className="flex items-center gap-2 text-sm text-text-secondary">
+                  <span className="text-signal-green">✓</span>
+                  {f}
+                </li>
+              ))}
+            </ul>
           </button>
-          <button
-            type="button"
-            className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm text-white"
-            onClick={onUpgrade ?? onClose}
-          >
-            View plans
-          </button>
-        </div>
-      </div>
-    </div>
+        ))}
+      </section>
+
+      <Button variant="primary" size="lg" fullWidth onClick={onSubscribe ?? onClose}>
+        Continue with {PLANS[selectedPlan].name}
+      </Button>
+      <p className="mt-6 text-center text-xs text-text-tertiary">
+        Secure payment via Stripe · Cancel any time · No lock-in
+      </p>
+    </Card>
   );
+
+  if (variant === 'modal') {
+    return (
+      <section className="fixed inset-0 z-50 flex items-end justify-center bg-night/80 p-4 sm:items-center">
+        {content}
+      </section>
+    );
+  }
+
+  return content;
 }

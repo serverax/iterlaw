@@ -1,33 +1,33 @@
 import Link from 'next/link';
-
-const STEPS = [
-  { title: 'Record the facts', detail: 'Write dates, names, and what was said in meetings.' },
-  { title: 'Check deadlines', detail: 'Employment tribunal limits are strict — note dismissal date.' },
-  { title: 'Gather documents', detail: 'Contract, letters, payslips, and any disciplinary notes.' },
-  { title: 'Consider ACAS', detail: 'Early conciliation is usually required before a tribunal claim.' },
-];
+import { Header } from '@/components/nav/Header';
+import { Container } from '@/components/layout/Container';
+import { Button } from '@/components/ui/button';
+import { NextSteps } from '@/components/case/NextSteps';
 
 export default function NextStepPage() {
   return (
-    <main className="mx-auto max-w-2xl p-6">
-      <h1 className="text-2xl font-semibold text-gray-900">Your next steps</h1>
-      <p className="mt-2 text-sm text-gray-600">
-        Practical actions for tonight. This is general guidance, not legal advice.
-      </p>
-      <ol className="mt-6 space-y-4">
-        {STEPS.map((step, i) => (
-          <li key={step.title} className="rounded-lg border border-gray-200 p-4">
-            <span className="text-xs font-medium text-indigo-600">Step {i + 1}</span>
-            <h2 className="mt-1 font-medium text-gray-900">{step.title}</h2>
-            <p className="mt-1 text-sm text-gray-600">{step.detail}</p>
-          </li>
-        ))}
-      </ol>
-      <p className="mt-8 text-sm">
-        <Link href="/answer" className="text-indigo-600 underline">
-          Back to Q&amp;A
-        </Link>
-      </p>
+    <main className="min-h-screen bg-night">
+      <Header />
+
+      <Container className="max-w-2xl py-10">
+        <p className="mb-2 text-body-sm text-text-tertiary">General guidance — not legal advice</p>
+        <h1 className="font-fraunces text-h1 text-text-primary">Your next steps</h1>
+
+        <section className="mt-8">
+          <NextSteps stage="formal" />
+        </section>
+
+        <footer className="mt-10">
+          <Button variant="primary" size="lg" fullWidth href="/answer">
+            Ask a question about this
+          </Button>
+          <p className="mt-6 text-center text-body-sm">
+            <Link href="/answer" className="text-gold hover:underline">
+              ← Back to Q&amp;A
+            </Link>
+          </p>
+        </footer>
+      </Container>
     </main>
   );
 }

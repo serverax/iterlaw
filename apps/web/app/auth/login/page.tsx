@@ -1,92 +1,94 @@
 'use client';
 
-// IterLaw is local-first / self-hosted. Browser-side public-cloud
-// auth (Supabase / Auth0 / Clerk) is NOT in the default build path.
-// During pilot, the only available user state is the anonymous
-// case-session held in apps/web/lib/anon-session/anon-session-store
-// behind /api/case. Once a self-hosted auth path lands (see
-// docs/iterlaw/ITERLAW_LOCAL_FIRST_DB_AND_AUTH_ARCHITECTURE.md), this
-// page is the replacement target.
+import { useState } from 'react';
+import Link from 'next/link';
+import { Button, Card, Input } from '@/components/ui';
 
 export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  async function handleLogin() {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      if (response.ok) {
+        window.location.href = '/dashboard';
+        return;
+      }
+      setError('Invalid email or password');
+    } catch {
+      setError('Login unavailable — use anonymous assessment for pilot mode');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <div
-      style={{
-        width: '100%',
-        maxWidth: '480px',
-        padding: '2rem',
-        background: '#1A1D26',
-        borderRadius: '12px',
-        border: '1px solid #252836',
-        color: '#F0EDE6',
-      }}
-    >
-      <h1
-        style={{
-          fontSize: '24px',
-          fontWeight: 'bold',
-          marginBottom: '0.75rem',
-        }}
-      >
-        Sign in
-      </h1>
-      <p
-        style={{
-          fontSize: '14px',
-          color: '#9A97A0',
-          marginBottom: '1.5rem',
-          lineHeight: 1.5,
-        }}
-      >
-        Local-auth is not configured in this build. IterLaw is running
-        in <strong>anonymous pilot mode</strong>: your case narrative
-        is held in a server-side session for up to 15 minutes and is
-        never sent to a public cloud provider.
-      </p>
-      <p
-        style={{
-          fontSize: '13px',
-          color: '#9A97A0',
-          marginBottom: '1.5rem',
-          lineHeight: 1.5,
-        }}
-      >
-        To continue, start a case from the assessment flow. Your
-        narrative stays in this browser session; nothing is persisted
-        until you choose to create an account in a future self-hosted
-        auth step.
-      </p>
-      <a
-        href="/case/assessment"
-        style={{
-          display: 'inline-block',
-          padding: '10px 16px',
-          background: '#C9A84C',
-          color: '#0D0F14',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontWeight: 500,
-          fontSize: '14px',
-        }}
-      >
-        Start anonymous assessment
-      </a>
-      <div
-        style={{
-          padding: '12px',
-          marginTop: '1.5rem',
-          background: '#FFF8E1',
-          color: '#3D3D3A',
-          borderRadius: '8px',
-          fontSize: '12px',
-          lineHeight: 1.5,
-        }}
-      >
-        IterLaw provides general information based on UK Government
-        sources. This is not professional legal advice. Always consult
-        a qualified employment solicitor for advice on your specific
-        situation.
-      </div>
-    </div>
+    <main className="flex min-h-screen items-center justify-center bg-night px-6">
+      <Card className="w-full max-w-md">
+        <header className="mb-8">
+          <h1 className="font-fraunces text-3xl font-bold text-text-primary">Welcome back</h1>
+          <p className="mt-2 text-text-secondary">Sign in to your RightsNow account</p>
+        </header>
+
+        {error ? (
+          <p className="mb-6 rounded-lg border border-signal-red bg-signal-red/15 p-4 text-sm text-signal-red">
+            {error}
+          </p>
+        ) : null}
+
+        <section className="mb-6 space-y-4">
+          <Input
+            type="email"
+            label="Email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            type="password"
+            label="Password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </section>
+
+        <Button variant="primary" size="lg" fullWidth loading={loading} onClick={handleLogin} className="mb-4">
+          Sign In
+        </Button>
+
+        <p className="mb-6 text-center text-xs text-text-tertiary">OR</p>
+
+        <section className="mb-6 space-y-2">
+          {['Google', 'LinkedIn', 'Microsoft'].map((provider) => (
+            <Button key={provider} variant="secondary" size="lg" fullWidth disabled>
+              Continue with {provider}
+            </Button>
+          ))}
+        </section>
+
+        <p className="text-center text-sm text-text-secondary">
+          No account?{' '}
+          <Link href="/auth/register" className="font-semibold text-gold hover:text-gold/80">
+            Sign up
+          </Link>
+        </p>
+
+        <p className="mt-6 border-t border-steel pt-6 text-center text-sm text-text-secondary">
+          <Link href="/case/assessment" className="text-gold hover:underline">
+            Continue in anonymous pilot mode →
+          </Link>
+        </p>
+      </Card>
+    </main>
   );
 }

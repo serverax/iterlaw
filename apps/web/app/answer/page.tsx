@@ -1,81 +1,138 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Header } from '@/components/nav/Header';
+import { Container } from '@/components/layout/Container';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { AnswerCard } from '@/components/answer/AnswerCard';
 import { PaywallSheet } from '@/components/paywall/PaywallSheet';
 import { trackEvent } from '@/lib/analytics';
 
-const FREE_QUESTION_LIMIT = 3;
+const DEMO_ANSWER = {
+  law: 'The Employment Rights Act 1996 gives employees with at least two years of service the right not to be unfairly dismissed.',
+  meaning:
+    'If you have worked for your employer for two years or more, a dismissal may be unfair without a fair reason and process.',
+  action: 'Write down the exact date of dismissal and save every letter from your employer.',
+  source: 'legislation.gov.uk — ERA 1996',
+  sourceUrl: 'https://www.legislation.gov.uk/ukpga/1996/18/contents',
+  confidence: 0.92,
+};
 
-export default function AnswerPage() {
-  const [question, setQuestion] = useState('');
-  const [questionsUsed, setQuestionsUsed] = useState(0);
-  const [answer, setAnswer] = useState<string | null>(null);
+function AnswerPageContent() {
+  const searchParams = useSearchParams();
+  const questionId = searchParams.get('q');
+
+  const [answer, setAnswer] = useState<typeof DEMO_ANSWER | null>(null);
+  const [loading, setLoading] = useState(Boolean(questionId));
   const [answerDisplayed, setAnswerDisplayed] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
 
-  const submit = () => {
-    if (!question.trim()) return;
+  useEffect(() => {
+    if (questionId) void fetchAnswer(questionId);
+    else setLoading(false);
+  }, [questionId]);
 
-    const preview =
-      'This is a preview answer. Official sources are queried first; upgrade for full case guidance.';
-    setAnswer(preview);
-    setAnswerDisplayed(true);
-    trackEvent('answer_submitted', { question_length: question.length });
-
-    setQuestionsUsed((n) => n + 1);
-    if (questionsUsed + 1 > FREE_QUESTION_LIMIT) {
-      setTimeout(() => {
-        setShowPaywall(true);
-        trackEvent('paywall_shown', { reason: 'free_limit' });
-      }, 500);
+  async function fetchAnswer(id: string) {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/answer/${id}`);
+      if (response.ok) {
+        const data = (await response.json()) as typeof DEMO_ANSWER;
+        setAnswer(data);
+      } else {
+        setAnswer(DEMO_ANSWER);
+      }
+    } catch {
+      setAnswer(DEMO_ANSWER);
+    } finally {
+      setLoading(false);
     }
-  };
+  }
+
+  function handleHelpful() {
+    setAnswerDisplayed(true);
+    trackEvent('answer_submitted', { question_id: questionId ?? 'demo' });
+    setTimeout(() => setShowPaywall(true), 500);
+  }
+
+  if (loading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-night">
+        <section className="text-center">
+          <p className="animate-spin text-4xl">⟳</p>
+          <p className="mt-4 text-text-secondary">Loading your answer…</p>
+        </section>
+      </main>
+    );
+  }
+
+  const display = answer ?? DEMO_ANSWER;
 
   return (
-    <main className="mx-auto max-w-2xl p-6">
-      <h1 className="text-2xl font-semibold text-gray-900">Ask a question</h1>
-      <p className="mt-1 text-sm text-gray-600">
-        Free questions remaining: {Math.max(0, FREE_QUESTION_LIMIT - questionsUsed)}
-      </p>
-      <textarea
-        className="mt-4 w-full rounded-lg border border-gray-300 p-3 text-sm"
-        rows={4}
-        value={question}
-        onChange={(e) => setQuestion(e.target.value)}
-        placeholder="Describe your employment situation…"
-      />
-      <button
-        type="button"
-        className="mt-3 rounded-lg bg-indigo-600 px-4 py-2 text-sm text-white"
-        onClick={submit}
-      >
-        Get answer
-      </button>
+    <main className="min-h-screen bg-night">
+      <Header />
 
-      {answer ? (
-        <section className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-800">
-          {answer}
-          <p className="mt-4">
-            <Link href="/next-step" className="text-indigo-600 underline">
-              What should I do next?
-            </Link>
-          </p>
+      <Container className="max-w-3xl py-12">
+        <header className="mb-4 flex items-center gap-2">
+          <Badge label="ANSWER" variant="success" />
+          <span className="text-xs text-text-tertiary">Just now</span>
+        </header>
+
+        <AnswerCard {...display} onHelpful={handleHelpful} />
+
+        <section className="mb-8 mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Button variant="primary" size="lg" fullWidth href="/dashboard">
+            Save to Case
+          </Button>
+          <Button variant="secondary" size="lg" fullWidth href="/case/start">
+            Ask Another Question
+          </Button>
         </section>
-      ) : null}
 
-      {answerDisplayed && showPaywall ? (
-        <div className="mt-6 border-t border-gray-200 pt-6">
-          <PaywallSheet
-            open
-            onClose={() => setShowPaywall(false)}
-            onUpgrade={() => {
-              setShowPaywall(false);
-              window.location.href = '/dashboard';
-            }}
-          />
-        </div>
-      ) : null}
+        <p className="text-center">
+          <Link href="/next-step" className="text-gold hover:underline">
+            What should I do next? →
+          </Link>
+        </p>
+
+        {answerDisplayed && showPaywall ? (
+          <section className="mt-8">
+            <PaywallSheet onSubscribe={() => setShowPaywall(false)} />
+          </section>
+        ) : null}
+
+        {!questionId ? (
+          <section className="mt-12 rounded-lg border border-steel bg-slate p-6">
+            <p className="text-text-secondary">
+              Demo answer shown. Start from{' '}
+              <Link href="/case/start" className="text-gold underline">
+                case intake
+              </Link>{' '}
+              or pass <code>?q=</code> with an answer id.
+            </p>
+            <Button variant="primary" className="mt-4" href="/case/start">
+              Start case intake
+            </Button>
+          </section>
+        ) : null}
+      </Container>
     </main>
+  );
+}
+
+export default function AnswerPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen items-center justify-center bg-night">
+          <p className="text-text-secondary">Loading…</p>
+        </main>
+      }
+    >
+      <AnswerPageContent />
+    </Suspense>
   );
 }

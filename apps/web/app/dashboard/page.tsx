@@ -1,103 +1,146 @@
 'use client';
 
-// Local-first build: no public-cloud session is read here. Until a
-// self-hosted auth path lands, the dashboard shows the anonymous
-// pilot-mode state. Real user-bound case data is rendered server-
-// side via API routes in a later sprint.
+import { useEffect, useState } from 'react';
+import { Header } from '@/components/nav/Header';
+import { Container } from '@/components/layout/Container';
+import { Button, Card, Badge } from '@/components/ui';
+
+type CaseData = {
+  situation_type: string;
+  service_months: number;
+  stage: string;
+  created_at: string;
+  questions_asked?: number;
+  documents_uploaded?: number;
+  timeline_events?: number;
+};
 
 export default function DashboardPage() {
+  const [caseData, setCaseData] = useState<CaseData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    void fetchCaseData();
+  }, []);
+
+  async function fetchCaseData() {
+    try {
+      const response = await fetch('/api/case');
+      if (response.ok) {
+        const data = (await response.json()) as CaseData;
+        setCaseData(data);
+      }
+    } catch {
+      setCaseData(null);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-night">
+        <p className="text-text-secondary">Loading...</p>
+      </main>
+    );
+  }
+
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#0D0F14',
-        color: '#F0EDE6',
-        padding: '2rem',
-      }}
-    >
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ marginBottom: '2.5rem' }}>
-          <h1 style={{ fontSize: '32px', fontWeight: 'bold' }}>Dashboard</h1>
-          <p style={{ color: '#9A97A0', marginTop: '0.5rem' }}>
-            Anonymous pilot mode. Local-auth is not configured in this build.
+    <main className="min-h-screen bg-night">
+      <Header />
+
+      <Container className="py-12">
+        <header className="mb-12">
+          <h1 className="font-fraunces text-4xl font-bold text-text-primary">Your Case</h1>
+          <p className="mt-2 text-text-secondary">
+            {caseData
+              ? `${caseData.situation_type} · ${caseData.service_months} months service`
+              : 'No active case — start below'}
           </p>
-        </div>
+        </header>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '1.5rem',
-          }}
-        >
-          <a
-            href="/case/assessment"
-            style={{
-              display: 'block',
-              background: '#1A1D26',
-              padding: '1.5rem',
-              borderRadius: '12px',
-              border: '1px solid #252836',
-              textDecoration: 'none',
-              color: 'inherit',
-            }}
-          >
-            <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-              Start a case
-            </h2>
-            <p style={{ color: '#9A97A0', marginBottom: '1rem' }}>
-              Begin an anonymous assessment of your situation.
-            </p>
-            <span
-              style={{
-                display: 'inline-block',
-                padding: '10px 16px',
-                background: '#C9A84C',
-                color: '#0D0F14',
-                borderRadius: '8px',
-                fontWeight: 500,
-                fontSize: '14px',
-              }}
-            >
-              Open assessment
-            </span>
-          </a>
+        {caseData ? (
+          <>
+            <Card className="mb-8">
+              <header className="mb-6 flex items-start justify-between">
+                <section>
+                  <h2 className="mb-2 text-2xl font-bold text-text-primary">{caseData.situation_type}</h2>
+                  <p className="text-text-secondary">
+                    Started {new Date(caseData.created_at).toLocaleDateString('en-GB')}
+                  </p>
+                </section>
+                <Badge label={caseData.stage} variant="info" />
+              </header>
+              <section className="grid grid-cols-3 gap-4 border-t border-steel pt-6">
+                <article>
+                  <p className="text-4xl font-bold text-gold">{caseData.questions_asked ?? 0}</p>
+                  <p className="mt-1 text-sm text-text-secondary">Questions Asked</p>
+                </article>
+                <article>
+                  <p className="text-4xl font-bold text-gold">{caseData.documents_uploaded ?? 0}</p>
+                  <p className="mt-1 text-sm text-text-secondary">Documents</p>
+                </article>
+                <article>
+                  <p className="text-4xl font-bold text-gold">{caseData.timeline_events ?? 0}</p>
+                  <p className="mt-1 text-sm text-text-secondary">Timeline Events</p>
+                </article>
+              </section>
+            </Card>
 
-          <div
-            style={{
-              background: '#1A1D26',
-              padding: '1.5rem',
-              borderRadius: '12px',
-              border: '1px solid #252836',
-              opacity: 0.7,
-            }}
-          >
-            <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-              My cases
-            </h2>
-            <p style={{ color: '#9A97A0' }}>
-              Available after self-hosted account sign-in lands.
-            </p>
-          </div>
+            <Card className="mb-8 border-gold/50 bg-gold/5">
+              <section className="flex flex-wrap items-start justify-between gap-4">
+                <section>
+                  <h3 className="mb-2 font-bold text-text-primary">Next Step</h3>
+                  <p className="text-text-secondary">Prepare your response statement</p>
+                </section>
+                <Button variant="primary" href="/next-step">
+                  View Details →
+                </Button>
+              </section>
+            </Card>
 
-          <div
-            style={{
-              background: '#1A1D26',
-              padding: '1.5rem',
-              borderRadius: '12px',
-              border: '1px solid #252836',
-              opacity: 0.7,
-            }}
-          >
-            <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-              Settings
-            </h2>
-            <p style={{ color: '#9A97A0' }}>
-              Account, privacy, deletion controls — pending local-auth sprint.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+            <section className="mb-12 grid grid-cols-1 gap-4 md:grid-cols-3">
+              <Button variant="primary" size="lg" fullWidth href="/answer">
+                Ask a Question
+              </Button>
+              <Button variant="secondary" size="lg" fullWidth href="/dashboard/documents">
+                Upload Document
+              </Button>
+              <Button variant="secondary" size="lg" fullWidth href="/dashboard/timeline">
+                View Timeline
+              </Button>
+            </section>
+
+            <Card>
+              <h3 className="mb-6 text-xl font-bold text-text-primary">Recent Activity</h3>
+              <ul className="space-y-4">
+                {['Asked about unfair dismissal rights', 'Uploaded disciplinary letter', 'Timeline updated'].map(
+                  (text, i) => (
+                    <li key={text} className="border-b border-steel pb-4 last:border-0">
+                      <section className="flex items-start justify-between gap-4">
+                        <section>
+                          <p className="font-semibold text-text-primary">{text}</p>
+                          <p className="text-sm text-text-secondary">{i + 1} days ago</p>
+                        </section>
+                        <Badge label="Recorded" variant="success" size="sm" />
+                      </section>
+                    </li>
+                  )
+                )}
+              </ul>
+            </Card>
+          </>
+        ) : (
+          <Card className="p-12 text-center">
+            <p className="mb-4 text-6xl">📋</p>
+            <h2 className="mb-2 text-2xl font-bold text-text-primary">No active case</h2>
+            <p className="mb-8 text-text-secondary">Start by telling us what is happening at work</p>
+            <Button variant="primary" size="lg" href="/case/start">
+              Start New Case
+            </Button>
+          </Card>
+        )}
+      </Container>
+    </main>
   );
 }

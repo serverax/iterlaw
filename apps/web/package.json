@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm exec next -- dev",
+    "dev": "npm exec next -- dev -p 3001",
     "build": "npm exec next -- build && node ./scripts/post-next-standalone.cjs",
     "start": "npm exec next -- start",
     "lint": "npm exec next -- lint",

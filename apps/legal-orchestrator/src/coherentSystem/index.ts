@@ -35,6 +35,16 @@ export * from "./crossWorkspaceRestrictionsPhase5.js";
 export * from "./workspaceSettingsPhase6.js";
 export * from "./workspaceTemporalBand.js";
 export * from "./documentIntelBand.js";
+export * from "./zone2DocumentTypes.js";
+export * from "./zone2DocumentStub.js";
+export * from "./documentUploadOcrPhase51.js";
+export * from "./entityExtractionPhase52.js";
+export * from "./legalDocumentParsingPhase53.js";
+export * from "./documentClassificationPhase54.js";
+export * from "./semanticChunkingPhase55.js";
+export * from "./semanticSearchPhase56.js";
+export * from "./citationLockedAnswerPhase57.js";
+export * from "./documentIntelIntegrationPhase58.js";
 export * from "./zone2LawTypes.js";
 export * from "./zone2LawStub.js";
 export * from "./lawEnginePhase2.js";
@@ -68,6 +78,15 @@ import { WasmZkpVerificationPhase7Band } from "./wasmZkpVerificationPhase7.js";
 import { WasmLedgerIntegrationPhase8Band } from "./wasmLedgerIntegrationPhase8.js";
 import { WasmAggregationPhase9Band } from "./wasmAggregationPhase9.js";
 import { WasmDisputeResolutionPhase10Band } from "./wasmDisputeResolutionPhase10.js";
+import { createZone2DocumentService } from "./azureDocumentIntelligenceZone2.js";
+import { DocumentUploadOcrPhase51Band } from "./documentUploadOcrPhase51.js";
+import { EntityExtractionPhase52Band } from "./entityExtractionPhase52.js";
+import { LegalDocumentParsingPhase53Band } from "./legalDocumentParsingPhase53.js";
+import { DocumentClassificationPhase54Band } from "./documentClassificationPhase54.js";
+import { SemanticChunkingPhase55Band } from "./semanticChunkingPhase55.js";
+import { SemanticSearchPhase56Band } from "./semanticSearchPhase56.js";
+import { CitationLockedAnswerPhase57Band } from "./citationLockedAnswerPhase57.js";
+import { DocumentIntelIntegrationPhase58Band } from "./documentIntelIntegrationPhase58.js";
 import { Zone2WorkspaceServiceStub } from "./zone2WorkspaceStub.js";
 import { WorkspaceIsolationPhase1Band } from "./workspaceIsolationPhase1.js";
 import { TemporalRlsPhase2Band } from "./temporalRlsPhase2.js";
@@ -176,3 +195,29 @@ export const crossWorkspaceRestrictionsPhase5Band = new CrossWorkspaceRestrictio
 
 /** Sprint 50 — Workspace settings and defaults. */
 export const workspaceSettingsPhase6Band = new WorkspaceSettingsPhase6Band(zone2Workspace);
+
+const zone2Document = createZone2DocumentService();
+
+/** Sprint 51 — Document upload + OCR (Azure DI or stub). */
+export const documentUploadOcrPhase51Band = new DocumentUploadOcrPhase51Band(zone2Document);
+
+/** Sprint 52 — Entity extraction. */
+export const entityExtractionPhase52Band = new EntityExtractionPhase52Band();
+
+/** Sprint 53 — Legal document parsing. */
+export const legalDocumentParsingPhase53Band = new LegalDocumentParsingPhase53Band();
+
+/** Sprint 54 — Document classification + metadata. */
+export const documentClassificationPhase54Band = new DocumentClassificationPhase54Band();
+
+/** Sprint 55 — Semantic chunking + embeddings stub. */
+export const semanticChunkingPhase55Band = new SemanticChunkingPhase55Band(zone2Document);
+
+/** Sprint 56 — Vector search / RAG retrieval. */
+export const semanticSearchPhase56Band = new SemanticSearchPhase56Band();
+
+/** Sprint 57 — Citation-locked answer synthesis. */
+export const citationLockedAnswerPhase57Band = new CitationLockedAnswerPhase57Band(zone2Document);
+
+/** Sprint 58 — Document intelligence pipeline integration. */
+export const documentIntelIntegrationPhase58Band = new DocumentIntelIntegrationPhase58Band();

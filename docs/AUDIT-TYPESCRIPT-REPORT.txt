@@ -1,0 +1,22 @@
+
+> iterlaw@0.1.0 type-check
+> npm run typecheck
+
+
+> iterlaw@0.1.0 typecheck
+> npm run typecheck -w @iterlaw/web
+
+
+> @iterlaw/web@0.1.0 typecheck
+> tsc --noEmit
+
+app/dashboard/page.tsx(13,25): error TS2307: Cannot find module '@/context/AuthContext' or its corresponding type declarations.
+app/dashboard/page.tsx(14,25): error TS2307: Cannot find module '@/context/CaseContext' or its corresponding type declarations.
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 1
+npm error path C:\Users\kalsh\projects\iterlaw\apps\web
+npm error workspace @iterlaw/web@0.1.0
+npm error location C:\Users\kalsh\projects\iterlaw\apps\web
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe /d /s /c tsc --noEmit
+EXIT_CODE=1

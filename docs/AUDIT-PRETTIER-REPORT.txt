@@ -1,0 +1,1347 @@
+
+> iterlaw@0.1.0 format:check
+> prettier --check "apps/**/*.{ts,tsx,js,json}" "packages/**/*.{ts,tsx,js,json}" "backend/**/*.{ts,js,json}" "*.{json,yml,yaml}" ".github/**/*.{yml,yaml}"
+
+Checking formatting...
+[warn] apps/ai-orchestrator/package-lock.json
+[warn] apps/ai-orchestrator/package.json
+[warn] apps/ai-orchestrator/src/compensation/acas-uplift.calculator.ts
+[warn] apps/ai-orchestrator/src/compensation/basic-award.calculator.ts
+[warn] apps/ai-orchestrator/src/compensation/build-compensation-section.ts
+[warn] apps/ai-orchestrator/src/compensation/compensation.types.ts
+[warn] apps/ai-orchestrator/src/compensation/compensatory-award.calculator.ts
+[warn] apps/ai-orchestrator/src/compensation/constants.ts
+[warn] apps/ai-orchestrator/src/compensation/contributory-conduct.calculator.ts
+[warn] apps/ai-orchestrator/src/compensation/discrimination-injury.calculator.ts
+[warn] apps/ai-orchestrator/src/compensation/input-hints.ts
+[warn] apps/ai-orchestrator/src/compensation/polkey-reduction.calculator.ts
+[warn] apps/ai-orchestrator/src/compensation/schedule-of-loss.generator.ts
+[warn] apps/ai-orchestrator/src/compensation/unfair-dismissal-aggregate.ts
+[warn] apps/ai-orchestrator/src/engines/aee.engine.ts
+[warn] apps/ai-orchestrator/src/engines/art.engine.ts
+[warn] apps/ai-orchestrator/src/engines/lvc.engine.ts
+[warn] apps/ai-orchestrator/src/engines/risk.engine.ts
+[warn] apps/ai-orchestrator/src/pipeline/legal-review.pipeline.ts
+[warn] apps/ai-orchestrator/src/rag/citation.service.ts
+[warn] apps/ai-orchestrator/src/rag/ingestion.service.ts
+[warn] apps/ai-orchestrator/src/rag/rag.types.ts
+[warn] apps/ai-orchestrator/src/rag/retrieval.service.ts
+[warn] apps/ai-orchestrator/src/rag/sources.config.ts
+[warn] apps/ai-orchestrator/src/reasoning/acas-code.engine.ts
+[warn] apps/ai-orchestrator/src/reasoning/burchell.engine.ts
+[warn] apps/ai-orchestrator/src/reasoning/claim-detection.ts
+[warn] apps/ai-orchestrator/src/reasoning/evidence-weight.engine.ts
+[warn] apps/ai-orchestrator/src/reasoning/legal-reasoning.engine.ts
+[warn] apps/ai-orchestrator/src/reasoning/limitation.engine.ts
+[warn] apps/ai-orchestrator/src/reasoning/reasoning.types.ts
+[warn] apps/ai-orchestrator/src/reasoning/tribunal-tests/discrimination.test.ts
+[warn] apps/ai-orchestrator/src/reasoning/tribunal-tests/redundancy.test.ts
+[warn] apps/ai-orchestrator/src/reasoning/tribunal-tests/unfair-dismissal.test.ts
+[warn] apps/ai-orchestrator/src/reasoning/tribunal-tests/wages.test.ts
+[warn] apps/ai-orchestrator/src/reasoning/tribunal-tests/whistleblowing.test.ts
+[warn] apps/ai-orchestrator/src/routes/review.route.ts
+[warn] apps/ai-orchestrator/src/safety/review-safety.ts
+[warn] apps/ai-orchestrator/src/server.ts
+[warn] apps/ai-orchestrator/src/services/openrouter.ts
+[warn] apps/ai-orchestrator/src/types/legal.types.ts
+[warn] apps/ai-orchestrator/src/types/review-api.types.ts
+[warn] apps/ai-orchestrator/src/utils/jsonLog.ts
+[warn] apps/ai-orchestrator/src/utils/logger.ts
+[warn] apps/ai-orchestrator/tests/review-engines.test.ts
+[warn] apps/ai-orchestrator/tsconfig.json
+[warn] apps/ai-orchestrator/vitest.config.ts
+[warn] apps/legal-orchestrator/dist/citations/citationGateActiveMode.js
+[warn] apps/legal-orchestrator/dist/citations/citationGateAdapter.js
+[warn] apps/legal-orchestrator/dist/citations/citationVerifier.js
+[warn] apps/legal-orchestrator/dist/citations/evidencePack.types.js
+[warn] apps/legal-orchestrator/dist/citations/evidencePackBuilder.js
+[warn] apps/legal-orchestrator/dist/citations/index.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/auditTrailLoggingPhase3.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/azureDocumentIntelligenceZone2.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/citationLockedAnswerPhase57.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/crossWorkspaceRestrictionsPhase5.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/documentClassificationPhase54.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/documentIntelBand.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/documentIntelIntegrationPhase58.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/documentUploadOcrPhase51.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/entityExtractionPhase52.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/index.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/lawEngineBand.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/lawEnginePhase2.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/lawEnginePhase3.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/lawEnginePhase4.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/lawEnginePhase5.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/legalDocumentParsingPhase53.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/rerankerV2.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/retrievalBand.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/retrievalBatchPhase7.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/retrievalCacheInvalidationPhase8.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/retrievalFallbackPhase9.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/retrievalHNSWPhase1.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/retrievalLatencySLAPhase5.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/retrievalOllamaPhase2.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/retrievalQueryOptPhase6.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/retrievalSpeculativePhase4.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/retrievalStreamingPhase3.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/semanticChunkingPhase55.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/semanticSearchPhase56.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/temporalRlsPhase2.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/wasmAggregationPhase9.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/wasmBand.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/wasmClientProofPhase3.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/wasmDisputeResolutionPhase10.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/wasmLedgerIntegrationPhase8.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/wasmMemoryEnforcementPhase5.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/wasmMerkleCommitmentPhase6.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/wasmProofVerificationPhase2.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/wasmSandboxPhase1.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/wasmSignedPackagePhase4.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/wasmZkpVerificationPhase7.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/workspaceIsolationPhase1.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/workspaceRbacPhase4.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/workspaceSettingsPhase6.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/workspaceTemporalBand.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/zone2DocumentStub.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/zone2DocumentTypes.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/zone2LawStub.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/zone2LawTypes.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/zone2RetrievalStub.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/zone2RetrievalTypes.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/zone2WasmStub.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/zone2WasmTypes.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/zone2WorkspaceStub.js
+[warn] apps/legal-orchestrator/dist/coherentSystem/zone2WorkspaceTypes.js
+[warn] apps/legal-orchestrator/dist/config/featureFlags.js
+[warn] apps/legal-orchestrator/dist/documents/documentUploadService.js
+[warn] apps/legal-orchestrator/dist/documents/documentUploadStore.js
+[warn] apps/legal-orchestrator/dist/entitlements/entitlement.types.js
+[warn] apps/legal-orchestrator/dist/entitlements/entitlementGateAdapter.js
+[warn] apps/legal-orchestrator/dist/entitlements/entitlementPolicy.js
+[warn] apps/legal-orchestrator/dist/entitlements/entitlementRepository.js
+[warn] apps/legal-orchestrator/dist/entitlements/index.js
+[warn] apps/legal-orchestrator/dist/evaluation/legalGoldenHarness.js
+[warn] apps/legal-orchestrator/dist/gdprRetention/dsrTypes.js
+[warn] apps/legal-orchestrator/dist/gdprRetention/index.js
+[warn] apps/legal-orchestrator/dist/gdprRetention/retentionSchedule.js
+[warn] apps/legal-orchestrator/dist/index.js
+[warn] apps/legal-orchestrator/dist/ingestion/chunkDocument.js
+[warn] apps/legal-orchestrator/dist/ingestion/citationExtractor.js
+[warn] apps/legal-orchestrator/dist/ingestion/citationRegistryPolicy.js
+[warn] apps/legal-orchestrator/dist/ingestion/cliRunner.js
+[warn] apps/legal-orchestrator/dist/ingestion/fetchSource.js
+[warn] apps/legal-orchestrator/dist/ingestion/hashDocumentVersion.js
+[warn] apps/legal-orchestrator/dist/ingestion/index.js
+[warn] apps/legal-orchestrator/dist/ingestion/ingestionAudit.js
+[warn] apps/legal-orchestrator/dist/ingestion/ingestionPipeline.js
+[warn] apps/legal-orchestrator/dist/ingestion/ingestionPipelinePolicyGate.js
+[warn] apps/legal-orchestrator/dist/ingestion/ingestionPolicy.js
+[warn] apps/legal-orchestrator/dist/ingestion/normaliseDocument.js
+[warn] apps/legal-orchestrator/dist/ingestion/normalizeDocument.js
+[warn] apps/legal-orchestrator/dist/ingestion/persistIngestionJob.js
+[warn] apps/legal-orchestrator/dist/ingestion/robotsCompliance.js
+[warn] apps/legal-orchestrator/dist/ingestion/runIngestionPlan.js
+[warn] apps/legal-orchestrator/dist/ingestion/sourceRegistry.js
+[warn] apps/legal-orchestrator/dist/ingestion/statutorySources.js
+[warn] apps/legal-orchestrator/dist/ingestion/types.js
+[warn] apps/legal-orchestrator/dist/ingestion/ukEmploymentSourceRegistry.js
+[warn] apps/legal-orchestrator/dist/intelligence/contextCompressor.js
+[warn] apps/legal-orchestrator/dist/intelligence/fastAnswer.types.js
+[warn] apps/legal-orchestrator/dist/intelligence/fastAnswerPlanner.js
+[warn] apps/legal-orchestrator/dist/intelligence/freshnessFilter.js
+[warn] apps/legal-orchestrator/dist/intelligence/hybridRetriever.js
+[warn] apps/legal-orchestrator/dist/intelligence/index.js
+[warn] apps/legal-orchestrator/dist/intelligence/intelligence.types.js
+[warn] apps/legal-orchestrator/dist/intelligence/intelligenceGateway.js
+[warn] apps/legal-orchestrator/dist/intelligence/llmClients.js
+[warn] apps/legal-orchestrator/dist/intelligence/queryClassifier.js
+[warn] apps/legal-orchestrator/dist/intelligence/ragEvaluator.js
+[warn] apps/legal-orchestrator/dist/intelligence/retrievalPlanner.js
+[warn] apps/legal-orchestrator/dist/intelligence/rrfFusion.js
+[warn] apps/legal-orchestrator/dist/intelligence/semanticCache.js
+[warn] apps/legal-orchestrator/dist/intelligence/trustScorer.js
+[warn] apps/legal-orchestrator/dist/lawModuleEngine/evidencePackMetrics.js
+[warn] apps/legal-orchestrator/dist/lawModuleEngine/index.js
+[warn] apps/legal-orchestrator/dist/lawModuleEngine/inputFingerprint.js
+[warn] apps/legal-orchestrator/dist/lawModuleEngine/legalModule.types.js
+[warn] apps/legal-orchestrator/dist/lawModuleEngine/legalModuleRegistry.js
+[warn] apps/legal-orchestrator/dist/lawModuleEngine/legalModuleRouting.js
+[warn] apps/legal-orchestrator/dist/lawModuleEngine/phase1Orchestrator.js
+[warn] apps/legal-orchestrator/dist/lawModuleEngine/plannedModules.js
+[warn] apps/legal-orchestrator/dist/lawModuleEngine/rerankerBlend.js
+[warn] apps/legal-orchestrator/dist/lawModuleEngine/ukEmploymentModule.js
+[warn] apps/legal-orchestrator/dist/legal/llm/boundedSynthesis.js
+[warn] apps/legal-orchestrator/dist/legal/llm/citationBoundPrompt.js
+[warn] apps/legal-orchestrator/dist/legal/llm/httpOllamaTransport.js
+[warn] apps/legal-orchestrator/dist/legal/llm/index.js
+[warn] apps/legal-orchestrator/dist/legal/llm/llm.types.js
+[warn] apps/legal-orchestrator/dist/legal/llm/llmAudit.types.js
+[warn] apps/legal-orchestrator/dist/legal/llm/llmAuditRedactor.js
+[warn] apps/legal-orchestrator/dist/legal/llm/llmAuditSink.js
+[warn] apps/legal-orchestrator/dist/legal/llm/llmGateway.types.js
+[warn] apps/legal-orchestrator/dist/legal/llm/llmOutputGuard.js
+[warn] apps/legal-orchestrator/dist/legal/llm/localLlmGateway.js
+[warn] apps/legal-orchestrator/dist/legal/llm/localOllamaGateway.js
+[warn] apps/legal-orchestrator/dist/legal/llm/localTransportPolicy.js
+[warn] apps/legal-orchestrator/dist/legal/llm/modelRouter.js
+[warn] apps/legal-orchestrator/dist/legal/llm/runLocalDraftingStep.js
+[warn] apps/legal-orchestrator/dist/legal/orchestrator/handleEmploymentLawQuestion.js
+[warn] apps/legal-orchestrator/dist/legal/rag/retrieveLegalContext.js
+[warn] apps/legal-orchestrator/dist/legal/repositories/ragRunRepository.js
+[warn] apps/legal-orchestrator/dist/legal/seeds/officialSources.seed.js
+[warn] apps/legal-orchestrator/dist/legal/types/legalAnswer.types.js
+[warn] apps/legal-orchestrator/dist/legal/types/legalDocument.types.js
+[warn] apps/legal-orchestrator/dist/legal/types/legalRag.types.js
+[warn] apps/legal-orchestrator/dist/legal/types/legalRules.types.js
+[warn] apps/legal-orchestrator/dist/legal/types/legalSource.types.js
+[warn] apps/legal-orchestrator/dist/legalRules/holidayPayCalculator.js
+[warn] apps/legal-orchestrator/dist/legalRules/noticePeriodCalculator.js
+[warn] apps/legal-orchestrator/dist/legalRules/redundancyPayCalculator.js
+[warn] apps/legal-orchestrator/dist/legalRules/statutoryCalculatorRegistry.js
+[warn] apps/legal-orchestrator/dist/legalRules/statutoryRates.js
+[warn] apps/legal-orchestrator/dist/legalRules/statutoryRateSeed.js
+[warn] apps/legal-orchestrator/dist/legalRules/statutoryRateSources.js
+[warn] apps/legal-orchestrator/dist/liveEvolution/abTestFramework.js
+[warn] apps/legal-orchestrator/dist/liveEvolution/index.js
+[warn] apps/legal-orchestrator/dist/liveEvolution/promptAndRuleRegistries.js
+[warn] apps/legal-orchestrator/dist/liveEvolution/versionRegistry.js
+[warn] apps/legal-orchestrator/dist/memberAuth/apiKeyHash.js
+[warn] apps/legal-orchestrator/dist/memberAuth/index.js
+[warn] apps/legal-orchestrator/dist/memberAuth/jwtHs256.js
+[warn] apps/legal-orchestrator/dist/memberAuth/passwordHash.js
+[warn] apps/legal-orchestrator/dist/memberAuth/subscriptionTier.js
+[warn] apps/legal-orchestrator/dist/memberAuth/tierRateLimiter.js
+[warn] apps/legal-orchestrator/dist/modules/citationVerifier.js
+[warn] apps/legal-orchestrator/dist/modules/contracts.js
+[warn] apps/legal-orchestrator/dist/modules/deadlineChecker.js
+[warn] apps/legal-orchestrator/dist/modules/index.js
+[warn] apps/legal-orchestrator/dist/modules/legal-packs/se_employment.js
+[warn] apps/legal-orchestrator/dist/modules/legal-packs/uk_employment.js
+[warn] apps/legal-orchestrator/dist/modules/modulePipeline.js
+[warn] apps/legal-orchestrator/dist/modules/piiRedactor.js
+[warn] apps/legal-orchestrator/dist/modules/policyGate.js
+[warn] apps/legal-orchestrator/dist/modules/ruleEngine.js
+[warn] apps/legal-orchestrator/dist/modules/sourceRanker.js
+[warn] apps/legal-orchestrator/dist/orchestrator.js
+[warn] apps/legal-orchestrator/dist/pipeline/buildLegalPrompt.js
+[warn] apps/legal-orchestrator/dist/pipeline/classifyRequest.js
+[warn] apps/legal-orchestrator/dist/pipeline/handleLegalRequest.js
+[warn] apps/legal-orchestrator/dist/pipeline/immediateRiskCheck.js
+[warn] apps/legal-orchestrator/dist/pipeline/policyGate.js
+[warn] apps/legal-orchestrator/dist/pipeline/selectModel.js
+[warn] apps/legal-orchestrator/dist/pipeline/verifyCitations.js
+[warn] apps/legal-orchestrator/dist/ports/pgRagPort.js
+[warn] apps/legal-orchestrator/dist/rag/index.js
+[warn] apps/legal-orchestrator/dist/rag/mockRetrieval.js
+[warn] apps/legal-orchestrator/dist/rag/postgresRetrieval.js
+[warn] apps/legal-orchestrator/dist/rag/rag.service.js
+[warn] apps/legal-orchestrator/dist/rag/rag.types.js
+[warn] apps/legal-orchestrator/dist/rag/ragRepository.js
+[warn] apps/legal-orchestrator/dist/rag/ragRepository.types.js
+[warn] apps/legal-orchestrator/dist/rag/retrieval.port.js
+[warn] apps/legal-orchestrator/dist/rag/temporalFilter.js
+[warn] apps/legal-orchestrator/dist/retrieval/approvedAnswerFastPath.js
+[warn] apps/legal-orchestrator/dist/retrieval/approvedAnswerFastPathGateway.js
+[warn] apps/legal-orchestrator/dist/retrieval/approvedAnswerStore.js
+[warn] apps/legal-orchestrator/dist/retrieval/contextPackBuilder.js
+[warn] apps/legal-orchestrator/dist/retrieval/exactMatchTier.js
+[warn] apps/legal-orchestrator/dist/retrieval/fullTextTier.js
+[warn] apps/legal-orchestrator/dist/retrieval/index.js
+[warn] apps/legal-orchestrator/dist/retrieval/localEmbedder.js
+[warn] apps/legal-orchestrator/dist/retrieval/metadataFilter.js
+[warn] apps/legal-orchestrator/dist/retrieval/multiTierRetrievalGateway.js
+[warn] apps/legal-orchestrator/dist/retrieval/pgvectorSearchAdapter.js
+[warn] apps/legal-orchestrator/dist/retrieval/postgresRetrievalAdapters.js
+[warn] apps/legal-orchestrator/dist/retrieval/reranker.js
+[warn] apps/legal-orchestrator/dist/retrieval/retrieval.types.js
+[warn] apps/legal-orchestrator/dist/retrieval/retrievalCacheKey.js
+[warn] apps/legal-orchestrator/dist/retrieval/retrievalFreshnessFilter.js
+[warn] apps/legal-orchestrator/dist/retrieval/retrievalPlanner.js
+[warn] apps/legal-orchestrator/dist/retrieval/retrievalTrustFilter.js
+[warn] apps/legal-orchestrator/dist/retrieval/rrfFusion.js
+[warn] apps/legal-orchestrator/dist/retrieval/rulesLookupTier.js
+[warn] apps/legal-orchestrator/dist/retrieval/vectorTier.js
+[warn] apps/legal-orchestrator/dist/routes/documentUploadRoutes.js
+[warn] apps/legal-orchestrator/dist/server.js
+[warn] apps/legal-orchestrator/dist/synthesis/synthesisHealth.js
+[warn] apps/legal-orchestrator/dist/testing/data/sprint-1-testset.js
+[warn] apps/legal-orchestrator/dist/testing/rag-accuracy-measurer.js
+[warn] apps/legal-orchestrator/dist/tests/fixtures/legalGoldenEvidenceFixtures.js
+[warn] apps/legal-orchestrator/dist/tests/fixtures/legalGoldenEvidenceFixturesExtended.js
+[warn] apps/legal-orchestrator/dist/tests/fixtures/legalGoldenScenarios.js
+[warn] apps/legal-orchestrator/dist/tests/helpers/resolveBash.js
+[warn] apps/legal-orchestrator/dist/tests/helpers/zone2DocumentTestDouble.js
+[warn] apps/legal-orchestrator/dist/tests/helpers/zone2RetrievalTestDouble.js
+[warn] apps/legal-orchestrator/dist/tests/helpers/zone2WasmTestDouble.js
+[warn] apps/legal-orchestrator/dist/tests/helpers/zone2WorkspaceTestDouble.js
+[warn] apps/legal-orchestrator/dist/types/legal.js
+[warn] apps/legal-orchestrator/dist/wasm/core.js
+[warn] apps/legal-orchestrator/dist/wasm/ruleModule.types.js
+[warn] apps/legal-orchestrator/dist/wasm/rules/deadlineCalculator.js
+[warn] apps/legal-orchestrator/dist/wasm/rules/redundancyCalculator.js
+[warn] apps/legal-orchestrator/dist/wasm/rules/ventoBandSelector.js
+[warn] apps/legal-orchestrator/dist/wasm/wasmRunner.js
+[warn] apps/legal-orchestrator/scripts/ingest-cli.ts
+[warn] apps/legal-orchestrator/scripts/ingest-rag-dry-run.ts
+[warn] apps/legal-orchestrator/scripts/seed-legal-rag.ts
+[warn] apps/legal-orchestrator/scripts/sprint-1-run.ts
+[warn] apps/legal-orchestrator/src/citations/citationGateActiveMode.ts
+[warn] apps/legal-orchestrator/src/citations/citationGateAdapter.ts
+[warn] apps/legal-orchestrator/src/citations/citationVerifier.ts
+[warn] apps/legal-orchestrator/src/citations/evidencePack.types.ts
+[warn] apps/legal-orchestrator/src/citations/evidencePackBuilder.ts
+[warn] apps/legal-orchestrator/src/citations/index.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/auditTrailLoggingPhase3.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/azureDocumentIntelligenceZone2.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/citationLockedAnswerPhase57.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/crossWorkspaceRestrictionsPhase5.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/documentClassificationPhase54.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/documentIntelBand.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/documentIntelIntegrationPhase58.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/documentUploadOcrPhase51.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/entityExtractionPhase52.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/index.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/lawEngineBand.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/lawEnginePhase2.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/lawEnginePhase3.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/lawEnginePhase4.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/lawEnginePhase5.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/legalDocumentParsingPhase53.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/retrievalBand.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/retrievalBatchPhase7.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/retrievalCacheInvalidationPhase8.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/retrievalFallbackPhase9.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/retrievalHNSWPhase1.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/retrievalLatencySLAPhase5.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/retrievalOllamaPhase2.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/retrievalQueryOptPhase6.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/retrievalSpeculativePhase4.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/retrievalStreamingPhase3.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/semanticChunkingPhase55.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/semanticSearchPhase56.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/temporalRlsPhase2.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/wasmAggregationPhase9.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/wasmBand.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/wasmClientProofPhase3.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/wasmDisputeResolutionPhase10.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/wasmLedgerIntegrationPhase8.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/wasmMemoryEnforcementPhase5.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/wasmMerkleCommitmentPhase6.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/wasmProofVerificationPhase2.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/wasmSandboxPhase1.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/wasmSignedPackagePhase4.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/wasmZkpVerificationPhase7.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/workspaceIsolationPhase1.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/workspaceRbacPhase4.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/workspaceSettingsPhase6.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/workspaceTemporalBand.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/zone2DocumentStub.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/zone2DocumentTypes.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/zone2LawStub.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/zone2LawTypes.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/zone2RetrievalStub.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/zone2RetrievalTypes.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/zone2WasmStub.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/zone2WasmTypes.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/zone2WorkspaceStub.ts
+[warn] apps/legal-orchestrator/src/coherentSystem/zone2WorkspaceTypes.ts
+[warn] apps/legal-orchestrator/src/config/featureFlags.ts
+[warn] apps/legal-orchestrator/src/documents/documentUploadService.ts
+[warn] apps/legal-orchestrator/src/documents/documentUploadStore.ts
+[warn] apps/legal-orchestrator/src/entitlements/entitlement.types.ts
+[warn] apps/legal-orchestrator/src/entitlements/entitlementGateAdapter.ts
+[warn] apps/legal-orchestrator/src/entitlements/entitlementPolicy.ts
+[warn] apps/legal-orchestrator/src/entitlements/entitlementRepository.ts
+[warn] apps/legal-orchestrator/src/entitlements/index.ts
+[warn] apps/legal-orchestrator/src/evaluation/legalGoldenHarness.ts
+[warn] apps/legal-orchestrator/src/gdprRetention/dsrTypes.ts
+[warn] apps/legal-orchestrator/src/gdprRetention/index.ts
+[warn] apps/legal-orchestrator/src/gdprRetention/retentionSchedule.ts
+[warn] apps/legal-orchestrator/src/index.ts
+[warn] apps/legal-orchestrator/src/ingestion/chunkDocument.ts
+[warn] apps/legal-orchestrator/src/ingestion/citationExtractor.ts
+[warn] apps/legal-orchestrator/src/ingestion/citationRegistryPolicy.ts
+[warn] apps/legal-orchestrator/src/ingestion/cliRunner.ts
+[warn] apps/legal-orchestrator/src/ingestion/fetchSource.ts
+[warn] apps/legal-orchestrator/src/ingestion/hashDocumentVersion.ts
+[warn] apps/legal-orchestrator/src/ingestion/index.ts
+[warn] apps/legal-orchestrator/src/ingestion/ingestionAudit.ts
+[warn] apps/legal-orchestrator/src/ingestion/ingestionPipeline.ts
+[warn] apps/legal-orchestrator/src/ingestion/ingestionPipelinePolicyGate.ts
+[warn] apps/legal-orchestrator/src/ingestion/ingestionPolicy.ts
+[warn] apps/legal-orchestrator/src/ingestion/normaliseDocument.ts
+[warn] apps/legal-orchestrator/src/ingestion/normalizeDocument.ts
+[warn] apps/legal-orchestrator/src/ingestion/persistIngestionJob.ts
+[warn] apps/legal-orchestrator/src/ingestion/robotsCompliance.ts
+[warn] apps/legal-orchestrator/src/ingestion/runIngestionPlan.ts
+[warn] apps/legal-orchestrator/src/ingestion/sourceRegistry.ts
+[warn] apps/legal-orchestrator/src/ingestion/statutorySources.ts
+[warn] apps/legal-orchestrator/src/ingestion/types.ts
+[warn] apps/legal-orchestrator/src/ingestion/ukEmploymentSourceRegistry.ts
+[warn] apps/legal-orchestrator/src/intelligence/contextCompressor.ts
+[warn] apps/legal-orchestrator/src/intelligence/fastAnswer.types.ts
+[warn] apps/legal-orchestrator/src/intelligence/fastAnswerPlanner.ts
+[warn] apps/legal-orchestrator/src/intelligence/freshnessFilter.ts
+[warn] apps/legal-orchestrator/src/intelligence/hybridRetriever.ts
+[warn] apps/legal-orchestrator/src/intelligence/index.ts
+[warn] apps/legal-orchestrator/src/intelligence/intelligence.types.ts
+[warn] apps/legal-orchestrator/src/intelligence/intelligenceGateway.ts
+[warn] apps/legal-orchestrator/src/intelligence/llmClients.ts
+[warn] apps/legal-orchestrator/src/intelligence/queryClassifier.ts
+[warn] apps/legal-orchestrator/src/intelligence/ragEvaluator.ts
+[warn] apps/legal-orchestrator/src/intelligence/retrievalPlanner.ts
+[warn] apps/legal-orchestrator/src/intelligence/rrfFusion.ts
+[warn] apps/legal-orchestrator/src/intelligence/semanticCache.ts
+[warn] apps/legal-orchestrator/src/intelligence/trustScorer.ts
+[warn] apps/legal-orchestrator/src/lawModuleEngine/index.ts
+[warn] apps/legal-orchestrator/src/lawModuleEngine/inputFingerprint.ts
+[warn] apps/legal-orchestrator/src/lawModuleEngine/legalModule.types.ts
+[warn] apps/legal-orchestrator/src/lawModuleEngine/legalModuleRegistry.ts
+[warn] apps/legal-orchestrator/src/lawModuleEngine/legalModuleRouting.ts
+[warn] apps/legal-orchestrator/src/lawModuleEngine/phase1Orchestrator.ts
+[warn] apps/legal-orchestrator/src/lawModuleEngine/plannedModules.ts
+[warn] apps/legal-orchestrator/src/lawModuleEngine/rerankerBlend.ts
+[warn] apps/legal-orchestrator/src/lawModuleEngine/ukEmploymentModule.ts
+[warn] apps/legal-orchestrator/src/legal/llm/boundedSynthesis.ts
+[warn] apps/legal-orchestrator/src/legal/llm/citationBoundPrompt.ts
+[warn] apps/legal-orchestrator/src/legal/llm/httpOllamaTransport.ts
+[warn] apps/legal-orchestrator/src/legal/llm/index.ts
+[warn] apps/legal-orchestrator/src/legal/llm/llm.types.ts
+[warn] apps/legal-orchestrator/src/legal/llm/llmAudit.types.ts
+[warn] apps/legal-orchestrator/src/legal/llm/llmAuditRedactor.ts
+[warn] apps/legal-orchestrator/src/legal/llm/llmAuditSink.ts
+[warn] apps/legal-orchestrator/src/legal/llm/llmGateway.types.ts
+[warn] apps/legal-orchestrator/src/legal/llm/llmOutputGuard.ts
+[warn] apps/legal-orchestrator/src/legal/llm/localLlmGateway.ts
+[warn] apps/legal-orchestrator/src/legal/llm/localOllamaGateway.ts
+[warn] apps/legal-orchestrator/src/legal/llm/localTransportPolicy.ts
+[warn] apps/legal-orchestrator/src/legal/llm/modelRouter.ts
+[warn] apps/legal-orchestrator/src/legal/llm/runLocalDraftingStep.ts
+[warn] apps/legal-orchestrator/src/legal/orchestrator/handleEmploymentLawQuestion.ts
+[warn] apps/legal-orchestrator/src/legal/rag/retrieveLegalContext.ts
+[warn] apps/legal-orchestrator/src/legal/repositories/ragRunRepository.ts
+[warn] apps/legal-orchestrator/src/legal/seeds/officialSources.seed.ts
+[warn] apps/legal-orchestrator/src/legal/types/legalAnswer.types.ts
+[warn] apps/legal-orchestrator/src/legal/types/legalDocument.types.ts
+[warn] apps/legal-orchestrator/src/legal/types/legalRag.types.ts
+[warn] apps/legal-orchestrator/src/legal/types/legalRules.types.ts
+[warn] apps/legal-orchestrator/src/legal/types/legalSource.types.ts
+[warn] apps/legal-orchestrator/src/legalRules/holidayPayCalculator.ts
+[warn] apps/legal-orchestrator/src/legalRules/noticePeriodCalculator.ts
+[warn] apps/legal-orchestrator/src/legalRules/redundancyPayCalculator.ts
+[warn] apps/legal-orchestrator/src/legalRules/statutoryCalculatorRegistry.ts
+[warn] apps/legal-orchestrator/src/legalRules/statutoryRates.ts
+[warn] apps/legal-orchestrator/src/legalRules/statutoryRateSeed.ts
+[warn] apps/legal-orchestrator/src/legalRules/statutoryRateSources.ts
+[warn] apps/legal-orchestrator/src/liveEvolution/abTestFramework.ts
+[warn] apps/legal-orchestrator/src/liveEvolution/index.ts
+[warn] apps/legal-orchestrator/src/liveEvolution/promptAndRuleRegistries.ts
+[warn] apps/legal-orchestrator/src/liveEvolution/versionRegistry.ts
+[warn] apps/legal-orchestrator/src/memberAuth/apiKeyHash.ts
+[warn] apps/legal-orchestrator/src/memberAuth/index.ts
+[warn] apps/legal-orchestrator/src/memberAuth/jwtHs256.ts
+[warn] apps/legal-orchestrator/src/memberAuth/passwordHash.ts
+[warn] apps/legal-orchestrator/src/memberAuth/subscriptionTier.ts
+[warn] apps/legal-orchestrator/src/memberAuth/tierRateLimiter.ts
+[warn] apps/legal-orchestrator/src/modules/citationVerifier.ts
+[warn] apps/legal-orchestrator/src/modules/contracts.ts
+[warn] apps/legal-orchestrator/src/modules/deadlineChecker.ts
+[warn] apps/legal-orchestrator/src/modules/index.ts
+[warn] apps/legal-orchestrator/src/modules/legal-packs/se_employment.ts
+[warn] apps/legal-orchestrator/src/modules/legal-packs/uk_employment.ts
+[warn] apps/legal-orchestrator/src/modules/modulePipeline.ts
+[warn] apps/legal-orchestrator/src/modules/piiRedactor.ts
+[warn] apps/legal-orchestrator/src/modules/policyGate.ts
+[warn] apps/legal-orchestrator/src/modules/ruleEngine.ts
+[warn] apps/legal-orchestrator/src/modules/sourceRanker.ts
+[warn] apps/legal-orchestrator/src/orchestrator.ts
+[warn] apps/legal-orchestrator/src/pipeline/buildLegalPrompt.ts
+[warn] apps/legal-orchestrator/src/pipeline/classifyRequest.ts
+[warn] apps/legal-orchestrator/src/pipeline/handleLegalRequest.ts
+[warn] apps/legal-orchestrator/src/pipeline/immediateRiskCheck.ts
+[warn] apps/legal-orchestrator/src/pipeline/policyGate.ts
+[warn] apps/legal-orchestrator/src/pipeline/verifyCitations.ts
+[warn] apps/legal-orchestrator/src/ports/pgRagPort.ts
+[warn] apps/legal-orchestrator/src/rag/index.ts
+[warn] apps/legal-orchestrator/src/rag/mockRetrieval.ts
+[warn] apps/legal-orchestrator/src/rag/postgresRetrieval.ts
+[warn] apps/legal-orchestrator/src/rag/rag.service.ts
+[warn] apps/legal-orchestrator/src/rag/rag.types.ts
+[warn] apps/legal-orchestrator/src/rag/ragRepository.ts
+[warn] apps/legal-orchestrator/src/rag/ragRepository.types.ts
+[warn] apps/legal-orchestrator/src/rag/retrieval.port.ts
+[warn] apps/legal-orchestrator/src/rag/temporalFilter.ts
+[warn] apps/legal-orchestrator/src/retrieval/approvedAnswerFastPath.ts
+[warn] apps/legal-orchestrator/src/retrieval/approvedAnswerFastPathGateway.ts
+[warn] apps/legal-orchestrator/src/retrieval/approvedAnswerStore.ts
+[warn] apps/legal-orchestrator/src/retrieval/contextPackBuilder.ts
+[warn] apps/legal-orchestrator/src/retrieval/exactMatchTier.ts
+[warn] apps/legal-orchestrator/src/retrieval/fullTextTier.ts
+[warn] apps/legal-orchestrator/src/retrieval/index.ts
+[warn] apps/legal-orchestrator/src/retrieval/localEmbedder.ts
+[warn] apps/legal-orchestrator/src/retrieval/metadataFilter.ts
+[warn] apps/legal-orchestrator/src/retrieval/multiTierRetrievalGateway.ts
+[warn] apps/legal-orchestrator/src/retrieval/pgvectorSearchAdapter.ts
+[warn] apps/legal-orchestrator/src/retrieval/postgresRetrievalAdapters.ts
+[warn] apps/legal-orchestrator/src/retrieval/reranker.ts
+[warn] apps/legal-orchestrator/src/retrieval/retrieval.types.ts
+[warn] apps/legal-orchestrator/src/retrieval/retrievalCacheKey.ts
+[warn] apps/legal-orchestrator/src/retrieval/retrievalFreshnessFilter.ts
+[warn] apps/legal-orchestrator/src/retrieval/retrievalPlanner.ts
+[warn] apps/legal-orchestrator/src/retrieval/retrievalTrustFilter.ts
+[warn] apps/legal-orchestrator/src/retrieval/rrfFusion.ts
+[warn] apps/legal-orchestrator/src/retrieval/rulesLookupTier.ts
+[warn] apps/legal-orchestrator/src/retrieval/vectorTier.ts
+[warn] apps/legal-orchestrator/src/routes/documentUploadRoutes.ts
+[warn] apps/legal-orchestrator/src/server.ts
+[warn] apps/legal-orchestrator/src/synthesis/synthesisHealth.ts
+[warn] apps/legal-orchestrator/src/testing/data/sprint-1-testset.ts
+[warn] apps/legal-orchestrator/src/testing/rag-accuracy-measurer.ts
+[warn] apps/legal-orchestrator/src/tests/approvedAnswerFastPath.test.ts
+[warn] apps/legal-orchestrator/src/tests/approvedAnswerFastPathGateway.test.ts
+[warn] apps/legal-orchestrator/src/tests/approvedAnswerStore.test.ts
+[warn] apps/legal-orchestrator/src/tests/backupPolicy.test.ts
+[warn] apps/legal-orchestrator/src/tests/boundedSynthesis.test.ts
+[warn] apps/legal-orchestrator/src/tests/citationGate.test.ts
+[warn] apps/legal-orchestrator/src/tests/citationGateActiveMode.test.ts
+[warn] apps/legal-orchestrator/src/tests/citationGateAdapter.test.ts
+[warn] apps/legal-orchestrator/src/tests/classifyRequest.test.ts
+[warn] apps/legal-orchestrator/src/tests/contextCompressor.test.ts
+[warn] apps/legal-orchestrator/src/tests/createAppRetrieval.test.ts
+[warn] apps/legal-orchestrator/src/tests/endToEndMock.test.ts
+[warn] apps/legal-orchestrator/src/tests/entitlementGateAdapter.test.ts
+[warn] apps/legal-orchestrator/src/tests/entitlementPolicy.test.ts
+[warn] apps/legal-orchestrator/src/tests/evidencePackAndCitationVerifier.test.ts
+[warn] apps/legal-orchestrator/src/tests/fastAnswerPlanner.test.ts
+[warn] apps/legal-orchestrator/src/tests/fixtures/legalGoldenEvidenceFixtures.ts
+[warn] apps/legal-orchestrator/src/tests/fixtures/legalGoldenEvidenceFixturesExtended.ts
+[warn] apps/legal-orchestrator/src/tests/fixtures/legalGoldenScenarios.ts
+[warn] apps/legal-orchestrator/src/tests/freshnessFilter.test.ts
+[warn] apps/legal-orchestrator/src/tests/handleEmploymentLawQuestion.test.ts
+[warn] apps/legal-orchestrator/src/tests/helpers/resolveBash.ts
+[warn] apps/legal-orchestrator/src/tests/helpers/zone2DocumentTestDouble.ts
+[warn] apps/legal-orchestrator/src/tests/helpers/zone2RetrievalTestDouble.ts
+[warn] apps/legal-orchestrator/src/tests/helpers/zone2WasmTestDouble.ts
+[warn] apps/legal-orchestrator/src/tests/helpers/zone2WorkspaceTestDouble.ts
+[warn] apps/legal-orchestrator/src/tests/holidayPayCalculator.test.ts
+[warn] apps/legal-orchestrator/src/tests/hybridRetrievalPlanning.test.ts
+[warn] apps/legal-orchestrator/src/tests/immediateRiskCheck.test.ts
+[warn] apps/legal-orchestrator/src/tests/ingestDryRunStatic.test.ts
+[warn] apps/legal-orchestrator/src/tests/ingestion.sprint11.framework.test.ts
+[warn] apps/legal-orchestrator/src/tests/ingestion.sprint7.test.ts
+[warn] apps/legal-orchestrator/src/tests/ingestionChunkDocument.test.ts
+[warn] apps/legal-orchestrator/src/tests/ingestionCitationExtractor.test.ts
+[warn] apps/legal-orchestrator/src/tests/ingestionNormaliseDocument.test.ts
+[warn] apps/legal-orchestrator/src/tests/ingestionPipelineDryRun.test.ts
+[warn] apps/legal-orchestrator/src/tests/ingestionPipelinePolicyGate.test.ts
+[warn] apps/legal-orchestrator/src/tests/ingestionSourceSafety.test.ts
+[warn] apps/legal-orchestrator/src/tests/intelligenceActiveModeGuard.test.ts
+[warn] apps/legal-orchestrator/src/tests/intelligenceDisabledPath.test.ts
+[warn] apps/legal-orchestrator/src/tests/intelligenceFeatureFlags.test.ts
+[warn] apps/legal-orchestrator/src/tests/intelligenceGateway.test.ts
+[warn] apps/legal-orchestrator/src/tests/intelligenceShadowMode.test.ts
+[warn] apps/legal-orchestrator/src/tests/legalGoldenEvidenceHarness.test.ts
+[warn] apps/legal-orchestrator/src/tests/legalGoldenHardenedCitationHarness.test.ts
+[warn] apps/legal-orchestrator/src/tests/legalGoldenHarness.test.ts
+[warn] apps/legal-orchestrator/src/tests/legalModuleRegistry.test.ts
+[warn] apps/legal-orchestrator/src/tests/legalModuleRoutingFlag.test.ts
+[warn] apps/legal-orchestrator/src/tests/localEmbedder.test.ts
+[warn] apps/legal-orchestrator/src/tests/migration010LegalDocumentsStatutorySeed.test.ts
+[warn] apps/legal-orchestrator/src/tests/migration100CompatibilityShim.test.ts
+[warn] apps/legal-orchestrator/src/tests/migration102CompatibilityShim.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationChainSprint10Convention.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprint10SourceRegistry.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprint11QaCacheSchema.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprint11RagSupersededBy.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprint11RateCalculationHistory.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprint13CaseWorkspace.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprint13Rls.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprint13UserWorkspace.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprint17MemberAuthFoundation.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprint18LegalCaseApprovals.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprint19LiveEvolutionVersioning.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprint20GdprRetention.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprint21LawModuleEngine.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprint6Schema.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprint9Schema.test.ts
+[warn] apps/legal-orchestrator/src/tests/migrationSprints113_117SystemBuild.test.ts
+[warn] apps/legal-orchestrator/src/tests/module_citationVerifier.test.ts
+[warn] apps/legal-orchestrator/src/tests/module_deadlineChecker.test.ts
+[warn] apps/legal-orchestrator/src/tests/module_perf.test.ts
+[warn] apps/legal-orchestrator/src/tests/module_piiRedactor.test.ts
+[warn] apps/legal-orchestrator/src/tests/module_policyGate.test.ts
+[warn] apps/legal-orchestrator/src/tests/module_ruleEngine.test.ts
+[warn] apps/legal-orchestrator/src/tests/module_sourceRanker.test.ts
+[warn] apps/legal-orchestrator/src/tests/module_temporalFilter.test.ts
+[warn] apps/legal-orchestrator/src/tests/modulePipeline.test.ts
+[warn] apps/legal-orchestrator/src/tests/modulePipelineWire.test.ts
+[warn] apps/legal-orchestrator/src/tests/multiTierRetrieval.test.ts
+[warn] apps/legal-orchestrator/src/tests/multiTierRetrievalFlag.test.ts
+[warn] apps/legal-orchestrator/src/tests/namespaceAndSchemaPolicy.test.ts
+[warn] apps/legal-orchestrator/src/tests/noticePeriodCalculator.test.ts
+[warn] apps/legal-orchestrator/src/tests/pgRagPort.test.ts
+[warn] apps/legal-orchestrator/src/tests/pgvectorGatewayFlag.test.ts
+[warn] apps/legal-orchestrator/src/tests/pgvectorSearchAdapter.test.ts
+[warn] apps/legal-orchestrator/src/tests/policyGate.test.ts
+[warn] apps/legal-orchestrator/src/tests/postgresRetrievalAdapters.test.ts
+[warn] apps/legal-orchestrator/src/tests/postgresRetrievalTemporalSql.test.ts
+[warn] apps/legal-orchestrator/src/tests/ragEvaluator.test.ts
+[warn] apps/legal-orchestrator/src/tests/ragRepository.test.ts
+[warn] apps/legal-orchestrator/src/tests/ragRetrieval.test.ts
+[warn] apps/legal-orchestrator/src/tests/ragTemporalRetrieval.test.ts
+[warn] apps/legal-orchestrator/src/tests/ragWire.test.ts
+[warn] apps/legal-orchestrator/src/tests/redundancyPayCalculator.test.ts
+[warn] apps/legal-orchestrator/src/tests/rerankerGatewayFlag.test.ts
+[warn] apps/legal-orchestrator/src/tests/rerankerPolicy.test.ts
+[warn] apps/legal-orchestrator/src/tests/resolveBash.test.ts
+[warn] apps/legal-orchestrator/src/tests/semanticCache.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint10LiveRagWiring.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint11LlmGateway.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint11LocalLlmAuditAndTransportPolicy.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint11LocalLlmFoundation.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint11Phase2bHttpTransport.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint11Phase4PipelineWiring.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint11RagGatewayHardening.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint12BackupScripts.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint13BackupReadinessSmoke.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint13BackupToolchainCheck.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint17MemberAuthFoundation.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint19LiveEvolution.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint20GdprRetention.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint21LawModuleEngine.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint22LawEnginePhase2.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint23LawEnginePhase3.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint24LawEnginePhase4.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint25LawEnginePhase5.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint26RetrievalHNSWPhase1.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint27RetrievalOllamaPhase2.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint28RetrievalStreamingPhase3.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint29RetrievalSpeculativePhase4.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint30RetrievalLatencySLAPhase5.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint31RetrievalQueryOptPhase6.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint32RetrievalBatchPhase7.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint33RetrievalCacheInvalidationPhase8.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint34RetrievalFallbackPhase9.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint35WasmSandboxPhase1.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint36WasmProofVerificationPhase2.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint37WasmClientProofPhase3.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint38WasmSignedPackagePhase4.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint39WasmMemoryEnforcementPhase5.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint40WasmMerkleCommitmentPhase6.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint41WasmZkpVerificationPhase7.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint42WasmLedgerIntegrationPhase8.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint43WasmAggregationPhase9.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint44WasmDisputeResolutionPhase10.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint45WorkspaceIsolationPhase1.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint46TemporalRlsPhase2.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint47AuditTrailLoggingPhase3.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint48WorkspaceRbacPhase4.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint49CrossWorkspaceRestrictionsPhase5.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint50WorkspaceSettingsPhase6.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint51DocumentUploadOcrPhase51.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint52EntityExtractionPhase52.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint53LegalDocumentParsingPhase53.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint54DocumentClassificationPhase54.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint55SemanticChunkingPhase55.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint56SemanticSearchPhase56.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint57CitationLockedAnswerPhase57.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint58DocumentIntelIntegrationPhase58.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprint8Ready.test.ts
+[warn] apps/legal-orchestrator/src/tests/sprints22_57CoherentSystem.test.ts
+[warn] apps/legal-orchestrator/src/tests/statutoryRateSeedIngestion.test.ts
+[warn] apps/legal-orchestrator/src/tests/statutoryRatesRegistry.test.ts
+[warn] apps/legal-orchestrator/src/tests/synthesisReady.test.ts
+[warn] apps/legal-orchestrator/src/tests/tenantModuleEntitlementsLoader.test.ts
+[warn] apps/legal-orchestrator/src/tests/trustScorer.test.ts
+[warn] apps/legal-orchestrator/src/tests/ukEmploymentIngestionPack.test.ts
+[warn] apps/legal-orchestrator/src/types/legal.ts
+[warn] apps/legal-orchestrator/src/wasm/__tests__/wasmRunner.test.ts
+[warn] apps/legal-orchestrator/src/wasm/core.ts
+[warn] apps/legal-orchestrator/src/wasm/ruleModule.types.ts
+[warn] apps/legal-orchestrator/src/wasm/rules/deadlineCalculator.ts
+[warn] apps/legal-orchestrator/src/wasm/rules/redundancyCalculator.ts
+[warn] apps/legal-orchestrator/src/wasm/rules/ventoBandSelector.ts
+[warn] apps/legal-orchestrator/src/wasm/wasmRunner.ts
+[warn] apps/legal-orchestrator/test-reports/sprint-1-accuracy.json
+[warn] apps/legal-orchestrator/test/data/sprint-1-testset.js
+[warn] apps/legal-orchestrator/tsconfig.json
+[warn] apps/mobile/app/(tabs)/index.tsx
+[warn] apps/synthesis-worker/dist/handler.js
+[warn] apps/synthesis-worker/dist/index.js
+[warn] apps/synthesis-worker/dist/queue/redisStreams.js
+[warn] apps/synthesis-worker/dist/types/synthesis.types.js
+[warn] apps/synthesis-worker/package-lock.json
+[warn] apps/synthesis-worker/package.json
+[warn] apps/synthesis-worker/src/handler.ts
+[warn] apps/synthesis-worker/src/index.ts
+[warn] apps/synthesis-worker/src/queue/redisStreams.ts
+[warn] apps/synthesis-worker/src/tests/handler.test.ts
+[warn] apps/synthesis-worker/src/tests/redisManifest.test.ts
+[warn] apps/synthesis-worker/src/tests/synthesisTypes.test.ts
+[warn] apps/synthesis-worker/src/types/synthesis.types.ts
+[warn] apps/synthesis-worker/tsconfig.json
+[warn] apps/synthesis-worker/vitest.config.ts
+[warn] apps/web/.eslintrc.json
+[warn] apps/web/app/admin/cases/[id]/page.tsx
+[warn] apps/web/app/admin/cases/page.tsx
+[warn] apps/web/app/admin/dashboard/page.tsx
+[warn] apps/web/app/admin/history/page.tsx
+[warn] apps/web/app/api/answer/route.ts
+[warn] apps/web/app/api/axiom/__tests__/process.test.ts
+[warn] apps/web/app/api/axiom/__tests__/routes.test.ts
+[warn] apps/web/app/api/axiom/extract/route.ts
+[warn] apps/web/app/api/axiom/process/route.ts
+[warn] apps/web/app/api/axiom/reason/route.ts
+[warn] apps/web/app/api/case/__tests__/route.test.ts
+[warn] apps/web/app/api/case/route.ts
+[warn] apps/web/app/api/cases/__tests__/casesRoutes.test.ts
+[warn] apps/web/app/api/cases/[id]/approve/route.ts
+[warn] apps/web/app/api/cases/[id]/reject/route.ts
+[warn] apps/web/app/api/cases/history/route.ts
+[warn] apps/web/app/api/cases/route.ts
+[warn] apps/web/app/api/gov-apis/query/route.ts
+[warn] apps/web/app/api/orchestrator/__tests__/routes.test.ts
+[warn] apps/web/app/api/orchestrator/legal/ask/route.ts
+[warn] apps/web/app/api/orchestrator/ready/route.ts
+[warn] apps/web/app/auth/layout.tsx
+[warn] apps/web/app/auth/login/page.tsx
+[warn] apps/web/app/case/assessment/__tests__/page.test.tsx
+[warn] apps/web/app/case/assessment/page.tsx
+[warn] apps/web/app/case/layout.tsx
+[warn] apps/web/app/dashboard/page.tsx
+[warn] apps/web/app/layout.tsx
+[warn] apps/web/app/page.tsx
+[warn] apps/web/components/admin/__tests__/AdminCaseDetail.test.tsx
+[warn] apps/web/components/admin/__tests__/AdminCaseList.test.tsx
+[warn] apps/web/components/admin/__tests__/ApprovalHistoryList.test.tsx
+[warn] apps/web/components/admin/__tests__/RejectionReasonModal.test.tsx
+[warn] apps/web/components/admin/AdminCaseDetail.tsx
+[warn] apps/web/components/admin/AdminCaseList.tsx
+[warn] apps/web/components/admin/ApprovalHistoryList.tsx
+[warn] apps/web/components/admin/RejectionReasonModal.tsx
+[warn] apps/web/components/dashboard/__tests__/AxiomPulse.test.tsx
+[warn] apps/web/components/dashboard/__tests__/FactReview.test.tsx
+[warn] apps/web/components/dashboard/__tests__/ReasoningTimeline.test.tsx
+[warn] apps/web/components/dashboard/AxiomPulse.tsx
+[warn] apps/web/components/dashboard/AxiomStreamWidget.tsx
+[warn] apps/web/components/dashboard/FactReview.tsx
+[warn] apps/web/components/dashboard/ReasoningTimeline.tsx
+[warn] apps/web/hooks/useAxiomEngine.ts
+[warn] apps/web/jest-dom.d.ts
+[warn] apps/web/lib/admin/__tests__/adminAuth.test.ts
+[warn] apps/web/lib/admin/__tests__/caseApprovalQueue.test.ts
+[warn] apps/web/lib/admin/adminAuth.ts
+[warn] apps/web/lib/admin/caseApprovalQueue.ts
+[warn] apps/web/lib/agents/__tests__/document.test.ts
+[warn] apps/web/lib/agents/__tests__/extraction.test.ts
+[warn] apps/web/lib/agents/__tests__/reasoning.test.ts
+[warn] apps/web/lib/agents/__tests__/schemas.test.ts
+[warn] apps/web/lib/agents/axiom-employment/document-employment.ts
+[warn] apps/web/lib/agents/axiom-employment/reasoning-employment.ts
+[warn] apps/web/lib/agents/document-architect.ts
+[warn] apps/web/lib/agents/document-schema.ts
+[warn] apps/web/lib/agents/extraction-engine.ts
+[warn] apps/web/lib/agents/extraction-schema.ts
+[warn] apps/web/lib/agents/reasoning-schema.ts
+[warn] apps/web/lib/agents/reasoning-tracer.ts
+[warn] apps/web/lib/ai/__tests__/claude.test.ts
+[warn] apps/web/lib/ai/__tests__/costs.test.ts
+[warn] apps/web/lib/ai/__tests__/gate.test.ts
+[warn] apps/web/lib/ai/__tests__/gemini.test.ts
+[warn] apps/web/lib/ai/__tests__/json.test.ts
+[warn] apps/web/lib/ai/__tests__/orchestrate.test.ts
+[warn] apps/web/lib/ai/claude.ts
+[warn] apps/web/lib/ai/costs.ts
+[warn] apps/web/lib/ai/gate.ts
+[warn] apps/web/lib/ai/gemini.ts
+[warn] apps/web/lib/ai/index.ts
+[warn] apps/web/lib/ai/json.ts
+[warn] apps/web/lib/ai/orchestrate.ts
+[warn] apps/web/lib/ai/prompts.ts
+[warn] apps/web/lib/ai/types.ts
+[warn] apps/web/lib/anon-session/anon-session-store.ts
+[warn] apps/web/lib/answer/__tests__/orchestrator.test.ts
+[warn] apps/web/lib/answer/cost-log.ts
+[warn] apps/web/lib/answer/costs.ts
+[warn] apps/web/lib/answer/orchestrator.ts
+[warn] apps/web/lib/axiom/stream-events.ts
+[warn] apps/web/lib/documents/__tests__/generate.test.ts
+[warn] apps/web/lib/documents/generate.ts
+[warn] apps/web/lib/gov-apis/__tests__/acas-guidance.test.ts
+[warn] apps/web/lib/gov-apis/__tests__/helpers.test.ts
+[warn] apps/web/lib/gov-apis/__tests__/orchestrate.test.ts
+[warn] apps/web/lib/gov-apis/__tests__/wrappers.test.ts
+[warn] apps/web/lib/gov-apis/acas-guidance.ts
+[warn] apps/web/lib/gov-apis/helpers.ts
+[warn] apps/web/lib/gov-apis/http.ts
+[warn] apps/web/lib/gov-apis/index.ts
+[warn] apps/web/lib/gov-apis/orchestrate.ts
+[warn] apps/web/lib/gov-apis/types.ts
+[warn] apps/web/lib/gov-apis/wrappers.ts
+[warn] apps/web/lib/orchestrator/__tests__/proxy.test.ts
+[warn] apps/web/lib/orchestrator/proxy.ts
+[warn] apps/web/lib/prompts/ada-employment-letter.ts
+[warn] apps/web/lib/prompts/art-employment-acas.ts
+[warn] apps/web/lib/qa-pool/__tests__/content-hash.test.ts
+[warn] apps/web/lib/qa-pool/__tests__/service.test.ts
+[warn] apps/web/lib/qa-pool/content-hash.ts
+[warn] apps/web/lib/qa-pool/service.ts
+[warn] apps/web/lib/supabase.ts
+[warn] apps/web/lib/supabase/__tests__/client.test.ts
+[warn] apps/web/lib/supabase/client.ts
+[warn] apps/web/lib/validation/__tests__/formatter.test.ts
+[warn] apps/web/lib/validation/__tests__/pipeline.test.ts
+[warn] apps/web/lib/validation/__tests__/types.test.ts
+[warn] apps/web/lib/validation/__tests__/validator.test.ts
+[warn] apps/web/lib/validation/formatter.ts
+[warn] apps/web/lib/validation/index.ts
+[warn] apps/web/lib/validation/pipeline.ts
+[warn] apps/web/lib/validation/types.ts
+[warn] apps/web/lib/validation/validator.ts
+[warn] apps/web/lib/workflow/__tests__/orchestrator.test.ts
+[warn] apps/web/lib/workflow/__tests__/state-machine.test.ts
+[warn] apps/web/lib/workflow/axiom-orchestrator.ts
+[warn] apps/web/lib/workflow/state-machine.ts
+[warn] apps/web/next-env.d.ts
+[warn] apps/web/postcss.config.js
+[warn] apps/web/tailwind.config.ts
+[warn] apps/web/tsconfig.json
+[warn] apps/web/types/index.ts
+[warn] apps/web/types/schema.ts
+[warn] packages/legal-core/dist/axiom/lvc/legalVerificationController.d.ts
+[warn] packages/legal-core/dist/axiom/lvc/legalVerificationController.js
+[warn] packages/legal-core/dist/axiom/orchestrator/runAxiomPipeline.d.ts
+[warn] packages/legal-core/dist/axiom/orchestrator/runAxiomPipeline.js
+[warn] packages/legal-core/dist/axiom/sea/runSeaPhase.d.ts
+[warn] packages/legal-core/dist/axiom/sea/runSeaPhase.js
+[warn] packages/legal-core/dist/index.d.ts
+[warn] packages/legal-core/dist/index.js
+[warn] packages/legal-core/dist/legal/constants/ukEmploymentRates2026.d.ts
+[warn] packages/legal-core/dist/legal/constants/ukEmploymentRates2026.js
+[warn] packages/legal-core/dist/legal/rules/fireAndRehire.d.ts
+[warn] packages/legal-core/dist/legal/rules/fireAndRehire.js
+[warn] packages/legal-core/dist/legal/rules/payAuditTriggers.d.ts
+[warn] packages/legal-core/dist/legal/rules/payAuditTriggers.js
+[warn] packages/legal-core/dist/legal/rules/unfairDismissalTransition.d.ts
+[warn] packages/legal-core/dist/legal/rules/unfairDismissalTransition.js
+[warn] packages/legal-core/dist/legal/rules/zeroHoursReferencePeriod.d.ts
+[warn] packages/legal-core/dist/legal/rules/zeroHoursReferencePeriod.js
+[warn] packages/legal-core/package.json
+[warn] packages/legal-core/src/axiom/lvc/__tests__/legalVerificationController.test.ts
+[warn] packages/legal-core/src/axiom/lvc/legalVerificationController.ts
+[warn] packages/legal-core/src/axiom/orchestrator/__tests__/runAxiomPipeline.test.ts
+[warn] packages/legal-core/src/axiom/orchestrator/runAxiomPipeline.ts
+[warn] packages/legal-core/src/axiom/sea/runSeaPhase.ts
+[warn] packages/legal-core/src/index.ts
+[warn] packages/legal-core/src/legal/__tests__/legalConstants2026.test.ts
+[warn] packages/legal-core/src/legal/__tests__/phase1b.test.ts
+[warn] packages/legal-core/src/legal/constants/ukEmploymentRates2026.ts
+[warn] packages/legal-core/src/legal/rules/fireAndRehire.ts
+[warn] packages/legal-core/src/legal/rules/payAuditTriggers.ts
+[warn] packages/legal-core/src/legal/rules/unfairDismissalTransition.ts
+[warn] packages/legal-core/src/legal/rules/zeroHoursReferencePeriod.ts
+[warn] packages/legal-core/tsconfig.jest.json
+[warn] packages/legal-core/tsconfig.json
+[warn] packages/shared/dist/api-contracts.d.ts
+[warn] packages/shared/dist/api-contracts.js
+[warn] packages/shared/dist/cost-control.d.ts
+[warn] packages/shared/dist/cost-control.js
+[warn] packages/shared/dist/index.d.ts
+[warn] packages/shared/dist/index.js
+[warn] packages/shared/dist/legal-review.d.ts
+[warn] packages/shared/dist/legal-review.js
+[warn] packages/shared/package.json
+[warn] packages/shared/src/api-contracts.ts
+[warn] packages/shared/src/cost-control.ts
+[warn] packages/shared/src/index.ts
+[warn] packages/shared/src/legal-review.ts
+[warn] packages/shared/tsconfig.json
+[warn] backend/app.ts
+[warn] backend/dist/app.js
+[warn] backend/dist/scripts/phase1-e2e.js
+[warn] backend/dist/scripts/test-legal-review.js
+[warn] backend/dist/server.js
+[warn] backend/dist/src/auth/auth.service.js
+[warn] backend/dist/src/cases/case.service.js
+[warn] backend/dist/src/config/env.js
+[warn] backend/dist/src/config/supabase.js
+[warn] backend/dist/src/deadlines/deadline.service.js
+[warn] backend/dist/src/documents/document.service.js
+[warn] backend/dist/src/escalation/escalation.service.js
+[warn] backend/dist/src/formatting/answer-validator.js
+[warn] backend/dist/src/formatting/response-formatter.js
+[warn] backend/dist/src/middleware/controlledAskJsonGuard.js
+[warn] backend/dist/src/middleware/errorHandler.js
+[warn] backend/dist/src/payments/stripe.service.js
+[warn] backend/dist/src/routes/ask.routes.js
+[warn] backend/dist/src/routes/auth.routes.js
+[warn] backend/dist/src/routes/cases.routes.js
+[warn] backend/dist/src/routes/health.js
+[warn] backend/dist/src/routes/index.js
+[warn] backend/dist/src/routes/legalReview.routes.js
+[warn] backend/dist/src/services/controlledAskService.js
+[warn] backend/dist/src/services/index.js
+[warn] backend/dist/src/services/legalReviewService.js
+[warn] backend/dist/src/services/safetyGateService.js
+[warn] backend/dist/src/types/controlledAsk.js
+[warn] backend/dist/src/types/index.js
+[warn] backend/dist/src/types/legalReview.js
+[warn] backend/dist/src/utils/index.js
+[warn] backend/package-lock.json
+[warn] backend/package.json
+[warn] backend/scripts/phase1-e2e.ts
+[warn] backend/scripts/test-legal-review.ts
+[warn] backend/server.ts
+[warn] backend/src/auth/auth.service.ts
+[warn] backend/src/cases/case.service.ts
+[warn] backend/src/config/env.ts
+[warn] backend/src/config/supabase.ts
+[warn] backend/src/deadlines/deadline.service.ts
+[warn] backend/src/documents/document.service.ts
+[warn] backend/src/escalation/escalation.service.ts
+[warn] backend/src/formatting/answer-validator.ts
+[warn] backend/src/formatting/response-formatter.ts
+[warn] backend/src/middleware/controlledAskJsonGuard.ts
+[warn] backend/src/middleware/errorHandler.ts
+[warn] backend/src/payments/stripe.service.ts
+[warn] backend/src/routes/ask.routes.ts
+[warn] backend/src/routes/auth.routes.ts
+[warn] backend/src/routes/cases.routes.ts
+[warn] backend/src/routes/health.ts
+[warn] backend/src/routes/index.ts
+[warn] backend/src/routes/legalReview.routes.ts
+[warn] backend/src/services/controlledAskService.ts
+[warn] backend/src/services/index.ts
+[warn] backend/src/services/legalReviewService.ts
+[warn] backend/src/services/safetyGateService.ts
+[warn] backend/src/types/controlledAsk.ts
+[warn] backend/src/types/express.d.ts
+[warn] backend/src/types/index.ts
+[warn] backend/src/types/legalReview.ts
+[warn] backend/src/utils/index.ts
+[warn] backend/test/formatting.test.ts
+[warn] backend/tsconfig.json
+[warn] .eslintrc.json
+[warn] deploy.yaml
+[warn] docker-compose-CORRECTED.yml
+[warn] docker-compose.local.yml
+[warn] tsconfig.json
+[warn] .github/workflows-disabled/backup.yml
+[warn] .github/workflows-disabled/deploy-aks.yml
+[warn] .github/workflows-disabled/deploy-functions.yml
+[warn] .github/workflows-disabled/deploy-production.yml
+[warn] .github/workflows-disabled/deploy-staging.yml
+[warn] .github/workflows-disabled/deploy.yml
+[warn] .github/workflows-disabled/legal-orchestrator-image.yml
+[warn] .github/workflows-disabled/manual-deploy-functions.yml
+[error] .github/workflows/01-scrape-daily.yml: SyntaxError: All collection items must start at the same column (1:1)
+[error] >  1 | name: Daily Scraping Pipeline
+[error]      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error] >  2 |
+[error]      | ^
+[error] >  3 | on:
+[error]      | ^
+[error] >  4 |   schedule:
+[error]      | ^
+[error] >  5 |     - cron: '0 2 * * *'  # 2 AM UTC every day
+[error]      | ^
+[error] >  6 |   workflow_dispatch:     # Allow manual trigger
+[error]      | ^
+[error] >  7 |
+[error]      | ^
+[error] >  8 | jobs:
+[error]      | ^
+[error] >  9 |   scrape:
+[error]      | ^
+[error] >  10 |     runs-on: ubuntu-latest
+[error]       | ^
+[error] >  11 |
+[error]       | ^
+[error] >  12 |     services:
+[error]       | ^
+[error] >  13 |       postgres:
+[error]       | ^
+[error] >  14 |         image: pgvector/pgvector:pg16-latest
+[error]       | ^
+[error] >  15 |         env:
+[error]       | ^
+[error] >  16 |           POSTGRES_USER: iterlaw_user
+[error]       | ^
+[error] >  17 |           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+[error]       | ^
+[error] >  18 |           POSTGRES_DB: iterlaw_knowledge
+[error]       | ^
+[error] >  19 |         options: >-
+[error]       | ^
+[error] >  20 |           --health-cmd pg_isready
+[error]       | ^
+[error] >  21 |           --health-interval 10s
+[error]       | ^
+[error] >  22 |           --health-timeout 5s
+[error]       | ^
+[error] >  23 |           --health-retries 5
+[error]       | ^
+[error] >  24 |         ports:
+[error]       | ^
+[error] >  25 |           - 5432:5432
+[error]       | ^
+[error] >  26 |
+[error]       | ^
+[error] >  27 |     steps:
+[error]       | ^
+[error] >  28 |       - uses: actions/checkout@v4
+[error]       | ^
+[error] >  29 |
+[error]       | ^
+[error] >  30 |       - name: Set up Python
+[error]       | ^
+[error] >  31 |         uses: actions/setup-python@v4
+[error]       | ^
+[error] >  32 |         with:
+[error]       | ^
+[error] >  33 |           python-version: '3.11'
+[error]       | ^
+[error] >  34 |
+[error]       | ^
+[error] >  35 |       - name: Install dependencies
+[error]       | ^
+[error] >  36 |         run: |
+[error]       | ^
+[error] >  37 |           python -m pip install --upgrade pip
+[error]       | ^
+[error] >  38 |           pip install requests psycopg2-binary beautifulsoup4
+[error]       | ^
+[error] >  39 |
+[error]       | ^
+[error] >  40 |       - name: Initialize database
+[error]       | ^
+[error] >  41 |         env:
+[error]       | ^
+[error] >  42 |           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+[error]       | ^
+[error] >  43 |         run: |
+[error]       | ^
+[error] >  44 |           sudo apt-get update && sudo apt-get install -y postgresql-client
+[error]       | ^
+[error] >  45 |           psql -h localhost -U iterlaw_user -d iterlaw_knowledge << 'SQL'
+[error]       | ^
+[error] >  46 |           CREATE EXTENSION IF NOT EXISTS vector;
+[error]       | ^
+[error] >  47 |
+[error]       | ^
+[error] >  48 |           CREATE TABLE IF NOT EXISTS law_categories (
+[error]       | ^
+[error] >  49 |             id SERIAL PRIMARY KEY,
+[error]       | ^
+[error] >  50 |             name VARCHAR(100) UNIQUE NOT NULL,
+[error]       | ^
+[error] >  51 |             description TEXT
+[error]       | ^
+[error] >  52 |           );
+[error]       | ^
+[error] >  53 |
+[error]       | ^
+[error] >  54 |           INSERT INTO law_categories (name, description) VALUES
+[error]       | ^
+[error] >  55 |             ('Employment Law', 'Workplace rights'),
+[error]       | ^
+[error] >  56 |             ('Company Law', 'Company formation'),
+[error]       | ^
+[error] >  57 |             ('Housing & Tenant Rights', 'Renters rights'),
+[error]       | ^
+[error] >  58 |             ('Consumer Rights', 'Consumer protection'),
+[error]       | ^
+[error] >  59 |             ('Benefits & Welfare', 'Benefits'),
+[error]       | ^
+[error] >  60 |             ('Small Business Rights', 'Business support')
+[error]       | ^
+[error] >  61 |           ON CONFLICT (name) DO NOTHING;
+[error]       | ^
+[error] >  62 |
+[error]       | ^
+[error] >  63 |           CREATE TABLE IF NOT EXISTS legislation (
+[error]       | ^
+[error] >  64 |             id SERIAL PRIMARY KEY,
+[error]       | ^
+[error] >  65 |             category_id INTEGER REFERENCES law_categories(id),
+[error]       | ^
+[error] >  66 |             title VARCHAR(500) NOT NULL,
+[error]       | ^
+[error] >  67 |             year INTEGER,
+[error]       | ^
+[error] >  68 |             act_type VARCHAR(50),
+[error]       | ^
+[error] >  69 |             full_text TEXT,
+[error]       | ^
+[error] >  70 |             url TEXT UNIQUE,
+[error]       | ^
+[error] >  71 |             source VARCHAR(100),
+[error]       | ^
+[error] >  72 |             source_id VARCHAR(255),
+[error]       | ^
+[error] >  73 |             is_active BOOLEAN DEFAULT true,
+[error]       | ^
+[error] >  74 |             created_at TIMESTAMP DEFAULT NOW(),
+[error]       | ^
+[error] >  75 |             updated_at TIMESTAMP DEFAULT NOW()
+[error]       | ^
+[error] >  76 |           );
+[error]       | ^
+[error] >  77 |
+[error]       | ^
+[error] >  78 |           CREATE TABLE IF NOT EXISTS legislation_chunks (
+[error]       | ^
+[error] >  79 |             id SERIAL PRIMARY KEY,
+[error]       | ^
+[error] >  80 |             legislation_id INTEGER REFERENCES legislation(id) ON DELETE CASCADE,
+[error]       | ^
+[error] >  81 |             chunk_order INTEGER,
+[error]       | ^
+[error] >  82 |             chunk_text TEXT NOT NULL
+[error]       | ^
+[error] >  83 |           );
+[error]       | ^
+[error] >  84 |
+[error]       | ^
+[error] >  85 |           CREATE TABLE IF NOT EXISTS embeddings (
+[error]       | ^
+[error] >  86 |             id SERIAL PRIMARY KEY,
+[error]       | ^
+[error] >  87 |             legislation_chunk_id INTEGER REFERENCES legislation_chunks(id) ON DELETE CASCADE,
+[error]       | ^
+[error] >  88 |             embedding vector(1536)
+[error]       | ^
+[error] >  89 |           );
+[error]       | ^
+[error] >  90 |
+[error]       | ^
+[error] >  91 |           CREATE INDEX IF NOT EXISTS idx_legislation_source ON legislation(source);
+[error]       | ^
+[error] >  92 |           CREATE INDEX IF NOT EXISTS idx_embeddings_search ON embeddings USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
+[error]       | ^
+[error] >  93 | SQL
+[error]       | ^
+[error] >  94 |
+[error]       | ^
+[error] >  95 |       - name: Run scraping orchestrator
+[error]       | ^
+[error] >  96 |         env:
+[error]       | ^
+[error] >  97 |           DATABASE_URL: postgresql://iterlaw_user:${{ secrets.DB_PASSWORD }}@localhost:5432/iterlaw_knowledge
+[error]       | ^
+[error] >  98 |         run: |
+[error]       | ^
+[error] >  99 |           python3 apps/law-scraper/run_all.py
+[error]       | ^
+[error] > 100 |
+[error]       | ^
+[error] > 101 |       - name: Backup database
+[error]       | ^
+[error] > 102 |         env:
+[error]       | ^
+[error] > 103 |           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+[error]       | ^
+[error] > 104 |         run: |
+[error]       | ^
+[error] > 105 |           pg_dump -h localhost -U iterlaw_user -d iterlaw_knowledge -F custom \
+[error]       | ^
+[error] > 106 |             > iterlaw_backup_$(date +%Y%m%d_%H%M%S).dump
+[error]       | ^
+[error] > 107 |
+[error]       | ^
+[error] > 108 |       - name: Upload backup
+[error]       | ^
+[error] > 109 |         uses: actions/upload-artifact@v4
+[error]       | ^
+[error] > 110 |         with:
+[error]       | ^
+[error] > 111 |           name: database-backup
+[error]       | ^
+[error] > 112 |           path: iterlaw_backup_*.dump
+[error]       | ^
+[error] > 113 |           retention-days: 30
+[error]       | ^
+[error] > 114 |
+[error]       | ^
+[error] > 115 |       - name: Notify Slack
+[error]       | ^
+[error] > 116 |         if: always()
+[error]       | ^
+[error] > 117 |         uses: slackapi/slack-github-action@v1.26.0
+[error]       | ^
+[error] > 118 |         with:
+[error]       | ^
+[error] > 119 |           webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+[error]       | ^
+[error] > 120 |           payload: |
+[error]       | ^
+[error] > 121 |             {
+[error]       | ^
+[error] > 122 |               "text": "Ô£à Daily scraping completed",
+[error]       | ^
+[error] > 123 |               "blocks": [
+[error]       | ^
+[error] > 124 |                 {
+[error]       | ^
+[error] > 125 |                   "type": "section",
+[error]       | ^
+[error] > 126 |                   "text": {
+[error]       | ^
+[error] > 127 |                     "type": "mrkdwn",
+[error]       | ^
+[error] > 128 |                     "text": "*Database Scraping Complete*\nÔÇó Legislation.gov.uk Ô£ô\nÔÇó GOV.UK API Ô£ô\nÔÇó ACAS Ô£ô\nÔÇó Case Law Ô£ô"
+[error]       | ^
+[error] > 129 |                   }
+[error]       | ^
+[error] > 130 |                 }
+[error]       | ^
+[error] > 131 |               ]
+[error]       | ^
+[error] > 132 |             }
+[error]       | ^
+[error] > 133 |
+[error]       | ^
+[warn] .github/workflows/02-chunk-embed.yml
+[error] .github/workflows/03-validate-rag.yml: SyntaxError: All collection items must start at the same column (1:1)
+[error] >  1 | name: Validate RAG Accuracy
+[error]      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error] >  2 |
+[error]      | ^
+[error] >  3 | on:
+[error]      | ^
+[error] >  4 |   workflow_run:
+[error]      | ^
+[error] >  5 |     workflows: ["Chunk and Generate Embeddings"]
+[error]      | ^
+[error] >  6 |     types: [completed]
+[error]      | ^
+[error] >  7 |   workflow_dispatch:
+[error]      | ^
+[error] >  8 |
+[error]      | ^
+[error] >  9 | jobs:
+[error]      | ^
+[error] > 10 |   validate:
+[error]      | ^
+[error] > 11 |     runs-on: ubuntu-latest
+[error]      | ^
+[error] > 12 |     if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
+[error]      | ^
+[error] > 13 |
+[error]      | ^
+[error] > 14 |     services:
+[error]      | ^
+[error] > 15 |       postgres:
+[error]      | ^
+[error] > 16 |         image: pgvector/pgvector:pg16-latest
+[error]      | ^
+[error] > 17 |         env:
+[error]      | ^
+[error] > 18 |           POSTGRES_USER: iterlaw_user
+[error]      | ^
+[error] > 19 |           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+[error]      | ^
+[error] > 20 |           POSTGRES_DB: iterlaw_knowledge
+[error]      | ^
+[error] > 21 |         options: >-
+[error]      | ^
+[error] > 22 |           --health-cmd pg_isready
+[error]      | ^
+[error] > 23 |           --health-interval 10s
+[error]      | ^
+[error] > 24 |         ports:
+[error]      | ^
+[error] > 25 |           - 5432:5432
+[error]      | ^
+[error] > 26 |
+[error]      | ^
+[error] > 27 |     steps:
+[error]      | ^
+[error] > 28 |       - uses: actions/checkout@v4
+[error]      | ^
+[error] > 29 |
+[error]      | ^
+[error] > 30 |       - name: Set up Python
+[error]      | ^
+[error] > 31 |         uses: actions/setup-python@v4
+[error]      | ^
+[error] > 32 |         with:
+[error]      | ^
+[error] > 33 |           python-version: '3.11'
+[error]      | ^
+[error] > 34 |
+[error]      | ^
+[error] > 35 |       - name: Install dependencies
+[error]      | ^
+[error] > 36 |         run: |
+[error]      | ^
+[error] > 37 |           pip install psycopg2-binary requests pytest
+[error]      | ^
+[error] > 38 |
+[error]      | ^
+[error] > 39 |       - name: Run RAG tests
+[error]      | ^
+[error] > 40 |         env:
+[error]      | ^
+[error] > 41 |           DATABASE_URL: postgresql://iterlaw_user:${{ secrets.DB_PASSWORD }}@localhost:5432/iterlaw_knowledge
+[error]      | ^
+[error] > 42 |         run: |
+[error]      | ^
+[error] > 43 |           # Create a dummy test if it doesn't exist
+[error]      | ^
+[error] > 44 |           mkdir -p tests
+[error]      | ^
+[error] > 45 |           if [ ! -f tests/rag_tests.py ]; then
+[error]      | ^
+[error] > 46 |             cat > tests/rag_tests.py << 'EOF'
+[error]      | ^
+[error] > 47 | import pytest
+[error]      | ^
+[error] > 48 | import os
+[error]      | ^
+[error] > 49 | import psycopg2
+[error]      | ^
+[error] > 50 |
+[error]      | ^
+[error] > 51 | def test_database_connection():
+[error]      | ^
+[error] > 52 |     db_url = os.environ.get("DATABASE_URL")
+[error]      | ^
+[error] > 53 |     conn = psycopg2.connect(db_url)
+[error]      | ^
+[error] > 54 |     assert conn is not None
+[error]      | ^
+[error] > 55 |     conn.close()
+[error]      | ^
+[error] > 56 | EOF
+[error]      | ^
+[error] > 57 |           fi
+[error]      | ^
+[error] > 58 |           pytest tests/rag_tests.py -v --junit-xml=test-results.xml
+[error]      | ^
+[error] > 59 |
+[error]      | ^
+[error] > 60 |       - name: Upload results
+[error]      | ^
+[error] > 61 |         if: always()
+[error]      | ^
+[error] > 62 |         uses: actions/upload-artifact@v4
+[error]      | ^
+[error] > 63 |         with:
+[error]      | ^
+[error] > 64 |           name: rag-test-results
+[error]      | ^
+[error] > 65 |           path: test-results.xml
+[error]      | ^
+[error] > 66 |
+[error]      | ^
+[warn] .github/workflows/04-build-docker.yml
+[warn] .github/workflows/05-deploy.yml
+[warn] .github/workflows/build.yml
+[warn] .github/workflows/ci-reusable.yml
+[warn] .github/workflows/ci.yml
+[warn] .github/workflows/iterlaw-k3s-verify.yml
+[warn] .github/workflows/legal-orchestrator-ci.yml
+[warn] .github/workflows/pull-request.yml
+[warn] .github/workflows/test.yml
+Error occurred when checking code style in 2 files.
+EXIT_CODE=2

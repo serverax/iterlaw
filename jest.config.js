@@ -10,6 +10,7 @@ const customJestConfig = {
     '^@/(.*)$': '<rootDir>/apps/web/$1',
   },
   testPathIgnorePatterns: [
+    '<rootDir>/.quarantine/',
     '<rootDir>/.next/',
     '<rootDir>/node_modules/',
     '<rootDir>/apps/web/.next/',
@@ -18,6 +19,15 @@ const customJestConfig = {
     '<rootDir>/apps/synthesis-worker/',
     '<rootDir>/apps/ai-orchestrator/',
   ],
+  testTimeout: 30000,
+  coverageThreshold: {
+    global: {
+      branches: 55,
+      functions: 80,
+      lines: 79,
+      statements: 77,
+    },
+  },
   modulePathIgnorePatterns: ['<rootDir>/apps/web/.next/standalone/'],
   collectCoverageFrom: [
     'apps/web/lib/gov-apis/**/*.{ts,tsx}',

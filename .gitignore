@@ -1,81 +1,36 @@
-# dependencies
-/node_modules
-**/node_modules
-/.pnp
-.pnp.js
-
-# local env (never commit)
+# Environment
 .env
-.env.*
-!.env.example
-!.env.local.example
+.env.local
+.env.*.local
+secrets/
 
-# testing
-/coverage
-**/coverage/
+# Python
+__pycache__/
+*.py[cod]
+venv/
+env/
+*.egg-info/
 
-# logs (all apps)
-*.log
+# Node
+node_modules/
+npm-debug.log
 
-# next.js
-/.next/
-**/.next/
-/out/
-
-# production
-/build
-
-# compiled TypeScript output (per-app + monorepo-wide)
-apps/*/dist/
-**/dist/
-
-# temp / caches
-tmp/
-temp/
-.cache/
-.turbo/
-
-# misc
-.DS_Store
-*.pem
-Thumbs.db
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# env files
-.env*.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# vercel
-.vercel
+# Docker
+docker-compose.override.yml
 
 # IDE
-.idea
-.vscode/*
-!.vscode/extensions.json
-iterlaw.code-workspace
+.vscode/
+.idea/
+*.swp
 
-# Claude Code harness state (per-workstation, never committed)
-.claude/
+# Database
+*.dump
+*.backup
 
-# TypeScript
-*.tsbuildinfo
+# Logs
+logs/
+*.log
 
-# Local / operator artefacts (Sprint 16 closeout — do not commit)
-/postgresql-18.4-1-windows-x64.exe
-/superpowers-marketplace-main.zip
-/docs/*.md
-!/docs/SPRINTS_51_58_CLARIFICATIONS.md
-!/docs/DISTRIBUTION_PLAN.md
-!/docs/LEGAL_CONTENT_AUDIT.md
-!/docs/SOLICITOR_REFERRAL_PARTNERS.md
-!/docs/APP_STORE_SUBMISSION.md
-!/docs/PENETRATION_TEST_SCOPE.md
-!/docs/RISK_REGISTER.md
-/docs/iterlaw/project/HYBRID_ARCHITECTURE/*.md
-/reports/ITERLAW_SPRINT_16_MVP_SMOKE_TEST_READINESS_2026-05-16T00-18-56.md
+# OS
+.DS_Store
+Thumbs.db

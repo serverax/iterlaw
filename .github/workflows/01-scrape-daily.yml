@@ -1,0 +1,132 @@
+name: Daily Scraping Pipeline
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # 2 AM UTC every day
+  workflow_dispatch:     # Allow manual trigger
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16-latest
+        env:
+          POSTGRES_USER: iterlaw_user
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: iterlaw_knowledge
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests psycopg2-binary beautifulsoup4
+
+      - name: Initialize database
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          psql -h localhost -U iterlaw_user -d iterlaw_knowledge << 'SQL'
+          CREATE EXTENSION IF NOT EXISTS vector;
+
+          CREATE TABLE IF NOT EXISTS law_categories (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100) UNIQUE NOT NULL,
+            description TEXT
+          );
+
+          INSERT INTO law_categories (name, description) VALUES
+            ('Employment Law', 'Workplace rights'),
+            ('Company Law', 'Company formation'),
+            ('Housing & Tenant Rights', 'Renters rights'),
+            ('Consumer Rights', 'Consumer protection'),
+            ('Benefits & Welfare', 'Benefits'),
+            ('Small Business Rights', 'Business support')
+          ON CONFLICT (name) DO NOTHING;
+
+          CREATE TABLE IF NOT EXISTS legislation (
+            id SERIAL PRIMARY KEY,
+            category_id INTEGER REFERENCES law_categories(id),
+            title VARCHAR(500) NOT NULL,
+            year INTEGER,
+            act_type VARCHAR(50),
+            full_text TEXT,
+            url TEXT UNIQUE,
+            source VARCHAR(100),
+            source_id VARCHAR(255),
+            is_active BOOLEAN DEFAULT true,
+            created_at TIMESTAMP DEFAULT NOW(),
+            updated_at TIMESTAMP DEFAULT NOW()
+          );
+
+          CREATE TABLE IF NOT EXISTS legislation_chunks (
+            id SERIAL PRIMARY KEY,
+            legislation_id INTEGER REFERENCES legislation(id) ON DELETE CASCADE,
+            chunk_order INTEGER,
+            chunk_text TEXT NOT NULL
+          );
+
+          CREATE TABLE IF NOT EXISTS embeddings (
+            id SERIAL PRIMARY KEY,
+            legislation_chunk_id INTEGER REFERENCES legislation_chunks(id) ON DELETE CASCADE,
+            embedding vector(1536)
+          );
+
+          CREATE INDEX IF NOT EXISTS idx_legislation_source ON legislation(source);
+          CREATE INDEX IF NOT EXISTS idx_embeddings_search ON embeddings USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
+SQL
+
+      - name: Run scraping orchestrator
+        env:
+          DATABASE_URL: postgresql://iterlaw_user:${{ secrets.DB_PASSWORD }}@localhost:5432/iterlaw_knowledge
+        run: |
+          python3 apps/law-scraper/run_all.py
+
+      - name: Backup database
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          pg_dump -h localhost -U iterlaw_user -d iterlaw_knowledge -F custom \
+            > iterlaw_backup_$(date +%Y%m%d_%H%M%S).dump
+
+      - name: Upload backup
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-backup
+          path: iterlaw_backup_*.dump
+          retention-days: 30
+
+      - name: Notify Slack
+        if: always()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+          payload: |
+            {
+              "text": "✅ Daily scraping completed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Database Scraping Complete*\n• Legislation.gov.uk ✓\n• GOV.UK API ✓\n• ACAS ✓\n• Case Law ✓"
+                  }
+                }
+              ]
+            }

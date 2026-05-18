@@ -1,0 +1,71 @@
+name: Chunk and Generate Embeddings
+
+on:
+  workflow_run:
+    workflows: ["Daily Scraping Pipeline"]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  chunk-embed:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16-latest
+        env:
+          POSTGRES_USER: iterlaw_user
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: iterlaw_knowledge
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+        ports:
+          - 5432:5432
+
+      ollama:
+        image: ollama/ollama:latest
+        options: >-
+          --health-cmd "curl -f http://localhost:11434/api/tags || exit 1"
+          --health-interval 10s
+        ports:
+          - 11434:11434
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install psycopg2-binary requests
+
+      - name: Pull Ollama models
+        run: |
+          sleep 15
+          curl -X POST http://localhost:11434/api/pull -d '{"name":"nomic-embed-text"}'
+
+      - name: Run chunking service
+        env:
+          DATABASE_URL: postgresql://iterlaw_user:${{ secrets.DB_PASSWORD }}@localhost:5432/iterlaw_knowledge
+        run: |
+          python3 apps/law-scraper/services/chunking_service.py
+
+      - name: Run embeddings service
+        env:
+          DATABASE_URL: postgresql://iterlaw_user:${{ secrets.DB_PASSWORD }}@localhost:5432/iterlaw_knowledge
+          OLLAMA_URL: http://localhost:11434
+        run: |
+          python3 apps/law-scraper/services/embeddings_service.py
+
+      - name: Verify embeddings
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          psql -h localhost -U iterlaw_user -d iterlaw_knowledge \
+            -c "SELECT COUNT(*) as embeddings FROM embeddings;"

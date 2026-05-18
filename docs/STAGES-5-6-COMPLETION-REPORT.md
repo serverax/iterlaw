@@ -19,7 +19,7 @@
 
 - Updated `docs/PRODUCTION-READINESS-FINAL-SIGN-OFF.md` (code GO, legal pending).
 - Merged blocker branch to `master` and pushed.
-- CI status: verify on GitHub Actions after push.
+- CI: `main-ci-cd.yml` on `master` run `26050114026` — **success** (after pdfkit + backend route stubs).
 
 ## Fixes in this remediation
 

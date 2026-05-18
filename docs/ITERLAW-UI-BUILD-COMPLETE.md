@@ -34,12 +34,17 @@
 - Fonts: Fraunces, DM Sans, JetBrains Mono (`app/layout.tsx`)
 - Globals: scrollbar, typography (`app/globals.css`)
 
-## Verification commands
+## Verification (2026-05-18)
+
+| Check | Result |
+|-------|--------|
+| `npm run typecheck` (apps/web) | 0 errors |
+| `npm run build` (apps/web) | 26 routes, exit 0 |
+| ESLint | 1 warning (`lib/analytics` no-console) |
 
 ```bash
 cd apps/web && npm run typecheck
-cd apps/web && npm run lint
-npm run build -w @iterlaw/web
+cd apps/web && npm run build
 ```
 
 ## Not in scope (this pass)

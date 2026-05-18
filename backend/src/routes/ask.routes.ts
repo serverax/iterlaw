@@ -32,6 +32,16 @@ async function postAsk(req: Request, res: Response): Promise<void> {
   const wire = outcomeToWireResponse(outcome);
   const meta = wireResponseMeta(wire);
 
+  const userId = (parsed.data as { user_id?: string }).user_id;
+  if (userId) {
+    try {
+      const { awardLoyaltyPointsForQuestion } = await import('../services/loyalty-engine');
+      await awardLoyaltyPointsForQuestion(sb, userId);
+    } catch {
+      // loyalty tables may be absent in local dev
+    }
+  }
+
   await logAskRequest(sb, {
     question: parsed.data.question,
     source_used: meta.source_used,

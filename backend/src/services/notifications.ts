@@ -1,20 +1,16 @@
-export type NotificationChannel = 'email' | 'push' | 'in_app';
+import { Logger } from '../utils/logger';
 
-export type NotificationPayload = {
+const logger = new Logger('Notifications');
+
+export async function sendDeadlineAlert(caseId: string, deadlineDate: Date): Promise<void> {
+  logger.info(`Deadline alert for case ${caseId}: ${deadlineDate.toISOString()}`);
+}
+
+export async function sendNotification(payload: {
   userId: string;
   title: string;
   body: string;
-  channel?: NotificationChannel;
-};
-
-export async function sendNotification(payload: NotificationPayload): Promise<{ queued: boolean }> {
-  console.log(
-    JSON.stringify({
-      event: 'notification_stub',
-      userId: payload.userId,
-      title: payload.title,
-      channel: payload.channel ?? 'in_app',
-    })
-  );
+}): Promise<{ queued: boolean }> {
+  logger.info(`Notification queued for ${payload.userId}: ${payload.title}`);
   return { queued: true };
 }

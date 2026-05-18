@@ -3,25 +3,33 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { PaywallSheet } from '@/components/paywall/PaywallSheet';
+import { trackEvent } from '@/lib/analytics';
 
 const FREE_QUESTION_LIMIT = 3;
 
 export default function AnswerPage() {
   const [question, setQuestion] = useState('');
   const [questionsUsed, setQuestionsUsed] = useState(0);
-  const [paywallOpen, setPaywallOpen] = useState(false);
   const [answer, setAnswer] = useState<string | null>(null);
+  const [answerDisplayed, setAnswerDisplayed] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const submit = () => {
     if (!question.trim()) return;
-    if (questionsUsed >= FREE_QUESTION_LIMIT) {
-      setPaywallOpen(true);
-      return;
-    }
+
+    const preview =
+      'This is a preview answer. Official sources are queried first; upgrade for full case guidance.';
+    setAnswer(preview);
+    setAnswerDisplayed(true);
+    trackEvent('answer_submitted', { question_length: question.length });
+
     setQuestionsUsed((n) => n + 1);
-    setAnswer(
-      'This is a preview answer. Official sources are queried first; upgrade for full case guidance.'
-    );
+    if (questionsUsed + 1 > FREE_QUESTION_LIMIT) {
+      setTimeout(() => {
+        setShowPaywall(true);
+        trackEvent('paywall_shown', { reason: 'free_limit' });
+      }, 500);
+    }
   };
 
   return (
@@ -44,6 +52,7 @@ export default function AnswerPage() {
       >
         Get answer
       </button>
+
       {answer ? (
         <section className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-800">
           {answer}
@@ -54,14 +63,19 @@ export default function AnswerPage() {
           </p>
         </section>
       ) : null}
-      <PaywallSheet
-        open={paywallOpen}
-        onClose={() => setPaywallOpen(false)}
-        onUpgrade={() => {
-          setPaywallOpen(false);
-          window.location.href = '/dashboard';
-        }}
-      />
+
+      {answerDisplayed && showPaywall ? (
+        <div className="mt-6 border-t border-gray-200 pt-6">
+          <PaywallSheet
+            open
+            onClose={() => setShowPaywall(false)}
+            onUpgrade={() => {
+              setShowPaywall(false);
+              window.location.href = '/dashboard';
+            }}
+          />
+        </div>
+      ) : null}
     </main>
   );
 }

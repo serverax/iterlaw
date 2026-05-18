@@ -1,12 +1,14 @@
-import { startDocumentLifecycleSweep } from './services/document-lifecycle';
-import { startQaCacheExpirySweep } from './services/qa-cache-expiry';
+import { initializeDocumentLifecycle } from './services/document-lifecycle';
+import { scheduleQACacheExpiry } from './services/qa-cache-expiry';
+import { Logger } from './utils/logger';
 
+const logger = new Logger('Bootstrap');
 let started = false;
 
-/** Background jobs for document retention and QA cache expiry. */
 export function startBackgroundJobs(): void {
   if (started) return;
   started = true;
-  startDocumentLifecycleSweep();
-  startQaCacheExpirySweep();
+  initializeDocumentLifecycle();
+  scheduleQACacheExpiry();
+  logger.info('Background jobs started (document lifecycle + QA cache expiry)');
 }

@@ -1,0 +1,80 @@
+# ============================================================================
+# ITERLAW RAG API SERVICE — PRODUCTION
+# Node.js microservice for legal question answering
+# Implements 9-step answer pipeline from PRD
+# ============================================================================
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install dumb-init to handle signals properly
+RUN apk add --no-cache dumb-init curl
+
+# Copy package dependencies
+COPY package*.json ./
+
+# Install production dependencies only
+RUN npm ci --only=production && \
+    npm cache clean --force
+
+# Copy compiled TypeScript and source
+COPY dist/ ./dist/
+COPY src/ ./src/
+
+# Create health check script
+RUN cat > /app/health-check.sh << 'EOF'
+#!/bin/sh
+set -e
+# Check if API is responding
+RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:3000/health)
+HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+BODY=$(echo "$RESPONSE" | head -n -1)
+
+if [ "$HTTP_CODE" != "200" ]; then
+  echo "Health check failed: HTTP $HTTP_CODE"
+  exit 1
+fi
+
+if ! echo "$BODY" | grep -q '"status"'; then
+  echo "Health check response invalid"
+  exit 1
+fi
+
+exit 0
+EOF
+RUN chmod +x /app/health-check.sh
+
+# Expose RAG API port
+EXPOSE 3000
+
+# Health check - verifies API responsiveness
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD /app/health-check.sh
+
+# Use dumb-init to properly handle signals
+ENTRYPOINT ["/usr/sbin/dumb-init", "--"]
+
+# Start RAG API service
+CMD ["node", "dist/rag-api.js"]
+
+# Build:
+#   docker build -f backend/Dockerfile.rag-api -t iterlaw/rag-api:1.0.0 .
+#
+# Run locally:
+#   docker run -p 3000:3000 \
+#     -e DB_HOST=localhost \
+#     -e DB_PORT=5432 \
+#     -e DB_USER=iterlaw_user \
+#     -e DB_PASSWORD=password \
+#     -e DB_NAME=iterlaw_knowledge \
+#     -e ANTHROPIC_API_KEY=sk-ant-xxxx \
+#     iterlaw/rag-api:1.0.0
+#
+# Health check:
+#   curl http://localhost:3000/health
+#
+# Test answer pipeline:
+#   curl -X POST http://localhost:3000/api/answer \
+#     -H "Content-Type: application/json" \
+#     -d '{"question":"Can I be dismissed without notice?","jurisdiction":"england_wales"}'

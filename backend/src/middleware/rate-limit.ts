@@ -1,70 +1,116 @@
 import type { NextFunction, Request, Response } from 'express';
+import { Logger } from '../utils/logger';
+
+const logger = new Logger('RateLimit');
+
+export const RATE_LIMITS = {
+  USER: { limit: 30, window: 60 },
+  IP: { limit: 100, window: 60 },
+};
 
 type Bucket = { count: number; resetAt: number };
+const memoryStore = new Map<string, Bucket>();
 
-const ipBuckets = new Map<string, Bucket>();
-const userBuckets = new Map<string, Bucket>();
-
-export type RateLimitOptions = {
-  windowMs?: number;
-  maxPerIp?: number;
-  maxPerUser?: number;
+type RedisLike = {
+  incr(key: string): Promise<number>;
+  expire(key: string, seconds: number): Promise<number>;
+  del(key: string): Promise<number>;
 };
 
-const DEFAULTS: Required<RateLimitOptions> = {
-  windowMs: 60_000,
-  maxPerIp: 120,
-  maxPerUser: 60,
-};
+let redis: RedisLike | null = null;
 
-function hit(
-  buckets: Map<string, Bucket>,
-  key: string,
-  max: number,
-  windowMs: number
-): { allowed: boolean; retryAfterSec: number } {
-  const now = Date.now();
-  let bucket = buckets.get(key);
-  if (!bucket || bucket.resetAt <= now) {
-    bucket = { count: 0, resetAt: now + windowMs };
-    buckets.set(key, bucket);
+async function getRedis(): Promise<RedisLike | null> {
+  if (redis) return redis;
+  const url = process.env.REDIS_URL;
+  if (!url) return null;
+  try {
+    const { default: Redis } = await import('ioredis');
+    const client = new Redis(url, { maxRetriesPerRequest: 1, lazyConnect: true });
+    await client.connect();
+    redis = client;
+    return redis;
+  } catch {
+    return null;
   }
-  bucket.count += 1;
-  if (bucket.count > max) {
-    return {
-      allowed: false,
-      retryAfterSec: Math.ceil((bucket.resetAt - now) / 1000),
-    };
-  }
-  return { allowed: true, retryAfterSec: 0 };
 }
 
-export function createRateLimitMiddleware(options: RateLimitOptions = {}) {
-  const { windowMs, maxPerIp, maxPerUser } = { ...DEFAULTS, ...options };
+async function increment(key: string, windowSec: number): Promise<number> {
+  const r = await getRedis();
+  if (r) {
+    const count = await r.incr(key);
+    if (count === 1) await r.expire(key, windowSec);
+    return count;
+  }
+  const now = Date.now();
+  let bucket = memoryStore.get(key);
+  if (!bucket || bucket.resetAt <= now) {
+    bucket = { count: 0, resetAt: now + windowSec * 1000 };
+    memoryStore.set(key, bucket);
+  }
+  bucket.count += 1;
+  return bucket.count;
+}
 
-  return function rateLimitMiddleware(req: Request, res: Response, next: NextFunction): void {
-    const ip = req.ip || req.socket.remoteAddress || 'unknown';
+export async function rateLimitMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
     const userId =
+      (req as Request & { user?: { id?: string } }).user?.id ||
       (req.headers['x-user-id'] as string | undefined) ||
-      (req.body as { user_id?: string } | undefined)?.user_id ||
       'anonymous';
+    const ip =
+      (req.headers['x-forwarded-for'] as string | undefined)?.split(',')[0]?.trim() ||
+      req.ip ||
+      'unknown';
 
-    const ipResult = hit(ipBuckets, ip, maxPerIp, windowMs);
-    if (!ipResult.allowed) {
-      res.setHeader('Retry-After', String(ipResult.retryAfterSec));
-      res.status(429).json({ ok: false, error: { code: 'RATE_LIMIT_IP', message: 'Too many requests' } });
+    const userCount = await increment(`rate:user:${userId}`, RATE_LIMITS.USER.window);
+    const ipCount = await increment(`rate:ip:${ip}`, RATE_LIMITS.IP.window);
+
+    res.setHeader('X-RateLimit-Limit-User', String(RATE_LIMITS.USER.limit));
+    res.setHeader('X-RateLimit-Remaining-User', String(Math.max(0, RATE_LIMITS.USER.limit - userCount)));
+    res.setHeader('X-RateLimit-Limit-IP', String(RATE_LIMITS.IP.limit));
+    res.setHeader('X-RateLimit-Remaining-IP', String(Math.max(0, RATE_LIMITS.IP.limit - ipCount)));
+
+    if (userCount > RATE_LIMITS.USER.limit) {
+      logger.warn(`Rate limit exceeded for user: ${userId}`);
+      res.status(429).json({
+        error: 'Rate limit exceeded',
+        message: `Maximum ${RATE_LIMITS.USER.limit} requests per minute`,
+        retry_after: RATE_LIMITS.USER.window,
+      });
       return;
     }
 
-    const userResult = hit(userBuckets, userId, maxPerUser, windowMs);
-    if (!userResult.allowed) {
-      res.setHeader('Retry-After', String(userResult.retryAfterSec));
-      res.status(429).json({ ok: false, error: { code: 'RATE_LIMIT_USER', message: 'Too many requests' } });
+    if (ipCount > RATE_LIMITS.IP.limit) {
+      logger.warn(`Rate limit exceeded for IP: ${ip}`);
+      res.status(429).json({
+        error: 'IP rate limit exceeded',
+        message: `Maximum ${RATE_LIMITS.IP.limit} requests per minute from this IP`,
+        retry_after: RATE_LIMITS.IP.window,
+      });
       return;
     }
 
     next();
-  };
+  } catch (err) {
+    logger.error('Rate limit middleware error', err);
+    next();
+  }
 }
 
-export const rateLimitMiddleware = createRateLimitMiddleware();
+export async function resetUserRateLimit(userId: string): Promise<void> {
+  const r = await getRedis();
+  if (r) await r.del(`rate:user:${userId}`);
+  memoryStore.delete(`rate:user:${userId}`);
+}
+
+export async function resetIpRateLimit(ip: string): Promise<void> {
+  const r = await getRedis();
+  if (r) await r.del(`rate:ip:${ip}`);
+  memoryStore.delete(`rate:ip:${ip}`);
+}
+
+export const rateLimitMiddlewareSync = rateLimitMiddleware;

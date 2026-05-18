@@ -1,0 +1,93 @@
+# ============================================================================
+# ITERLAW INGESTION WORKER SERVICE — PRODUCTION
+# Node.js background worker for document processing
+# Handles: OCR (Azure Document Intelligence) → chunking → embeddings
+# ============================================================================
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install dumb-init for signal handling + curl for health checks
+RUN apk add --no-cache dumb-init curl
+
+# Copy package dependencies
+COPY package*.json ./
+
+# Install production dependencies only
+RUN npm ci --only=production && \
+    npm cache clean --force
+
+# Copy compiled TypeScript and source
+COPY dist/ ./dist/
+COPY src/ ./src/
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001 && \
+    chown -R nodejs:nodejs /app
+
+# Create health check script
+RUN cat > /app/health-check.sh << 'EOF'
+#!/bin/sh
+set -e
+# Ingestion worker health check
+# Returns JSON with worker status
+RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:8080/health)
+HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+BODY=$(echo "$RESPONSE" | head -n -1)
+
+if [ "$HTTP_CODE" != "200" ]; then
+  echo "Worker health check failed: HTTP $HTTP_CODE"
+  exit 1
+fi
+
+# Verify worker is processing (check for recent activity)
+if ! echo "$BODY" | grep -q '"status"'; then
+  echo "Worker health response invalid"
+  exit 1
+fi
+
+exit 0
+EOF
+RUN chmod +x /app/health-check.sh
+
+# Switch to non-root user
+USER nodejs
+
+# Expose health check port (not for external traffic)
+EXPOSE 8080
+
+# Health check - verifies worker is running and processing
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+  CMD /app/health-check.sh
+
+# Use dumb-init to properly handle signals and graceful shutdown
+ENTRYPOINT ["/usr/sbin/dumb-init", "--"]
+
+# Start the ingestion worker service
+CMD ["node", "dist/ingestion-worker.js"]
+
+# Build:
+#   docker build -f backend/Dockerfile.ingestion-worker -t iterlaw/ingestion-worker:1.0.0 .
+#
+# Run locally:
+#   docker run \
+#     -e DB_HOST=localhost \
+#     -e DB_PORT=5432 \
+#     -e DB_USER=iterlaw_user \
+#     -e DB_PASSWORD=password \
+#     -e DB_NAME=iterlaw_knowledge \
+#     -e OLLAMA_URL=http://ollama:11434 \
+#     -e AZURE_DOCUMENT_INTELLIGENCE_KEY=xxxx \
+#     iterlaw/ingestion-worker:1.0.0
+#
+# Health check:
+#   curl http://localhost:8080/health
+#
+# Monitor processing:
+#   curl http://localhost:8080/status
+#   curl http://localhost:8080/metrics
+#
+# Note: Worker runs in background, processes documents asynchronously
+# Triggered by: CronJob (scheduled ingestion) or API upload event

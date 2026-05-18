@@ -1,0 +1,13 @@
+{
+  "tool": "k6",
+  "duration": "30s",
+  "vus": 20,
+  "http_req_failed": "0.00%",
+  "http_req_duration_p95_ms": 45.01,
+  "http_reqs": 1200,
+  "targets": {
+    "BASE_URL": "http://host.docker.internal:3000",
+    "ORCH_URL": "http://host.docker.internal:8081"
+  },
+  "pass": true
+}

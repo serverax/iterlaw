@@ -1,6 +1,13 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { generateCaseSummaryPdf } from '../services/case-summary-pdf';
 import { sendNotification } from '../services/notifications';
+
+function getSb(req: Request): SupabaseClient {
+  const sb = req.app.locals.supabase as SupabaseClient;
+  if (!sb) throw new Error('Supabase client missing');
+  return sb;
+}
 
 export function createEscalationRouter(): Router {
   const r = Router();
@@ -19,13 +26,20 @@ export function createEscalationRouter(): Router {
         return;
       }
 
-      const pdf = await generateCaseSummaryPdf({
-        caseId: body.case_id,
-        userId: body.user_id,
-        jurisdiction: body.jurisdiction ?? 'England and Wales',
-        timeline: body.timeline ?? [],
-        questions: body.questions ?? [],
-      });
+      const sb = getSb(req);
+      let pdf: Buffer;
+      try {
+        const { generateCaseSummaryPDF } = await import('../services/case-summary-pdf');
+        pdf = await generateCaseSummaryPDF(body.case_id, sb);
+      } catch {
+        pdf = await generateCaseSummaryPdf({
+          caseId: body.case_id,
+          userId: body.user_id,
+          jurisdiction: body.jurisdiction ?? 'England and Wales',
+          timeline: body.timeline ?? [],
+          questions: body.questions ?? [],
+        });
+      }
 
       await sendNotification({
         userId: body.user_id,

@@ -34,7 +34,9 @@ export function createApp(env: Env, options?: CreateAppOptions): Express {
     })
   );
   app.use(express.json({ limit: '512kb' }));
-  app.use(rateLimitMiddleware);
+  app.use((req, res, next) => {
+    void rateLimitMiddleware(req, res, next);
+  });
 
   app.use(healthRouter);
   registerApiRoutes(app);

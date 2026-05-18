@@ -1,26 +1,13 @@
 'use client';
 
-import { createContext, useContext, useReducer, type ReactNode } from 'react';
-import { caseReducer, initialCaseState, type CaseAction, type CaseState } from './caseSlice';
+import { configureStore } from '@reduxjs/toolkit';
+import caseReducer from './slices/caseSlice';
 
-type Store = {
-  case: CaseState;
-  dispatch: (action: CaseAction) => void;
-};
+export const store = configureStore({
+  reducer: {
+    case: caseReducer,
+  },
+});
 
-const CaseStoreContext = createContext<Store | null>(null);
-
-export function CaseStoreProvider({ children }: { children: ReactNode }) {
-  const [caseState, dispatch] = useReducer(caseReducer, initialCaseState);
-  return (
-    <CaseStoreContext.Provider value={{ case: caseState, dispatch }}>
-      {children}
-    </CaseStoreContext.Provider>
-  );
-}
-
-export function useCaseStore(): Store {
-  const ctx = useContext(CaseStoreContext);
-  if (!ctx) throw new Error('useCaseStore must be used within CaseStoreProvider');
-  return ctx;
-}
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

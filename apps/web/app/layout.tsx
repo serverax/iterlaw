@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { CaseStoreProvider } from '@/components/providers/CaseStoreProvider';
+import { ReduxProvider } from '@/components/providers/ReduxProvider';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en-GB">
       <body>
-        <CaseStoreProvider>{children}</CaseStoreProvider>
+        <ReduxProvider>{children}</ReduxProvider>
       </body>
     </html>
   );

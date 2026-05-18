@@ -1,6 +1,6 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { OcrService } from '../services/ocr-service';
+import { analyzeEmploymentDocument, extractIssuesFromDocument } from '../services/ocr-service';
 import { scheduleDocumentImageDeletion } from '../services/document-lifecycle';
 
 function getSb(req: Request): SupabaseClient {
@@ -11,7 +11,6 @@ function getSb(req: Request): SupabaseClient {
 
 export function createDocumentRouter(): Router {
   const r = Router();
-  const ocr = new OcrService();
 
   r.post('/upload', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -26,7 +25,8 @@ export function createDocumentRouter(): Router {
       }
 
       const buffer = Buffer.from(content_base64, 'base64');
-      const ocrResult = await ocr.extractText(buffer, filename);
+      const ocrResult = await analyzeEmploymentDocument(buffer);
+      const issues = await extractIssuesFromDocument(ocrResult);
       const sb = getSb(req);
       const docId = `doc_${Date.now()}`;
 
@@ -34,7 +34,8 @@ export function createDocumentRouter(): Router {
         id: docId,
         case_id,
         filename,
-        extracted_text: ocrResult.text,
+        extracted_text: ocrResult.fullText,
+        detected_issues: issues,
         uploaded_at: new Date().toISOString(),
       });
       if (error) throw error;
@@ -46,7 +47,7 @@ export function createDocumentRouter(): Router {
       res.status(201).json({
         ok: true,
         document_id: docId,
-        ocr_provider: ocrResult.provider,
+        issues,
         confidence: ocrResult.confidence,
       });
     } catch (err) {

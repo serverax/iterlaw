@@ -15,7 +15,7 @@ healthRouter.get('/', (_req, res) => {
   <h1>IterLaw API</h1>
   <p>This port serves the <strong>backend API</strong>, not the web app.</p>
   <p>Health: <a href="/health">/health</a></p>
-  <p>Web UI (Next.js): run <code>npm run dev</code> from the repo root — default <a href="http://localhost:3001">http://localhost:3001</a></p>
+  <p>Web UI (Next.js): run <code>npm run dev</code> from the repo root — <a href="http://localhost:3000">http://localhost:3000</a></p>
 </body>
 </html>`);
 });

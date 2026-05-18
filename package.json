@@ -35,7 +35,7 @@
     "security:scan": "npm audit --omit=dev --audit-level=high",
     "audit:fix-check": "npm audit --audit-level=high",
     "ci": "npm run lint && npm run typecheck && npm run test:ci && npm run build:web",
-    "health": "node -e \"Promise.all([fetch('http://localhost:3000/health'),fetch('http://localhost:8081/health')]).then(async r=>{for (const x of r) console.log(x.status, await x.text())}).catch(e=>{console.error(e);process.exit(1)})\""
+    "health": "node -e \"Promise.all([fetch('http://localhost:3000/'),fetch('http://localhost:4000/health'),fetch('http://localhost:8081/health')]).then(async r=>{for (const x of r) console.log(x.status);}).catch(e=>{console.error(e);process.exit(1)})\""
   },
   "dependencies": {
     "axios": "^1.7.9",

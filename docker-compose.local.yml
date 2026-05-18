@@ -1,0 +1,202 @@
+# ============================================================================
+# ITERLAW LOCAL TEST ENVIRONMENT — CORRECTED & RESOLVED
+# Matches actual codebase structure and requirements
+# ============================================================================
+
+version: '3.9'
+
+services:
+
+  # =========================================================================
+  # PostgreSQL 15 with pgvector extension
+  # =========================================================================
+  postgres:
+    image: ankane/pgvector:v0.5.1
+    container_name: iterlaw-postgres-local
+    environment:
+      POSTGRES_USER: iterlaw_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-TestPassword123456789!}
+      POSTGRES_DB: iterlaw_knowledge
+    ports:
+      # Host 5433 avoids conflict with a local PostgreSQL install on 5432 (Windows)
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iterlaw_user -d iterlaw_knowledge"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - iterlaw-local
+    restart: unless-stopped
+
+  # =========================================================================
+  # Ollama LLM Engine (for embeddings)
+  # =========================================================================
+  ollama:
+    image: ollama/ollama:latest
+    container_name: iterlaw-ollama-local
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+    volumes:
+      - ollama-data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - iterlaw-local
+    restart: unless-stopped
+
+  # =========================================================================
+  # BACKEND SERVICE (Node.js server)
+  # Entry point: backend/dist/server.js
+  # =========================================================================
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: iterlaw-backend-local
+    ports:
+      - "4000:3000"
+    environment:
+      # Database (if used by some modules)
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: iterlaw_user
+      DB_PASSWORD: ${DB_PASSWORD:-TestPassword123456789!}
+      DB_NAME: iterlaw_knowledge
+      
+      # Supabase (Required by backend/src/config/env.ts)
+      SUPABASE_URL: http://localhost:54321
+      SUPABASE_SERVICE_ROLE_KEY: local-test-key
+      
+      # LLM Services
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: mistral
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-sk-ant-test-placeholder}
+      AZURE_OPENAI_KEY: ${AZURE_OPENAI_KEY:-test-placeholder}
+      
+      # Stripe (Sprint 6)
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-pk_test_placeholder}
+      
+      # Security & Context
+      JWT_SECRET: ${JWT_SECRET:-test-jwt-secret-do-not-use-in-production}
+      ENVIRONMENT: development
+      
+      # Node environment
+      NODE_ENV: development
+      PORT: 3000
+      LOG_LEVEL: debug
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - iterlaw-local
+    restart: unless-stopped
+
+  # =========================================================================
+  # LEGAL ORCHESTRATOR SERVICE (Node.js)
+  # Entry point: apps/legal-orchestrator/dist/server.js
+  # =========================================================================
+  legal-orchestrator:
+    build:
+      context: .
+      dockerfile: apps/legal-orchestrator/Dockerfile
+    container_name: iterlaw-legal-orchestrator-local
+    ports:
+      - "8081:3001"
+    environment:
+      # Database
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: iterlaw_user
+      DB_PASSWORD: ${DB_PASSWORD:-TestPassword123456789!}
+      DB_NAME: iterlaw_knowledge
+      
+      # LLM Services
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: mistral
+      
+      # Context
+      NODE_ENV: development
+      LOG_LEVEL: debug
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - iterlaw-local
+    restart: unless-stopped
+
+  # =========================================================================
+  # SYNTHESIS WORKER (optional — requires Redis; index is library-only until worker loop ships)
+  # Start with: docker compose -f docker-compose.local.yml --profile synthesis up -d
+  # =========================================================================
+  synthesis-worker:
+    profiles:
+      - synthesis
+    image: iterlaw/synthesis-worker:local
+    container_name: iterlaw-synthesis-worker-local
+    environment:
+      # Database
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: iterlaw_user
+      DB_PASSWORD: ${DB_PASSWORD:-TestPassword123456789!}
+      DB_NAME: iterlaw_knowledge
+      
+      # LLM Services
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: mistral
+      
+      # Context
+      NODE_ENV: development
+      LOG_LEVEL: debug
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    networks:
+      - iterlaw-local
+    restart: unless-stopped
+
+# ============================================================================
+# VOLUMES (Persistent storage)
+# ============================================================================
+volumes:
+  postgres-data:
+    driver: local
+  ollama-data:
+    driver: local
+
+# ============================================================================
+# NETWORKS (Internal communication)
+# ============================================================================
+networks:
+  iterlaw-local:
+    driver: bridge

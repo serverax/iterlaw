@@ -56,21 +56,42 @@ export default function LoginPage() {
         until you choose to create an account in a future self-hosted
         auth step.
       </p>
-      <a
-        href="/case/assessment"
-        style={{
-          display: 'inline-block',
-          padding: '10px 16px',
-          background: '#C9A84C',
-          color: '#0D0F14',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontWeight: 500,
-          fontSize: '14px',
-        }}
-      >
-        Start anonymous assessment
-      </a>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <a
+          href="/case/assessment"
+          style={{
+            display: 'inline-block',
+            padding: '10px 16px',
+            background: '#C9A84C',
+            color: '#0D0F14',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            fontWeight: 500,
+            fontSize: '14px',
+            textAlign: 'center',
+          }}
+        >
+          Start anonymous assessment
+        </a>
+        <a
+          href="/auth/register"
+          style={{
+            display: 'inline-block',
+            padding: '10px 16px',
+            border: '1px solid #252836',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            color: '#F0EDE6',
+            fontSize: '14px',
+            textAlign: 'center',
+          }}
+        >
+          Create account (stub)
+        </a>
+        <a href="/" style={{ fontSize: '13px', color: '#9A97A0', textAlign: 'center' }}>
+          ← Back to home
+        </a>
+      </div>
       <div
         style={{
           padding: '12px',
